@@ -1,37 +1,22 @@
-## Welcome to GitHub Pages
+# 2024 capstone 03
 
-You can use the [editor on GitHub](https://github.com/kookmin-sw/cap-template/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+## 소개
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+사용자가 작성한 자동화 시나리오에 따라 스마트폰 제어하여 반복업무를 대신 수행하며 생산성을 높이고, 창의적인 업무에 매진할 수 있게 돕는다.
 
-### Markdown
+이 때 시나리오 작성은 코드가 아닌 유저 친화적인 양식(Form)과 끌어놓기 (Drag and Drop) 기능을 지원하여 누구나 사용할 수 있는 범용성을 가진다.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## 팀 소개
 
-```markdown
-Syntax highlighted code block
+|이름|프로필 사진|깃허브|
+| - | - | - |
+| **신민욱** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | [https://github.com/minwook-shin](https://github.com/minwook-shin) |
+| **산학 멘토** | <img src="" width="100" height="100"/> | [https://github.com/?](#) |
 
-# Header 1
-## Header 2
-### Header 3
+## 간단 사용법
 
-- Bulleted
-- List
+_설치법이나 사용법을 작성하세요._
 
-1. Numbered
-2. List
+## 문서
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kookmin-sw/cap-template/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+자세한 설치 및 사용 방식은 해당 프로젝트의 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 혹은 깃허브 [레포지토리](https://github.com/kookmin-sw/capstone-2024-03)를 참고해주세요.
