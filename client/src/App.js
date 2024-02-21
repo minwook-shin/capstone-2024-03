@@ -1,22 +1,38 @@
-import logo from './logo.svg';
+import { useEffect } from "react";
 import './App.css';
+const { ipcRenderer } = window;
 
 function App() {
+  useEffect(() => {
+    ipcRenderer.send("versions");
+    const replaceText = (selector, text) => {
+      const element = document.getElementById(selector)
+      if (element) element.innerText = text
+    }
+    ipcRenderer.on("versions", (event, args) => {
+      for (const type of ['chrome', 'node', 'electron']) {
+        replaceText(`${type}-version`, args[type])
+      }
+    });
+
+    ipcRenderer.send("py-version");
+    ipcRenderer.on("py-version", (event, args) => {
+      const element = document.getElementById('py-version');
+      if (element) element.innerText = args.py;
+    });
+  }, []);
+
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <body>
+          <h1>Hello World!</h1>
+          We are using Node.js <span id="node-version"></span>,
+          Chromium <span id="chrome-version"></span>,
+          Electron <span id="electron-version"></span>,
+          and Python <span id="py-version"></span>
+        </body>
       </header>
     </div>
   );
