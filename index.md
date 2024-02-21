@@ -11,12 +11,8 @@
 |이름|프로필 사진|깃허브|
 | - | - | - |
 | **신민욱** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | [https://github.com/minwook-shin](https://github.com/minwook-shin) |
-| **산학 멘토** | <img src="" width="100" height="100"/> | [https://github.com/?](#) |
-
-## 간단 사용법
-
-_설치법이나 사용법을 작성하세요._
+| **임덕규** | <img src="https://avatars.githubusercontent.com/u/1933975?v=4" width="100" height="100"/> | [https://github.com/RavenKyu](https://github.com/RavenKyu) |
 
 ## 문서
 
-자세한 설치 및 사용 방식은 해당 프로젝트의 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 혹은 깃허브 [레포지토리](https://github.com/kookmin-sw/capstone-2024-03)를 참고해주세요.
+설치 및 사용 방식은 해당 프로젝트의 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 혹은 깃허브 [레포지토리](https://github.com/kookmin-sw/capstone-2024-03)를 참고해주세요.

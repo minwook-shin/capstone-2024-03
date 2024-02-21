@@ -15,7 +15,7 @@ _프로젝트 소개하는 영상을 추가하세요._
 |이름|프로필 사진|깃허브|
 | - | - | - |
 | **신민욱** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | [https://github.com/minwook-shin](https://github.com/minwook-shin) |
-| **산학 멘토** | <img src="" width="100" height="100"/> | [https://github.com/?](#) |
+| **임덕규 (산학 멘토)** | <img src="https://avatars.githubusercontent.com/u/1933975?v=4" width="100" height="100"/> | [https://github.com/RavenKyu](https://github.com/RavenKyu) |
 
 ## 사용법
 
