@@ -4,6 +4,14 @@ from core import operators
 
 
 def create_tasks_from_json(json_string: str):
+    """
+    Create tasks from a JSON string.
+
+    This function takes a JSON string that represents a list of tasks.
+
+    :param json_string: A JSON string that represents a list of tasks.
+    :return: A dictionary of operator instances. The keys are the task IDs and the values are the operator instances.
+    """
     data = json.loads(json_string)
 
     tasks_obj = {task_data['task_id']: operators[task_data['class_name']].from_dict(task_data) for task_data in data}
