@@ -1,2 +1,4 @@
 flask==3.0.2
-easy-adb==0.0.3
+easy-adb==0.1.1
+pure-python-adb==0.3.0.dev0
+uwsgi
