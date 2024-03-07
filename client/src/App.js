@@ -8,6 +8,9 @@ function App() {
 
   const [flowItems, setFlowItems] = useState([]);
 
+  const [imageSrc, setImageSrc] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     setTaskItems([
       { id: 1, text: "Scroll" },
@@ -29,6 +32,15 @@ function App() {
       const element = document.getElementById('py-version');
       if (element) element.innerText = args.py;
     });
+
+    setIsLoading(true);
+      ipcRenderer.send("screen");
+      ipcRenderer.on("screen", (event, args) => {
+      const blob = new Blob([args.screen], { type: 'image/png' });
+      const url = URL.createObjectURL(blob);
+      setImageSrc(url);
+      setIsLoading(false);
+      });
   }, []);
 
   const handleDragStart = (event, item) => {
@@ -52,6 +64,10 @@ function App() {
     setFlowItems([]);
   };
 
+  const handleButtonReload = () => {
+    ipcRenderer.send("screen");
+  };
+  
   return (
     <div className="App">
       <header className="App-header">
@@ -87,8 +103,22 @@ function App() {
               ))}
             </ol>
           </div>
-          <button onClick={handleButtonClick}>Print JSON</button>
-          <button onClick={handleButtonClear}>Clear JSON</button>
+          <div style={{ display: "flex"}}>
+            <div style={{ flex: 1 }}>
+              <button onClick={handleButtonClick}>Print JSON</button>
+              <button onClick={handleButtonClear}>Clear JSON</button>
+            </div>
+            <div style={{ flex: 1, marginLeft: "20px" }}>
+              <button onClick={handleButtonReload}>refresh Screen</button>
+              <div style={{ maxWidth: "100%", maxHeight: "100%", overflow: "auto" }}>
+                {isLoading ? (
+                  <p>Loading...</p>
+                ) : (
+                  <p>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="Uploaded" style={{ maxWidth: "25%", maxHeight: "25%", objectFit: "contain" }} />}</p>
+                )}
+              </div>
+            </div>
+          </div>
         </body>
       </header>
     </div>

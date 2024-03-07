@@ -12,6 +12,21 @@ async function fetchPythonVersion() {
     return response.data
 }
 
+async function fetchImage() {
+    try {
+        const response = await axios.get('http://127.0.0.1/screen', {
+            responseType: 'arraybuffer',
+            headers: {
+                'Accept': 'image/png'
+            }
+        });
+        const imageBuffer = Buffer.from(response.data, 'binary');
+        return imageBuffer;
+    } catch (error) {
+        console.error('Error fetching image:', error);
+    }
+}
+
 const createWindow = () => {
     mainWindow = new BrowserWindow({
         resizable: true,
@@ -48,7 +63,18 @@ const createWindow = () => {
                 py: "Python not found!"
             });
           } )
-        
+    });
+
+    ipcMain.on("screen", event => {
+        fetchImage().then(data => {
+            event.reply("screen", {
+                screen: data
+            });
+        }).catch(err => {
+            event.reply("screen", {
+                screen: ""
+            });
+          } )
     });
 };
 
