@@ -3,6 +3,7 @@ from flask import Flask, send_file
 from service.screen import ADB
 
 app = Flask(__name__)
+screen_obj = ADB()
 
 
 @app.after_request
@@ -26,7 +27,6 @@ def screen():
     IP and port of the device are passed as query parameters.
     """
     temp_file_name = "tmp.png"
-    screen_obj = ADB()
     screen_obj.get_screen_capture(file_name=temp_file_name)
     return send_file(temp_file_name, mimetype='image/png')
 
