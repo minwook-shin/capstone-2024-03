@@ -7,11 +7,6 @@ const BASE_URL = 'http://127.0.0.1:3000';
 
 let mainWindow = null;
 
-async function fetchPythonVersion() {
-    const response = await axios.get('http://127.0.0.1/python-version')
-    return response.data
-}
-
 async function fetchImage() {
     try {
         const response = await axios.get('http://127.0.0.1/screen', {
@@ -45,26 +40,6 @@ const createWindow = () => {
         mainWindow.loadFile(path.join(__dirname, './build/index.html'));
     }
 
-    ipcMain.on("versions", event => {
-        event.reply("versions", {
-            node: process.versions.node,
-            chrome: process.versions.chrome,
-            electron: process.versions.electron,
-        });
-    });
-
-    ipcMain.on("py-version", event => {
-        fetchPythonVersion().then(data => {
-            event.reply("py-version", {
-                py: data
-            });
-        }).catch(err => {
-            event.reply("py-version", {
-                py: "Python not found!"
-            });
-          } )
-    });
-
     ipcMain.on("screen", event => {
         fetchImage().then(data => {
             event.reply("screen", {
@@ -74,7 +49,7 @@ const createWindow = () => {
             event.reply("screen", {
                 screen: ""
             });
-          } )
+        })
     });
 };
 

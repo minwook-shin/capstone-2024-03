@@ -1,5 +1,4 @@
 from flask import Flask, send_file
-import platform
 
 from service.screen import ADB
 
@@ -17,11 +16,6 @@ def add_cors_headers(response):
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
-
-
-@app.route('/python-version')
-def get_python_version():
-    return platform.python_version()
 
 
 @app.route('/screen')
