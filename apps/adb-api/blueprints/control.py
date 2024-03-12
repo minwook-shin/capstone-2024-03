@@ -101,17 +101,14 @@ def execute_adb_operator():
     """
     Execute the ADB operations.
     ---
-    parameters:
-      - name: starting_id
-        in: query
-        type: string
-        required: true
-        description: The ID of the task to start execution from.
     responses:
       200:
         description: All ADB operations executed successfully.
     """
-    task_id = request.args.get('starting_id')
+    if ordered_tasks:
+        task_id = ordered_tasks[0]
+    else:
+        return {'message': 'No operators to execute'}, 200
     try:
         converter = Converter(dag)
         converter.convert_list_to_dag(ordered_tasks)
