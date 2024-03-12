@@ -2,4 +2,5 @@ flask==3.0.2
 easy-adb==0.1.1
 pure-python-adb==0.3.0.dev0
 uwsgi
-f-scheduler==0.0.1
+f-scheduler==0.1.0
+flasgger==0.9.7b2

@@ -1,6 +1,7 @@
 from easy_adb import run_adb_server, download_adb_binary
 import os
 from ppadb.client import Client as AdbClient
+from time import sleep
 
 
 class ADB:
@@ -31,3 +32,23 @@ class ADB:
         result = self.device.screencap()
         with open(file_name, 'wb') as fp:
             fp.write(result)
+
+    def execute_adb_scroll_up(self):
+        """
+        Execute the ADB command to scroll up on the device.
+
+        Parameters:
+        times (int): The number of times to scroll up.
+        """
+        self.device.shell('input swipe 300 300 500 1000')
+        sleep(1)
+
+    def execute_adb_scroll_down(self):
+        """
+        Execute the ADB command to scroll down on the device.
+
+        Parameters:
+        times (int): The number of times to scroll down.
+        """
+        self.device.shell('input swipe 500 1000 300 300')
+        sleep(1)
