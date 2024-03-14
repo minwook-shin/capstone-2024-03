@@ -17,10 +17,5 @@ def add_cors_headers(response):
     return response
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8888, threaded=False, processes=1)

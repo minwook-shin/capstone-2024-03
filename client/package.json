@@ -19,7 +19,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "python": "source ../.venv/bin/activate && cd ../apps/adb-api && uwsgi --ini uwsgi.ini",
+    "python": "cd ../apps/adb-api && uwsgi --ini uwsgi.ini",
     "electron": "wait-on http://127.0.0.1 && wait-on http://127.0.0.1:3000 && electron .",
     "dev": "concurrently \"yarn python\" \"yarn start\" \"yarn electron\""
   },

@@ -11,6 +11,12 @@ control_obj = ADB()
 ordered_tasks = []
 
 
+@controller.route('/')
+def hello_world():
+    adb_status = control_obj.is_adb_enabled()
+    return {"ADB status": adb_status, "message": "If ADB status is False, please check the ADB connection"}
+
+
 @controller.route('/screen', methods=['GET'])
 def screen():
     """

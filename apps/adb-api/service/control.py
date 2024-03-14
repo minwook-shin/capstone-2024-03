@@ -17,10 +17,11 @@ class ADB:
         devices = client.devices()
 
         if len(devices) == 0:
-            quit()
-
-        device = devices[0]
-        self.device = device
+            print("No devices connected. ADB functionality will be disabled.")
+            self.device = None
+        else:
+            device = devices[0]
+            self.device = device
 
     def get_screen_capture(self, file_name):
         """
@@ -52,3 +53,12 @@ class ADB:
         """
         self.device.shell('input swipe 500 1000 300 300')
         sleep(1)
+
+    def is_adb_enabled(self):
+        """
+        Check if the ADB functionality is enabled.
+
+        Returns:
+        bool: True if ADB is enabled, False otherwise.
+        """
+        return self.device is not None
