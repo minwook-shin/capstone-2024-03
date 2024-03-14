@@ -16,10 +16,14 @@ function App() {
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [inputVisible, setInputVisible] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [pendingItem, setPendingItem] = useState(null);
+
   useEffect(() => {
     setTaskItems([
-      { id: 1, text: "Scroll" },
-      { id: 2, text: "Click" },
+      { id: 1, text: "scroll_up", time: 1 },
+      { id: 2, text: "scroll_down", time: 1 },
     ]);
 
     setIsLoading(true);
@@ -32,24 +36,90 @@ function App() {
     });
   }, []);
 
-  const handleDragStart = (event, item) => {
-    event.dataTransfer.setData("text/plain", JSON.stringify(item));
+  const onDrop = (event) => {
+    event.preventDefault();
+    const data = JSON.parse(event.dataTransfer.getData("text"));
+    const item = { id: data.id, text: data.text };
+    setInputVisible(true);
+    setPendingItem(item);
   };
 
-  const handleDrop = (event) => {
-    const item = JSON.parse(event.dataTransfer.getData("text/plain"));
-    setFlowItems([...flowItems, item]);
+  const onInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const onInputConfirm = async () => {
+    const newItem = { ...pendingItem, time: inputValue };
+    setFlowItems([...flowItems, newItem]);
+    setInputVisible(false);
+    setInputValue('');
+    setPendingItem(null);
+    if (newItem.text === 'scroll_up') {
+      const response = await fetch('http://127.0.0.1/scroll_up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ "time": parseInt(newItem.time, 10), "task_id": Math.floor(Math.random() * 10000) }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
+    }
+    if (newItem.text === 'scroll_down') {
+      const response = await fetch('http://127.0.0.1/scroll_down', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ "time": parseInt(newItem.time, 10), "task_id": Math.floor(Math.random() * 10000) }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
+    }
+  };
+
+
+  const handleDragStart = (event, item) => {
+    event.dataTransfer.setData("text/plain", JSON.stringify(item));
   };
 
   const handleDragOver = (event) => {
     event.preventDefault();
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
+    const response = await fetch('http://127.0.0.1/get_all_tasks', {
+      method: 'GET'
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const jsonResponse = await response.json();
     console.log(JSON.stringify(flowItems));
+    console.log(JSON.stringify(jsonResponse));
   };
 
-  const handleButtonClear = () => {
+
+  const handleButtonClear = async () => {
+    const response = await fetch('http://127.0.0.1/clear', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const jsonResponse = await response.json();
+    console.log(jsonResponse);
     setFlowItems([]);
   };
 
@@ -57,14 +127,41 @@ function App() {
     ipcRenderer.send("screen");
   };
 
+  const handleButtonRun = async () => {
+    const response = await fetch('http://127.0.0.1/run', {
+      method: 'GET'
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const jsonResponse = await response.json();
+    console.log(jsonResponse);
+  };
+
+
   return (
     <div className="App">
       <header className="App-header">
         <div>
           <div>
+            {inputVisible && (
+              <input
+                placeholder="time in seconds"
+                type="text"
+                value={inputValue}
+                onChange={onInputChange}
+                onBlur={onInputConfirm}
+                onKeyDown={event => {
+                  if (event.key === 'Enter') {
+                    onInputConfirm();
+                  }
+                }}
+              />
+            )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
-            <FlowList flowItems={flowItems} handleDrop={handleDrop} handleDragOver={handleDragOver} />
-            <ControlButtons handleButtonClick={handleButtonClick} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload} />
+            <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
+
+            <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload} />
           </div>
           <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} />
         </div>

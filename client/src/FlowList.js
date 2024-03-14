@@ -1,19 +1,19 @@
 import React from 'react';
 
-function FlowList({ flowItems, handleDrop, handleDragOver }) {
+function FlowList({ flowItems, onDrop, handleDragOver }) {
     return (
         <div
-            className="flow"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-        >
-            <h2>Flow</h2>
-            <ol>
+              className="flow"
+              onDrop={onDrop}
+              onDragOver={handleDragOver}
+            >
+              <h2>Flow</h2>
+              <ol>
                 {flowItems.map(item => (
-                    <li key={item.id}>{item.text}</li>
+                  <li key={item.id}>{item.text} * {item.time}</li>
                 ))}
-            </ol>
-        </div>
+              </ol>
+            </div>
     );
 }
 
