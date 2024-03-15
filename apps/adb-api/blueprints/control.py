@@ -138,7 +138,7 @@ def clear_adb_operator():
     return {'message': 'All operators cleared'}, 200
 
 
-@controller.route('/get_all_tasks', methods=['get'])
+@controller.route('/tasks', methods=['get'])
 def get_all_adb_operator():
     """
     Get all the ADB operations.
