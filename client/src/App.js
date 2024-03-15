@@ -17,13 +17,21 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [inputVisible, setInputVisible] = useState(false);
-  const [inputValue, setInputValue] = useState('');
   const [pendingItem, setPendingItem] = useState(null);
+  const [inputValues, setInputValues] = useState({});
+
+
+  const taskMetadata = {
+    scroll_up: { time: null },
+    scroll_down: { time: null },
+    single_click: { x: null, y: null },
+  };
 
   useEffect(() => {
     setTaskItems([
       { id: 1, text: "scroll_up", time: 1 },
       { id: 2, text: "scroll_down", time: 1 },
+      { id: 3, text: "single_click", x: 0, y: 0 },
     ]);
 
     setIsLoading(true);
@@ -42,17 +50,20 @@ function App() {
     const item = { id: data.id, text: data.text };
     setInputVisible(true);
     setPendingItem(item);
+    setInputValues(taskMetadata[data.text] || {});
   };
 
   const onInputChange = (event) => {
-    setInputValue(event.target.value);
+    setInputValues({
+      ...inputValues,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const onInputConfirm = async () => {
-    const newItem = { ...pendingItem, time: inputValue };
+    const newItem = { ...pendingItem, ...inputValues };
     setFlowItems([...flowItems, newItem]);
     setInputVisible(false);
-    setInputValue('');
     setPendingItem(null);
     if (newItem.text === 'scroll_up') {
       const response = await fetch('http://127.0.0.1/scroll_up', {
@@ -83,6 +94,23 @@ function App() {
       }
       const jsonResponse = await response.json();
       console.log(jsonResponse);
+    }
+    if (newItem.text === 'single_click') {
+      console.log(JSON.stringify({ "x": parseInt(newItem.x, 10), "y": parseInt(newItem.y, 10), "task_id": Math.floor(Math.random() * 10000) }));
+      // 다중 입력창 구현을 위해서 임시 작업된 조건문, 미구현됨
+      // const response = await fetch('http://127.0.0.1/single_click', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ "x": parseInt(newItem.x, 10), "y": parseInt(newItem.y, 10), "task_id": Math.floor(Math.random() * 10000) }),
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error('Network response was not ok');
+      // }
+      // const jsonResponse = await response.json();
+      // console.log(jsonResponse);
     }
   };
 
@@ -144,20 +172,22 @@ function App() {
       <header className="App-header">
         <div>
           <div>
-            {inputVisible && (
+            {inputVisible && Object.entries(inputValues).map(([key, value]) => (
               <input
-                placeholder="time in seconds"
+                key={key}
                 type="text"
-                value={inputValue}
+                name={key}
+                value={value}
                 onChange={onInputChange}
-                onBlur={onInputConfirm}
+                placeholder={`Enter ${key}`}
                 onKeyDown={event => {
                   if (event.key === 'Enter') {
                     onInputConfirm();
                   }
                 }}
               />
-            )}
+            ))}
+
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
             <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
 
