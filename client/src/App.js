@@ -97,20 +97,7 @@ function App() {
     }
     if (newItem.text === 'single_click') {
       console.log(JSON.stringify({ "x": parseInt(newItem.x, 10), "y": parseInt(newItem.y, 10), "task_id": Math.floor(Math.random() * 10000) }));
-      // 다중 입력창 구현을 위해서 임시 작업된 조건문, 미구현됨
-      // const response = await fetch('http://127.0.0.1/single_click', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ "x": parseInt(newItem.x, 10), "y": parseInt(newItem.y, 10), "task_id": Math.floor(Math.random() * 10000) }),
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok');
-      // }
-      // const jsonResponse = await response.json();
-      // console.log(jsonResponse);
+      // 다중 입력창 구현을 위해서 임시 작업된 조건문, 미구현됨ç
     }
   };
 
@@ -124,7 +111,7 @@ function App() {
   };
 
   const handleButtonClick = async () => {
-    const response = await fetch('http://127.0.0.1/get_all_tasks', {
+    const response = await fetch('http://127.0.0.1/tasks', {
       method: 'GET'
     });
     if (!response.ok) {
