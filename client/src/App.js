@@ -4,6 +4,7 @@ import TaskList from './TaskList';
 import FlowList from './FlowList';
 import ControlButtons from './ControlButtons';
 import ScreenViewer from './ScreenViewer';
+import OptionInput from './OptionInput';
 
 
 const { ipcRenderer } = window;
@@ -199,22 +200,13 @@ function App() {
       <header className="App-header">
         <div>
           <div>
-            {inputVisible && Object.entries(inputValues).map(([key, value]) => (
-              <input
-                key={key}
-                type="text"
-                name={key}
-                value={value}
-                onChange={onInputChange}
-                placeholder={`Enter ${key}`}
-                onKeyDown={event => {
-                  if (event.key === 'Enter') {
-                    onInputConfirm();
-                  }
-                }}
+          {inputVisible && (
+              <OptionInput
+                inputValues={inputValues}
+                onInputChange={onInputChange}
+                onInputConfirm={onInputConfirm}
               />
-            ))}
-
+            )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
             <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
 
