@@ -20,6 +20,46 @@ function App() {
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
 
+  const saveToFile = () => {
+    const data = JSON.stringify({ taskItems, flowItems });
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'backup.json';
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const loadFromFile = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      const flowItems = JSON.parse(event.target.result).flowItems;
+      setFlowItems(flowItems);
+
+      const newFlowItems = flowItems.map(item => {
+        const { id, time, ...rest } = item;
+        return { ...rest, time: parseInt(time, 10) };
+      });
+
+      for (const item of newFlowItems) {
+        const { text, ...rest } = item;
+        await fetch(`http://127.0.0.1/${text}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...rest, task_id: Math.floor(Math.random() * 10000) }),
+        });
+      }
+    };
+
+    reader.readAsText(file);
+  };
 
   const taskMetadata = {
     scroll_up: { time: null },
@@ -178,7 +218,8 @@ function App() {
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
             <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
 
-            <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload} />
+            <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload} 
+              saveToFile={saveToFile} loadFromFile ={loadFromFile}/>
           </div>
           <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} />
         </div>
