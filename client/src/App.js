@@ -194,13 +194,21 @@ function App() {
     console.log(jsonResponse);
   };
 
+  const handleMouseMove = (event) => {
+    const imgElement = document.getElementById('uploaded-image');
+    const scaleX = imgElement.naturalWidth / imgElement.offsetWidth;
+    const scaleY = imgElement.naturalHeight / imgElement.offsetHeight;
 
+    const realX = Math.round(event.nativeEvent.offsetX * scaleX);
+    const realY = Math.round(event.nativeEvent.offsetY * scaleY);
+    alert(`input tap ${realX} ${realY}`);
+  };
   return (
     <div className="App">
       <header className="App-header">
         <div>
           <div>
-          {inputVisible && (
+            {inputVisible && (
               <OptionInput
                 inputValues={inputValues}
                 onInputChange={onInputChange}
@@ -210,10 +218,10 @@ function App() {
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
             <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
 
-            <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload} 
-              saveToFile={saveToFile} loadFromFile ={loadFromFile}/>
+            <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload}
+              saveToFile={saveToFile} loadFromFile={loadFromFile} />
           </div>
-          <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} />
+          <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} handleMouseMove={handleMouseMove} />
         </div>
       </header>
     </div>
