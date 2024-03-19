@@ -20,6 +20,8 @@ function App() {
   const [inputVisible, setInputVisible] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
+  const [keyEvents, setKeyEvents] = useState({});
+
 
   const saveToFile = () => {
     const data = JSON.stringify({ taskItems, flowItems });
@@ -32,6 +34,27 @@ function App() {
     link.click();
 
     URL.revokeObjectURL(url);
+  };
+
+  const apiCall = async (url, method, body = null) => {
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(`http://127.0.0.1/${url}`, options);
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    return await response.json();
   };
 
   const loadFromFile = (event) => {
@@ -65,14 +88,16 @@ function App() {
   const taskMetadata = {
     scroll_up: { time: null },
     scroll_down: { time: null },
-    single_click: { x: null, y: null },
+    single_click: { time: null, x: null, y: null },
+    short_cut: { time: null, short_cut: null },
   };
 
   useEffect(() => {
     setTaskItems([
       { id: 1, text: "scroll_up", time: 1 },
       { id: 2, text: "scroll_down", time: 1 },
-      { id: 3, text: "single_click", x: 0, y: 0 },
+      { id: 3, text: "single_click", x: 0, y: 0, time: 1 },
+      { id: 4, text: "short_cut", short_cut: "keyevent 1", time: 1 }
     ]);
 
     setIsLoading(true);
@@ -83,6 +108,14 @@ function App() {
       setImageSrc(url);
       setIsLoading(false);
     });
+
+    const loadKeyEvents = async () => {
+      const response = await fetch('./key_event.json');
+      const data = await response.json();
+      setKeyEvents(data.key_events);
+    };
+
+    loadKeyEvents();
   }, []);
 
   const onDrop = (event) => {
@@ -102,44 +135,37 @@ function App() {
   };
 
   const onInputConfirm = async () => {
-    const newItem = { ...pendingItem, ...inputValues };
-    setFlowItems([...flowItems, newItem]);
+    const allFieldsFilled = Object.values(inputValues).every(value => value != null && value !== '');
+
+    if (!allFieldsFilled) {
+      alert('모든 필드를 채워주세요.');
+      return;
+    } else {
+      const newItem = { ...pendingItem, ...inputValues };
+      setFlowItems([...flowItems, newItem]);
+      setInputVisible(false);
+      setPendingItem(null);
+
+      const task_id = Math.floor(Math.random() * 10000);
+      const time = parseInt(newItem.time, 10);
+
+      if (['scroll_up', 'scroll_down', 'single_click'].includes(newItem.text)) {
+        const body = { time, task_id };
+
+        if (newItem.text === 'single_click') {
+          body.x = parseInt(newItem.x, 10);
+          body.y = parseInt(newItem.y, 10);
+        }
+
+        const jsonResponse = await apiCall(newItem.text, 'POST', body);
+        console.log(jsonResponse);
+      }
+    }
+  };
+
+  const onInputCancel = () => {
     setInputVisible(false);
     setPendingItem(null);
-    if (newItem.text === 'scroll_up') {
-      const response = await fetch('http://127.0.0.1/scroll_up', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ "time": parseInt(newItem.time, 10), "task_id": Math.floor(Math.random() * 10000) }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const jsonResponse = await response.json();
-      console.log(jsonResponse);
-    }
-    if (newItem.text === 'scroll_down') {
-      const response = await fetch('http://127.0.0.1/scroll_down', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ "time": parseInt(newItem.time, 10), "task_id": Math.floor(Math.random() * 10000) }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const jsonResponse = await response.json();
-      console.log(jsonResponse);
-    }
-    if (newItem.text === 'single_click') {
-      console.log(JSON.stringify({ "x": parseInt(newItem.x, 10), "y": parseInt(newItem.y, 10), "task_id": Math.floor(Math.random() * 10000) }));
-      // 다중 입력창 구현을 위해서 임시 작업된 조건문, 미구현됨ç
-    }
   };
 
 
@@ -213,6 +239,8 @@ function App() {
                 inputValues={inputValues}
                 onInputChange={onInputChange}
                 onInputConfirm={onInputConfirm}
+                onInputCancel={onInputCancel}
+                keyEvents={keyEvents}
               />
             )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />

@@ -62,3 +62,13 @@ class ADB:
         bool: True if ADB is enabled, False otherwise.
         """
         return self.device is not None
+
+    def execute_adb_single_click(self, x, y):
+        """
+        Execute the ADB command to scroll down on the device.
+
+        Parameters:
+        times (int): The number of times to scroll down.
+        """
+        self.device.shell(f'input tap {x} {y}')
+        sleep(1)
