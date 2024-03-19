@@ -1,5 +1,7 @@
 # 2024 capstone 03
 
+[![Python package](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml)
+
 ## 프로젝트 소개
 
 사용자가 작성한 자동화 시나리오에 따라 스마트폰 제어하여 반복업무를 대신 수행하며 생산성을 높이고, 창의적인 업무에 매진할 수 있게 돕는다.
@@ -27,26 +29,92 @@ _프로젝트 소개하는 영상을 추가하세요._
 | **신민욱 (\*\*\*\*1640 )** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | 서버, 클라이언트, 문서화 | [https://github.com/minwook-shin](https://github.com/minwook-shin) | 
 | **임덕규 (산학 멘토)** | <img src="https://avatars.githubusercontent.com/u/1933975?v=4" width="100" height="100"/> | 프로젝트 멘토링 | [https://github.com/RavenKyu](https://github.com/RavenKyu) |
 
-## 사용법
+## 개발 환경 설정 및 사용법
 
-해당 프로젝트의 시작을 위해서 서버의 환경 설정을 진행해주셔야 합니다.
+해당 프로젝트의 시작을 위해서 서버의 환경 설정을 먼저 진행해주셔야 합니다.
 
-### server
+### 서버
 
-> 문서 작성 중입니다.
+#### Windows
 
-* 파이썬 3.10 ~ 3.12 설치
-* 가상환경 생성
-* 파이썬 의존 패키지 설치
+1. 파이썬 3.10 ~ 3.12 설치: 
 
-### client
+[Python 공식 웹사이트](https://www.python.org/downloads/)에서 Python 3.10 ~ 3.12 버전을 내려받고 설치
 
-> 문서 작성 중입니다.
+2. 가상환경 생성: 
 
-* nodeJS 개발환경 구축
-* npm 패키지 설치
-* npm 실행
+```powershell
+python -m venv .venv
+.\venv\Scripts\activate
+```
+
+#### macOS
+
+1. 파이썬 3.10 ~ 3.12 설치:
+
+```bash
+brew install python@3.12
+```
+
+2. 가상환경 생성:
+
+```bash
+python3 -m venv .venv
+source venv/bin/activate
+```
+
+#### Linux
+
+1. 파이썬 3.10 ~ 3.12 설치:
+
+```bash
+sudo apt-get install python3.12
+```
+
+2. 가상환경 생성:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+#### 모든 플랫폼
+
+```bash
+pip install -r apps/adb-api/requirements.txt
+```
+
+### 클라이언트
+
+#### Windows
+
+1. Node.js 개발환경 구축:
+
+[Node.js 공식 웹사이트](https://nodejs.org/en/download/)에서 Node.js를 내려받고 설치
+
+#### macOS
+
+1. Node.js 개발환경 구축:
+
+```bash
+brew install node
+```
+
+#### Linux
+
+1. Node.js 개발환경 구축:
+
+```bash
+sudo apt-get install nodejs
+```
+
+#### 모든 플랫폼
+
+```bash
+npm install
+npm start
+```
 
 ## 문서
 
-해당 프로젝트의 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 를 참고해주세요.
+해당 프로젝트의 구조 및 API 설계에 대한 내용은 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 를 참고해주세요.
