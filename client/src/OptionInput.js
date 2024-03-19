@@ -39,7 +39,7 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, keyEvents ,on
                             name={key}
                             value={inputValues[key]}
                             onChange={onInputChange}
-                            placeholder='[{"text": "scroll_down", "time": "2"}, ...]'
+                            placeholder='Drag & drop here and create a list with brackets : [{"text": "scroll_down", "time": "2"}, ...]'
                             readOnly={key === 'text'}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
