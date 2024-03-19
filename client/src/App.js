@@ -22,6 +22,10 @@ function App() {
   const [inputValues, setInputValues] = useState({});
   const [keyEvents, setKeyEvents] = useState({});
 
+  const [repeatCount, setRepeatCount] = useState(1);
+  const [currentCount, setCurrentCount] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
 
   const saveToFile = () => {
     const data = JSON.stringify({ taskItems, flowItems });
@@ -86,10 +90,10 @@ function App() {
 
   useEffect(() => {
     const initialTaskItems = [
-      {text: "scroll_up", time: '' },
-      {text: "scroll_down", time: '' },
-      {text: "single_click", x: '', y: '', time: '' },
-      {text: "short_cut", key_event: '', time: '' }
+      { text: "scroll_up", time: '' },
+      { text: "scroll_down", time: '' },
+      { text: "single_click", x: '', y: '', time: '' },
+      { text: "short_cut", key_event: '', time: '' }
     ];
     setTaskItems(initialTaskItems);
 
@@ -117,7 +121,7 @@ function App() {
     const item = { id: data.id, text: data.text };
     setInputVisible(true);
     setPendingItem(item);
-  
+
     const taskItem = taskItems.find(taskItem => taskItem.text === data.text);
     setInputValues(taskItem || {});
   };
@@ -208,14 +212,21 @@ function App() {
   };
 
   const handleButtonRun = async () => {
-    const response = await fetch('http://127.0.0.1/run', {
-      method: 'GET'
-    });
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+    setIsPlaying(true);
+    for (let i = 0; i < repeatCount; i++) {
+      setCurrentCount(i + 1);
+
+      const response = await fetch('http://127.0.0.1/run', {
+        method: 'GET'
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
     }
-    const jsonResponse = await response.json();
-    console.log(jsonResponse);
+    setCurrentCount(0);
+    setIsPlaying(false);
   };
 
   const handleMouseMove = (event) => {
@@ -243,7 +254,21 @@ function App() {
             )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
             <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
+            <div>
+              <label>Iteration count </label>
+              <input
+                type="number"
+                value={repeatCount}
+                onChange={(e) => setRepeatCount(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>Current Iteration count : {currentCount}</label>
 
+            </div>
+            <div>
+              <p>{isPlaying ? "Playing..." : "Setting up a flow list..."}</p>
+            </div>
             <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload}
               saveToFile={saveToFile} loadFromFile={loadFromFile} />
           </div>
