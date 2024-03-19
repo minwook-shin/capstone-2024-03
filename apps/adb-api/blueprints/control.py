@@ -102,6 +102,49 @@ def scroll_down():
     return {'message': 'scroll_down added', 'time': time}, 200
 
 
+@controller.route('/single_click', methods=['POST'])
+def single_click():
+    """
+    Execute a single click on the device screen.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: single_click
+          required:
+            - x
+            - y
+            - time
+            - task_id
+          properties:
+            x:
+              type: integer
+              description: The x-coordinate of the click.
+            y:
+              type: integer
+              description: The y-coordinate of the click.
+            time:
+              type: integer
+              description: The number of times to single click.
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Single click operation added successfully.
+    """
+    x = request.json.get('x')
+    y = request.json.get('y')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_single_click, param=(x, y),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'single_click added', 'x': x, 'y': y, 'time': time}, 200
+
+
 @controller.route('/run', methods=['GET'])
 def execute_adb_operator():
     """
