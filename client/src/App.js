@@ -20,6 +20,8 @@ function App() {
   const [inputVisible, setInputVisible] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
+  const [keyEvents, setKeyEvents] = useState({});
+
 
   const saveToFile = () => {
     const data = JSON.stringify({ taskItems, flowItems });
@@ -87,6 +89,7 @@ function App() {
     scroll_up: { time: null },
     scroll_down: { time: null },
     single_click: { time: null, x: null, y: null },
+    short_cut: { time: null, short_cut: null },
   };
 
   useEffect(() => {
@@ -94,6 +97,7 @@ function App() {
       { id: 1, text: "scroll_up", time: 1 },
       { id: 2, text: "scroll_down", time: 1 },
       { id: 3, text: "single_click", x: 0, y: 0, time: 1 },
+      { id: 4, text: "short_cut", short_cut: "keyevent 1", time: 1 }
     ]);
 
     setIsLoading(true);
@@ -104,6 +108,14 @@ function App() {
       setImageSrc(url);
       setIsLoading(false);
     });
+
+    const loadKeyEvents = async () => {
+      const response = await fetch('./key_event.json');
+      const data = await response.json();
+      setKeyEvents(data.key_events);
+    };
+
+    loadKeyEvents();
   }, []);
 
   const onDrop = (event) => {
@@ -123,25 +135,37 @@ function App() {
   };
 
   const onInputConfirm = async () => {
-    const newItem = { ...pendingItem, ...inputValues };
-    setFlowItems([...flowItems, newItem]);
+    const allFieldsFilled = Object.values(inputValues).every(value => value != null && value !== '');
+
+    if (!allFieldsFilled) {
+      alert('모든 필드를 채워주세요.');
+      return;
+    } else {
+      const newItem = { ...pendingItem, ...inputValues };
+      setFlowItems([...flowItems, newItem]);
+      setInputVisible(false);
+      setPendingItem(null);
+
+      const task_id = Math.floor(Math.random() * 10000);
+      const time = parseInt(newItem.time, 10);
+
+      if (['scroll_up', 'scroll_down', 'single_click'].includes(newItem.text)) {
+        const body = { time, task_id };
+
+        if (newItem.text === 'single_click') {
+          body.x = parseInt(newItem.x, 10);
+          body.y = parseInt(newItem.y, 10);
+        }
+
+        const jsonResponse = await apiCall(newItem.text, 'POST', body);
+        console.log(jsonResponse);
+      }
+    }
+  };
+
+  const onInputCancel = () => {
     setInputVisible(false);
     setPendingItem(null);
-
-    const task_id = Math.floor(Math.random() * 10000);
-    const time = parseInt(newItem.time, 10);
-
-    if (['scroll_up', 'scroll_down', 'single_click'].includes(newItem.text)) {
-      const body = { time, task_id };
-
-      if (newItem.text === 'single_click') {
-        body.x = parseInt(newItem.x, 10);
-        body.y = parseInt(newItem.y, 10);
-      }
-
-      const jsonResponse = await apiCall(newItem.text, 'POST', body);
-      console.log(jsonResponse);
-    }
   };
 
 
@@ -215,6 +239,8 @@ function App() {
                 inputValues={inputValues}
                 onInputChange={onInputChange}
                 onInputConfirm={onInputConfirm}
+                onInputCancel={onInputCancel}
+                keyEvents={keyEvents}
               />
             )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
