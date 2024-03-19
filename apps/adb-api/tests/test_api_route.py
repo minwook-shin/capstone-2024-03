@@ -48,6 +48,15 @@ class TestController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'scroll_down added', 'time': 1})
 
+    def test_single_click_adds_task(self):
+        """
+        Test case for the single click route.
+        This test case sends a POST request to the '/single_click' route with a JSON payload.
+        """
+        response = self.client.post('/single_click', json={'x': 100, 'y': 200, 'time': 1, 'task_id': 'task1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'message': 'single_click added', 'x': 100, 'y': 200, 'time': 1})
+
     def test_execute_adb_returns_no_tasks(self):
         """
         Test case for the execute ADB operator route when there are no tasks.
