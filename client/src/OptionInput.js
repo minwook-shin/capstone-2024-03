@@ -5,13 +5,14 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, keyEvents ,on
     return (
         <>
             {Object.keys(inputValues).map((key) => {
-                if (key === 'short_cut') {
+                if (key === 'key_event') {
                     return (
                         <select
                             key={key}
                             name={key}
                             value={inputValues[key]}
                             onChange={onInputChange}
+                            readOnly={key === 'text'}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     onInputConfirm();
@@ -37,6 +38,7 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, keyEvents ,on
                             value={inputValues[key]}
                             onChange={onInputChange}
                             placeholder={`Enter ${key}`}
+                            readOnly={key === 'text'}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     onInputConfirm();

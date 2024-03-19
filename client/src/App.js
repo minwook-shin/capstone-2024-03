@@ -66,10 +66,9 @@ function App() {
       setFlowItems(flowItems);
 
       const newFlowItems = flowItems.map(item => {
-        const { id, time, ...rest } = item;
+        const { time, ...rest } = item;
         return { ...rest, time: parseInt(time, 10) };
       });
-
       for (const item of newFlowItems) {
         const { text, ...rest } = item;
         await fetch(`http://127.0.0.1/${text}`, {
@@ -85,20 +84,14 @@ function App() {
     reader.readAsText(file);
   };
 
-  const taskMetadata = {
-    scroll_up: { time: null },
-    scroll_down: { time: null },
-    single_click: { time: null, x: null, y: null },
-    short_cut: { time: null, short_cut: null },
-  };
-
   useEffect(() => {
-    setTaskItems([
-      { id: 1, text: "scroll_up", time: 1 },
-      { id: 2, text: "scroll_down", time: 1 },
-      { id: 3, text: "single_click", x: 0, y: 0, time: 1 },
-      { id: 4, text: "short_cut", short_cut: "keyevent 1", time: 1 }
-    ]);
+    const initialTaskItems = [
+      {text: "scroll_up", time: '' },
+      {text: "scroll_down", time: '' },
+      {text: "single_click", x: '', y: '', time: '' },
+      {text: "short_cut", key_event: '', time: '' }
+    ];
+    setTaskItems(initialTaskItems);
 
     setIsLoading(true);
     ipcRenderer.send("screen");
@@ -124,7 +117,9 @@ function App() {
     const item = { id: data.id, text: data.text };
     setInputVisible(true);
     setPendingItem(item);
-    setInputValues(taskMetadata[data.text] || {});
+  
+    const taskItem = taskItems.find(taskItem => taskItem.text === data.text);
+    setInputValues(taskItem || {});
   };
 
   const onInputChange = (event) => {
@@ -149,12 +144,15 @@ function App() {
       const task_id = Math.floor(Math.random() * 10000);
       const time = parseInt(newItem.time, 10);
 
-      if (['scroll_up', 'scroll_down', 'single_click'].includes(newItem.text)) {
+      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut'].includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
           body.x = parseInt(newItem.x, 10);
           body.y = parseInt(newItem.y, 10);
+        }
+        else if (newItem.text === 'short_cut') {
+          body.key_event = newItem.key_event;
         }
 
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
