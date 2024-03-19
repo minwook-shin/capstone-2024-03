@@ -76,7 +76,7 @@ function App() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...rest, task_id: Math.floor(Math.random() * 10000) }),
+          body: JSON.stringify({ ...rest, task_id: Date.now() }),
         });
       }
     };
@@ -141,7 +141,7 @@ function App() {
       setInputVisible(false);
       setPendingItem(null);
 
-      const task_id = Math.floor(Math.random() * 10000);
+      const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
 
       if (['scroll_up', 'scroll_down', 'single_click', 'short_cut'].includes(newItem.text)) {
