@@ -7,7 +7,7 @@ function FlowList({ flowItems, onDrop, handleDragOver }) {
               onDrop={onDrop}
               onDragOver={handleDragOver}
             >
-              <h2>Flow</h2>
+              <h2>List of Flows to run (Drop)</h2>
               <ol>
                 {flowItems.map(item => (
                   <li key={item.id}>
