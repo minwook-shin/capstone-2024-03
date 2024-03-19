@@ -93,7 +93,8 @@ function App() {
       { text: "scroll_up", time: '' },
       { text: "scroll_down", time: '' },
       { text: "single_click", x: '', y: '', time: '' },
-      { text: "short_cut", key_event: '', time: '' }
+      { text: "short_cut", key_event: '', time: '' },
+      { text: "delay", time: '' }
     ];
     setTaskItems(initialTaskItems);
 
@@ -148,7 +149,7 @@ function App() {
       const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
 
-      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut'].includes(newItem.text)) {
+      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay'].includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {

@@ -71,6 +71,7 @@ class TestController(unittest.TestCase):
         Test case for the execute ADB operator route when there are no tasks.
         This test case sends a GET request to the '/run' route.
         """
+        self.client.delete('/clear')
         response = self.client.get('/run')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'No operators to execute'})
@@ -93,6 +94,15 @@ class TestController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('ordered_tasks', response.json)
         self.assertIn('tasks', response.json)
+
+    def test_delay_adds_task(self):
+        """
+        Test case for the delay route.
+        This test case sends a POST request to the '/delay' route with a JSON payload.
+        """
+        response = self.client.post('/delay', json={'time': 1, 'task_id': 'task1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'message': 'delay added', 'time': 1})
 
 
 if __name__ == '__main__':

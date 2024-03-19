@@ -2,6 +2,7 @@ from f_scheduler import DAG, IterFunctionOperator, Converter
 from flask import Blueprint, request, send_file
 
 from service.control import ADB
+from service.extra import delay
 
 controller = Blueprint('controller', __name__)
 
@@ -228,3 +229,30 @@ def get_all_adb_operator():
         description: All ADB operations returned successfully.
     """
     return {'ordered_tasks': str(ordered_tasks), 'tasks': str(dag.get_all_tasks())}, 200
+
+
+@controller.route('/delay', methods=['POST'])
+def delay_seconds():
+    """
+    Add a delay to the task queue.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: delay
+          required:
+            - time
+          properties:
+            time:
+              type: integer
+              description: The number of seconds to delay.
+    responses:
+      200:
+        description: Delay operation added successfully.
+    """
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=delay, param=([]), task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'delay added', 'time': time}, 200
