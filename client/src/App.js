@@ -26,6 +26,8 @@ function App() {
   const [currentCount, setCurrentCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const [func_inputValues, func_setInputValues] = useState({});
+
 
   const saveToFile = () => {
     const data = JSON.stringify({ taskItems, flowItems });
@@ -66,6 +68,19 @@ function App() {
     const reader = new FileReader();
 
     reader.onload = async (event) => {
+      const response = await fetch('http://127.0.0.1/clear', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
+      setFlowItems([]);
+
       const flowItems = JSON.parse(event.target.result).flowItems;
       setFlowItems(flowItems);
 
@@ -94,7 +109,8 @@ function App() {
       { text: "scroll_down", time: '' },
       { text: "single_click", x: '', y: '', time: '' },
       { text: "short_cut", key_event: '', time: '' },
-      { text: "delay", time: '' }
+      { text: "delay", time: '' },
+      { text: "iteration", time: '', functions: [] }
     ];
     setTaskItems(initialTaskItems);
 
@@ -149,7 +165,7 @@ function App() {
       const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
 
-      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay'].includes(newItem.text)) {
+      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration'].includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
@@ -158,6 +174,10 @@ function App() {
         }
         else if (newItem.text === 'short_cut') {
           body.key_event = newItem.key_event;
+        }
+        else if (newItem.text === 'iteration') {
+          body.functions = newItem.functions;
+          body.time = newItem.time;
         }
 
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
@@ -251,6 +271,8 @@ function App() {
                 onInputConfirm={onInputConfirm}
                 onInputCancel={onInputCancel}
                 keyEvents={keyEvents}
+                func_inputValues={func_inputValues}
+                func_setInputValues={func_setInputValues}
               />
             )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
