@@ -57,6 +57,15 @@ class TestController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'single_click added', 'x': 100, 'y': 200, 'time': 1})
 
+    def test_short_cut_adds_task(self):
+        """
+        Test case for the shortcut route.
+        This test case sends a POST request to the '/short_cut' route with a JSON payload.
+        """
+        response = self.client.post('/short_cut', json={'key_event': "keyevent 1", 'task_id': 'task1', 'time': 1})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'message': 'short_cut added', 'key_event':  "keyevent 1", 'time': 1})
+
     def test_execute_adb_returns_no_tasks(self):
         """
         Test case for the execute ADB operator route when there are no tasks.

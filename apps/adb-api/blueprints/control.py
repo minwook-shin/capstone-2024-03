@@ -5,7 +5,6 @@ from service.control import ADB
 
 controller = Blueprint('controller', __name__)
 
-
 dag = DAG()
 control_obj = ADB()
 ordered_tasks = []
@@ -143,6 +142,44 @@ def single_click():
                                       task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
     return {'message': 'single_click added', 'x': x, 'y': y, 'time': time}, 200
+
+
+@controller.route('/short_cut', methods=['POST'])
+def short_cut():
+    """
+    Execute a shortcut on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: short_cut
+          required:
+            - key_event
+            - task_id
+            - time
+          properties:
+            key_event:
+              type: integer
+              description: The key event to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+            time:
+              type: integer
+              description: The number of times to single click.
+    responses:
+      200:
+        description: Shortcut operation added successfully.
+    """
+    key_event = request.json.get('key_event')
+    task_id = request.json.get('task_id')
+    time = request.json.get('time')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_short_cut, param=(key_event,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'short_cut added', 'key_event': key_event, 'time': time}, 200
 
 
 @controller.route('/run', methods=['GET'])

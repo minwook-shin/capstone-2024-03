@@ -68,7 +68,18 @@ class ADB:
         Execute the ADB command to scroll down on the device.
 
         Parameters:
-        times (int): The number of times to scroll down.
+        x (int): The x-coordinate of the click.
+        y (int): The y-coordinate of the click.
         """
         self.device.shell(f'input tap {x} {y}')
+        sleep(1)
+
+    def execute_adb_short_cut(self, key_event):
+        """
+        Execute the ADB command to input a key event on the device.
+
+        Parameters:
+        key_event (int): The key event to be executed.
+        """
+        self.device.shell(f'input {key_event}')
         sleep(1)
