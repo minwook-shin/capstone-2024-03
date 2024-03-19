@@ -179,7 +179,7 @@ def short_cut():
     dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_short_cut, param=(key_event,),
                                       task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
-    return {'message': 'short_cut added', 'key_event': key_event}, 200
+    return {'message': 'short_cut added', 'key_event': key_event, 'time': time}, 200
 
 
 @controller.route('/run', methods=['GET'])
