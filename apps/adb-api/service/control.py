@@ -1,3 +1,4 @@
+import requests
 from easy_adb import run_adb_server, download_adb_binary
 import os
 from ppadb.client import Client as AdbClient
@@ -6,6 +7,7 @@ from time import sleep
 
 class ADB:
     def __init__(self):
+        self.apk_path = 'https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk'
         download_adb_binary(agreement=True)
         run_adb_server()
         home_directory = os.path.expanduser("~")
@@ -83,3 +85,47 @@ class ADB:
         """
         self.device.shell(f'input {key_event}')
         sleep(1)
+
+    def execute_adb_input_text(self, input_text):
+        """
+        Execute the ADB command to input text on the device.
+
+        Parameters:
+        input_text (str): The text to be input.
+        """
+        sleep(1)
+        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg {input_text}')
+        sleep(1)
+
+    def install_adb_keyboard(self):
+        """
+        Install the ADB keyboard on the device.
+        """
+        if os.path.exists('ADBKeyboard.apk'):
+            pass
+        else:
+            response = requests.get(self.apk_path)
+            with open('ADBKeyboard.apk', 'wb') as f:
+                f.write(response.content)
+        self.device.install('ADBKeyboard.apk')
+        self.device.shell('ime enable com.android.adbkeyboard/.AdbIME')
+        self.device.shell('ime set com.android.adbkeyboard/.AdbIME')
+        sleep(1)
+
+    def reset_adb_keyboard(self):
+        """
+        Reset the input method to the default keyboard.
+        """
+        self.device.shell('ime set com.android.adbkeyboard/.AdbIME')
+        sleep(1)
+        self.device.shell('ime reset')
+        sleep(1)
+
+    def check_adb_keyboard(self):
+        """
+        Check if the ADB keyboard is enabled.
+
+        Returns:
+        bool: True if the ADB keyboard is enabled, False otherwise.
+        """
+        return "com.android.adbkeyboard/.AdbIME" in self.device.shell("ime list -a -s")

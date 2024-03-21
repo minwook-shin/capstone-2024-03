@@ -28,6 +28,42 @@ function App() {
 
   const [func_inputValues, func_setInputValues] = useState({});
 
+  const [keyboardStatus, setKeyboardStatus] = useState(false);
+
+  const installKeyboard = async () => {
+    const response = await fetch('http://127.0.0.1/install_keyboard', {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const jsonResponse = await response.json();
+    console.log(jsonResponse);
+    checkKeyboard(); 
+  };
+
+  const resetKeyboard = async () => {
+    const response = await fetch('http://127.0.0.1/reset_keyboard', {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const jsonResponse = await response.json();
+    console.log(jsonResponse);
+  };
+
+  const checkKeyboard = async () => {
+    const response = await fetch('http://127.0.0.1/check_keyboard', {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const jsonResponse = await response.json();
+    setKeyboardStatus(jsonResponse);
+  };
+
 
   const saveToFile = () => {
     const data = JSON.stringify({ taskItems, flowItems });
@@ -110,7 +146,8 @@ function App() {
       { text: "single_click", x: '', y: '', time: '' },
       { text: "short_cut", key_event: '', time: '' },
       { text: "delay", time: '' },
-      { text: "iteration", time: '', functions: [] }
+      { text: "iteration", time: '', functions: [] },
+      { text: "input_text", time: '', input_text: '' }
     ];
     setTaskItems(initialTaskItems);
 
@@ -130,6 +167,7 @@ function App() {
     };
 
     loadKeyEvents();
+    checkKeyboard(); 
   }, []);
 
   const onDrop = (event) => {
@@ -165,7 +203,7 @@ function App() {
       const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
 
-      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration'].includes(newItem.text)) {
+      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration', 'input_text'].includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
@@ -179,7 +217,9 @@ function App() {
           body.functions = newItem.functions;
           body.time = newItem.time;
         }
-
+        else if (newItem.text === 'input_text') {
+          body.input_text = newItem.input_text;
+        }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
       }
@@ -294,6 +334,9 @@ function App() {
             </div>
             <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload}
               saveToFile={saveToFile} loadFromFile={loadFromFile} />
+            <button onClick={installKeyboard}>Install Keyboard</button>
+            <button onClick={resetKeyboard}>Reset Keyboard</button>
+            <p>Keyboard Status: {keyboardStatus ? "True" : "False"}</p>
           </div>
           <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} handleMouseMove={handleMouseMove} />
         </div>
