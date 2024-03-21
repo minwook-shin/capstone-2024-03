@@ -212,6 +212,49 @@ def single_click():
     return {'message': 'single_click added', 'x': x, 'y': y, 'time': time}, 200
 
 
+@controller.route('/long_press', methods=['POST'])
+def long_press():
+    """
+    Execute a long press on the device screen.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: long_press
+          required:
+            - x
+            - y
+            - time
+            - task_id
+          properties:
+            x:
+              type: integer
+              description: The x-coordinate of the click.
+            y:
+              type: integer
+              description: The y-coordinate of the click.
+            time:
+              type: integer
+              description: The number of times to long press.
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Long press operation added successfully.
+    """
+    x = request.json.get('x')
+    y = request.json.get('y')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_long_press, param=(x, y),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'long_press added', 'x': x, 'y': y, 'time': time}, 200
+
+
 @controller.route('/short_cut', methods=['POST'])
 def short_cut():
     """

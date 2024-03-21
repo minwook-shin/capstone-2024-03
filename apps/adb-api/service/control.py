@@ -83,6 +83,17 @@ class ADB:
         self.device.shell(f'input tap {x} {y}')
         sleep(1)
 
+    def execute_adb_long_press(self, x, y):
+        """
+        Execute the ADB command to long press on the device.
+
+        Parameters:
+        x (int): The x-coordinate of the click.
+        y (int): The y-coordinate of the click.
+        """
+        self.device.shell(f'input swipe {x} {y} {x} {y} 500')
+        sleep(1)
+
     def execute_adb_short_cut(self, key_event):
         """
         Execute the ADB command to input a key event on the device.

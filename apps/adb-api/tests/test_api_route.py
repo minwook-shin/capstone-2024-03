@@ -57,6 +57,15 @@ class TestController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'single_click added', 'x': 100, 'y': 200, 'time': 1})
 
+    def test_long_press_adds_task(self):
+        """
+        Test case for the long press route.
+        This test case sends a POST request to the '/long_press' route with a JSON payload.
+        """
+        response = self.client.post('/long_press', json={'x': 100, 'y': 200, 'time': 1, 'task_id': 'task1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'message': 'long_press added', 'x': 100, 'y': 200, 'time': 1})
+
     def test_short_cut_adds_task(self):
         """
         Test case for the shortcut route.
