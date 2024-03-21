@@ -29,7 +29,30 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, keyEvents ,on
                             ))}
                         </select>
                     );
-                } else {
+                } 
+                else if (key === 'functions') {
+                    return (
+                        <textarea
+                        style={{ width: '100%' }}
+                            key={key}
+                            type="text"
+                            name={key}
+                            value={inputValues[key]}
+                            onChange={onInputChange}
+                            placeholder='Drag & drop here and create a list with brackets : [{"text": "scroll_down", "time": "2"}, ...]'
+                            readOnly={key === 'text'}
+                            onKeyDown={event => {
+                                if (event.key === 'Enter') {
+                                    onInputConfirm();
+                                }
+                                else if (event.key === 'Escape') {
+                                    onInputCancel();
+                                }
+                            }}
+                        />
+                    );
+                }
+                else {
                     return (
                         <input
                             key={key}

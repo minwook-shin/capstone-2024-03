@@ -1,3 +1,5 @@
+import json
+
 from f_scheduler import DAG, IterFunctionOperator, Converter
 from flask import Blueprint, request, send_file
 
@@ -256,3 +258,62 @@ def delay_seconds():
     dag.add_task(IterFunctionOperator(function=delay, param=([]), task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
     return {'message': 'delay added', 'time': time}, 200
+
+
+@controller.route('/iteration', methods=['POST'])
+def functions_iterator():
+    """
+    Add a function to the task queue.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: iteration
+          required:
+            - functions
+            - task_id
+            - time
+          properties:
+            functions:
+              type: string
+              description: The functions to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+            time:
+              type: integer
+              description: The number of iterations to execute the function.
+    responses:
+      200:
+        description: Function operation added successfully.
+    """
+    functions = request.json.get('functions')
+    task_id = request.json.get('task_id')
+    iterations = request.json.get('time')
+
+    function_mapping = {
+        "single_click": control_obj.execute_adb_single_click,
+        "delay": delay,
+        "scroll_down": control_obj.execute_adb_scroll_down,
+        "scroll_up": control_obj.execute_adb_scroll_up,
+        "short_cut": control_obj.execute_adb_short_cut
+    }
+    functions = json.loads(functions)
+
+    def combined_function():
+        for function in functions:
+            function_name = function.get('text')
+            function_to_call = function_mapping.get(function_name)
+            if function_to_call:
+                params = {k: v for k, v in function.items() if k != 'text'}
+                time = int(function.get('time', 1))
+                params = {k: v for k, v in params.items() if k != 'time'}
+                for _ in range(time):
+                    function_to_call(**params)
+
+    dag.add_task(IterFunctionOperator(function=combined_function, param=(),
+                                      task_id=task_id, iterations=int(iterations)))
+    ordered_tasks.append(task_id)
+
+    return {'message': 'function added', 'function': functions, 'iterations': iterations}, 200
