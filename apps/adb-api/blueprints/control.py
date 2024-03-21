@@ -443,7 +443,10 @@ def functions_iterator():
         "delay": delay,
         "scroll_down": control_obj.execute_adb_scroll_down,
         "scroll_up": control_obj.execute_adb_scroll_up,
-        "short_cut": control_obj.execute_adb_short_cut
+        "short_cut": control_obj.execute_adb_short_cut,
+        "screen_capture": control_obj.get_screen_capture,
+        "input_text": control_obj.execute_adb_input_text,
+        "long_press": control_obj.execute_adb_long_press,
     }
     functions = json.loads(functions)
 
