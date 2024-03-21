@@ -185,6 +185,44 @@ def short_cut():
     return {'message': 'short_cut added', 'key_event': key_event, 'time': time}, 200
 
 
+@controller.route('/input_text', methods=['POST'])
+def input_text():
+    """
+    Execute an input text on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: input_text
+          required:
+            - text
+            - task_id
+            - time
+          properties:
+            text:
+              type: string
+              description: The text to be input.
+            task_id:
+              type: string
+              description: The ID of the task.
+            time:
+              type: integer
+              description: The number of times to input the text.
+    responses:
+      200:
+        description: Text input operation added successfully.
+    """
+    text = request.json.get('input_text')
+    task_id = request.json.get('task_id')
+    time = request.json.get('time')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_input_text, param=(text,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'input_text added', 'text': text, 'time': time}, 200
+
+
 @controller.route('/run', methods=['GET'])
 def execute_adb_operator():
     """
@@ -317,3 +355,41 @@ def functions_iterator():
     ordered_tasks.append(task_id)
 
     return {'message': 'function added', 'function': functions, 'iterations': iterations}, 200
+
+
+@controller.route('/install_keyboard', methods=['GET'])
+def install_adb_keyboard():
+    """
+    Install the ADB keyboard on the device.
+    ---
+    responses:
+      200:
+        description: ADB keyboard installed successfully.
+    """
+    control_obj.install_adb_keyboard()
+    return {'message': 'ADB keyboard installed'}, 200
+
+
+@controller.route('/reset_keyboard', methods=['GET'])
+def reset_adb_keyboard():
+    """
+    Install the ADB keyboard on the device.
+    ---
+    responses:
+      200:
+        description: ADB keyboard installed successfully.
+    """
+    control_obj.reset_adb_keyboard()
+    return {'message': 'ADB keyboard removed'}, 200
+
+
+@controller.route('/check_keyboard', methods=['GET'])
+def check_adb_keyboard():
+    """
+    Install the ADB keyboard on the device.
+    ---
+    responses:
+      200:
+        description: Is ADB keyboard installed.
+    """
+    return {'ADB keyboard installed': control_obj.check_adb_keyboard()}, 200

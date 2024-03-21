@@ -1,4 +1,5 @@
-const { BrowserWindow, app, ipcMain } = require('electron');
+
+const { BrowserWindow, app, ipcMain, screen } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const axios = require('axios');
@@ -23,8 +24,12 @@ async function fetchImage() {
 }
 
 const createWindow = () => {
+    const { height } = screen.getPrimaryDisplay().workAreaSize;
+
     mainWindow = new BrowserWindow({
         resizable: true,
+        width: 800,
+        height: height,
         webPreferences: {
             devTools: isDev,
             nodeIntegration: true,
