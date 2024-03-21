@@ -1,4 +1,6 @@
 import json
+import os
+import zipfile
 
 from f_scheduler import DAG, IterFunctionOperator, Converter
 from flask import Blueprint, request, send_file
@@ -36,6 +38,69 @@ def screen():
     temp_file_name = "tmp.png"
     control_obj.get_screen_capture(file_name=temp_file_name)
     return send_file(temp_file_name, mimetype='image/png')
+
+
+@controller.route('/screen_capture', methods=['POST'])
+def screen_capture():
+    """
+    Capture the screen of a device and save the image to a local file.
+    ---
+    parameters:
+       - in: body
+         name: body
+         schema:
+             id: screen_capture
+             required:
+                 - time
+                 - task_id
+             properties:
+                 time:
+                     type: integer
+                     description: The number of times to capture the screen.
+                 task_id:
+                     type: string
+                     description: The ID of the task.
+    responses:
+        200:
+            description: Screen capture operation added successfully.
+    """
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.get_screen_capture,
+                                      param=([]),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'screen_capture added', 'time': time}, 200
+
+
+@controller.route('/screen/download', methods=['GET'])
+def download_images():
+    """
+    save the screen of a device and return the zip.
+    ---
+    responses:
+      200:
+        description: Return the captured image
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+    """
+    image_directory = 'tmp'
+    zip_filename = 'images.zip'
+    zip_path = os.path.join(zip_filename)
+
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
+        for root, _, files in os.walk(image_directory):
+            for file in files:
+                zipf.write(os.path.join(root, file), arcname=file)
+
+    for root, _, files in os.walk(image_directory):
+        for file in files:
+            os.remove(os.path.join(root, file))
+
+    return send_file(zip_path, as_attachment=True, mimetype='application/zip', download_name=zip_filename)
 
 
 @controller.route('/scroll_up', methods=['POST'])

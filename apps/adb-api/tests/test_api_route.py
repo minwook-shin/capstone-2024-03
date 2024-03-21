@@ -84,6 +84,15 @@ class TestController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'input_text added', 'text': "Hello", 'time': 1})
 
+    def test_screen_shot_adds_task(self):
+        """
+        Test case for the screen_capture route.
+        This test case sends a POST request to the '/screen_shot' route with a JSON payload.
+        """
+        response = self.client.post('/screen_capture', json={'task_id': 'task1', 'time': 1})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'message': 'screen_capture added', 'time': 1})
+
     def test_execute_adb_returns_no_tasks(self):
         """
         Test case for the execute ADB operator route when there are no tasks.
