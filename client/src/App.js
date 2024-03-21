@@ -144,6 +144,7 @@ function App() {
       { text: "scroll_up", time: '' },
       { text: "scroll_down", time: '' },
       { text: "single_click", x: '', y: '', time: '' },
+      { text: "long_press", x: '', y: '', time: ''},
       { text: "short_cut", key_event: '', time: '' },
       { text: "delay", time: '' },
       { text: "iteration", time: '', functions: [] },
@@ -204,7 +205,7 @@ function App() {
       const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
 
-      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration', 'input_text', 'screen_capture'].includes(newItem.text)) {
+      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration', 'input_text', 'screen_capture', 'long_press'].includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
@@ -220,6 +221,10 @@ function App() {
         }
         else if (newItem.text === 'input_text') {
           body.input_text = newItem.input_text;
+        }
+        else if (newItem.text === 'long_press') {
+          body.x = parseInt(newItem.x, 10);
+          body.y = parseInt(newItem.y, 10);
         }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
