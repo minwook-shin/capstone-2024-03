@@ -1,9 +1,11 @@
-import requests
-from easy_adb import run_adb_server, download_adb_binary
 import os
-from ppadb.client import Client as AdbClient
 from time import sleep
 
+import requests
+from easy_adb import run_adb_server, download_adb_binary
+from ppadb.client import Client as AdbClient
+
+from utils.file import create_directory
 from utils.generator import generate_unique_value
 
 
@@ -27,7 +29,7 @@ class ADB:
             device = devices[0]
             self.device = device
 
-    def get_screen_capture(self, file_name = None):
+    def get_screen_capture(self, file_name=None):
         """
         Capture the screen of a device and save the image to a local file.
 
@@ -35,6 +37,7 @@ class ADB:
         file_name (str): The local path where the image file should be saved.
         """
         if file_name is None:
+            create_directory()
             file_name = "tmp/" + generate_unique_value() + '.png'
         result = self.device.screencap()
         with open(file_name, 'wb') as fp:

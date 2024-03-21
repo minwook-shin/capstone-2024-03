@@ -7,7 +7,6 @@ from flask import Blueprint, request, send_file
 
 from service.control import ADB
 from service.extra import delay
-from utils.file import create_directory
 
 controller = Blueprint('controller', __name__)
 
@@ -67,7 +66,6 @@ def screen_capture():
     """
     time = request.json.get('time')
     task_id = request.json.get('task_id')
-    create_directory()
     dag.add_task(IterFunctionOperator(function=control_obj.get_screen_capture,
                                       param=([]),
                                       task_id=task_id, iterations=time))
