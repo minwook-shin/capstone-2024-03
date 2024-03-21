@@ -147,7 +147,8 @@ function App() {
       { text: "short_cut", key_event: '', time: '' },
       { text: "delay", time: '' },
       { text: "iteration", time: '', functions: [] },
-      { text: "input_text", time: '', input_text: '' }
+      { text: "input_text", time: '', input_text: '' },
+      { text: "screen_capture", time: ''}
     ];
     setTaskItems(initialTaskItems);
 
@@ -203,7 +204,7 @@ function App() {
       const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
 
-      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration', 'input_text'].includes(newItem.text)) {
+      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration', 'input_text', 'screen_capture'].includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
@@ -290,6 +291,27 @@ function App() {
     setIsPlaying(false);
   };
 
+  const DownloadScreenShot = async () => {
+    const url = 'http://127.0.0.1/screen/download';
+  
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+  
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+  
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'screenshot.zip';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleMouseMove = (event) => {
     const imgElement = document.getElementById('uploaded-image');
     const scaleX = imgElement.naturalWidth / imgElement.offsetWidth;
@@ -333,7 +355,7 @@ function App() {
               <p>{isPlaying ? "Playing..." : "Setting up a flow list..."}</p>
             </div>
             <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload}
-              saveToFile={saveToFile} loadFromFile={loadFromFile} />
+              saveToFile={saveToFile} loadFromFile={loadFromFile} DownloadScreenShot={DownloadScreenShot}/>
             <button onClick={installKeyboard}>Install Keyboard</button>
             <button onClick={resetKeyboard}>Reset Keyboard</button>
             <p>Keyboard Status: {keyboardStatus ? "True" : "False"}</p>

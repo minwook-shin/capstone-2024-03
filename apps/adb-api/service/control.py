@@ -4,6 +4,8 @@ import os
 from ppadb.client import Client as AdbClient
 from time import sleep
 
+from utils.generator import generate_unique_value
+
 
 class ADB:
     def __init__(self):
@@ -25,13 +27,15 @@ class ADB:
             device = devices[0]
             self.device = device
 
-    def get_screen_capture(self, file_name):
+    def get_screen_capture(self, file_name = None):
         """
         Capture the screen of a device and save the image to a local file.
 
         Parameters:
         file_name (str): The local path where the image file should be saved.
         """
+        if file_name is None:
+            file_name = "tmp/" + generate_unique_value() + '.png'
         result = self.device.screencap()
         with open(file_name, 'wb') as fp:
             fp.write(result)
