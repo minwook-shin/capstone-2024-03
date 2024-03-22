@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
 
+const API_URL = 'http://127.0.0.1';
 
 function FlowList({ taskItems, initialTaskItems }) {
   const [currentCount, setCurrentCount] = useState(0);
@@ -38,7 +39,7 @@ function FlowList({ taskItems, initialTaskItems }) {
     const reader = new FileReader();
 
     reader.onload = async (event) => {
-      const response = await fetch('http://127.0.0.1/clear', {
+      const response = await fetch(`${API_URL}/clear`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ function FlowList({ taskItems, initialTaskItems }) {
       });
       for (const item of newFlowItems) {
         const { text, ...rest } = item;
-        await fetch(`http://127.0.0.1/${text}`, {
+        await fetch(`${API_URL}/${text}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ function FlowList({ taskItems, initialTaskItems }) {
       options.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`http://127.0.0.1/${url}`, options);
+    const response = await fetch(`${API_URL}/${url}`, options);
 
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -160,7 +161,7 @@ function FlowList({ taskItems, initialTaskItems }) {
   };
 
   const handleButtonClear = async () => {
-    const response = await fetch('http://127.0.0.1/clear', {
+    const response = await fetch(`${API_URL}/clear`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -179,7 +180,7 @@ function FlowList({ taskItems, initialTaskItems }) {
     for (let i = 0; i < repeatCount; i++) {
       setCurrentCount(i + 1);
 
-      const response = await fetch('http://127.0.0.1/run', {
+      const response = await fetch(`${API_URL}/run`, {
         method: 'GET'
       });
       if (!response.ok) {
@@ -192,7 +193,7 @@ function FlowList({ taskItems, initialTaskItems }) {
     setIsPlaying(false);
   };
   const handleButtonClick = async () => {
-    const response = await fetch('http://127.0.0.1/tasks', {
+    const response = await fetch(`${API_URL}/tasks`, {
       method: 'GET'
     });
     if (!response.ok) {

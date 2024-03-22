@@ -1,45 +1,37 @@
 import React, { useEffect, useState } from 'react';
 
+const BASE_URL = 'http://127.0.0.1';
+
+async function fetchData(url, options = {}) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return await response.json();
+}
+
 function ControlButtons() {
     const [keyboardStatus, setKeyboardStatus] = useState(false);
     useEffect(() => {
         checkKeyboard();
     }, []);
     const installKeyboard = async () => {
-      const response = await fetch('http://127.0.0.1/install_keyboard', {
-        method: 'GET',
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const jsonResponse = await response.json();
+      const jsonResponse = await fetchData(`${BASE_URL}/install_keyboard`);
       console.log(jsonResponse);
       checkKeyboard();
     };
   
     const resetKeyboard = async () => {
-      const response = await fetch('http://127.0.0.1/reset_keyboard', {
-        method: 'GET',
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const jsonResponse = await response.json();
+      const jsonResponse = await fetchData(`${BASE_URL}/reset_keyboard`);
       console.log(jsonResponse);
     };
   
     const checkKeyboard = async () => {
-      const response = await fetch('http://127.0.0.1/check_keyboard', {
-        method: 'GET',
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const jsonResponse = await response.json();
+      const jsonResponse = await fetchData(`${BASE_URL}/check_keyboard`);
       setKeyboardStatus(jsonResponse);
     };
     const DownloadScreenShot = async () => {
-        const url = 'http://127.0.0.1/screen/download';
+        const url = `${BASE_URL}/screen/download`;
     
         const response = await fetch(url, {
           method: 'GET',
