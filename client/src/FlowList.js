@@ -1,34 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
 
 
-function FlowList({ taskItems }) {
+function FlowList({ taskItems, initialTaskItems }) {
   const [currentCount, setCurrentCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
-  const [keyEvents, setKeyEvents] = useState({});
-  const [func_inputValues, func_setInputValues] = useState({});
   const [inputVisible, setInputVisible] = useState(false);
   const [flowItems, setFlowItems] = useState([]);
-
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
 
   const handleDragOver = (event) => {
     event.preventDefault();
   };
-
-
-  useEffect(() => {
-    const loadKeyEvents = async () => {
-      const response = await fetch('./key_event.json');
-      const data = await response.json();
-      setKeyEvents(data.key_events);
-    };
-
-    loadKeyEvents();
-  }, []);
 
   const saveToFile = () => {
     const data = JSON.stringify({ taskItems, flowItems });
@@ -130,8 +116,7 @@ function FlowList({ taskItems }) {
 
       const task_id = Date.now();
       const time = parseInt(newItem.time, 10);
-
-      if (['scroll_up', 'scroll_down', 'single_click', 'short_cut', 'delay', 'iteration', 'input_text', 'screen_capture', 'long_press'].includes(newItem.text)) {
+      if (initialTaskItems.map(item => item.text).includes(newItem.text)) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
@@ -224,9 +209,6 @@ function FlowList({ taskItems }) {
         onInputChange={onInputChange}
         onInputConfirm={onInputConfirm}
         onInputCancel={onInputCancel}
-        keyEvents={keyEvents}
-        func_inputValues={func_inputValues}
-        func_setInputValues={func_setInputValues}
       />
     )}
     <div

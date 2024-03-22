@@ -26,15 +26,15 @@ function ScreenViewer() {
 
     const handleButtonReload = () => {
         ipcRenderer.send("screen");
-      };
+    };
 
     return (
         <div>
             <button onClick={handleButtonReload}>refresh Screen</button><br />
             {isLoading ? (
-                <p>Loading...</p>
+                <label>Loading...</label>
             ) : (
-                <p>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="Uploaded" style={{ maxWidth: "25%", maxHeight: "25%" }} onClick={handleMouseMove} />}</p>
+                <label>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="Uploaded" style={{ maxWidth: "25%", maxHeight: "25%" }} onClick={handleMouseMove} />}</label>
             )}
         </div>
     );

@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 
-function OptionInput({ inputValues, onInputChange, onInputConfirm, keyEvents ,onInputCancel}) {
+function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel}) {
+    const [keyEvents, setKeyEvents] = useState({});
+
+    useEffect(() => {
+        const loadKeyEvents = async () => {
+          const response = await fetch('./key_event.json');
+          const data = await response.json();
+          setKeyEvents(data.key_events);
+        };
+    
+        loadKeyEvents();
+      }, []);
     return (
         <>
             {Object.keys(inputValues).map((key) => {
