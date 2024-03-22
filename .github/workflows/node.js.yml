@@ -25,6 +25,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: cd client
+    - run: yarn install
+      working-directory: client
+    - run: yarn build
+      working-directory: client
     - run: npm ci
+      working-directory: client
     - run: npm run test
+      working-directory: client
