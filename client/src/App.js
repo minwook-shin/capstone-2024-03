@@ -5,6 +5,7 @@ import FlowList from './FlowList';
 import ControlButtons from './ControlButtons';
 import ScreenViewer from './ScreenViewer';
 import OptionInput from './OptionInput';
+import IterationControl from './IterationControl';
 
 
 const { ipcRenderer } = window;
@@ -39,7 +40,7 @@ function App() {
     }
     const jsonResponse = await response.json();
     console.log(jsonResponse);
-    checkKeyboard(); 
+    checkKeyboard();
   };
 
   const resetKeyboard = async () => {
@@ -144,12 +145,12 @@ function App() {
       { text: "scroll_up", time: '' },
       { text: "scroll_down", time: '' },
       { text: "single_click", x: '', y: '', time: '' },
-      { text: "long_press", x: '', y: '', time: ''},
+      { text: "long_press", x: '', y: '', time: '' },
       { text: "short_cut", key_event: '', time: '' },
       { text: "delay", time: '' },
       { text: "iteration", time: '', functions: [] },
       { text: "input_text", time: '', input_text: '' },
-      { text: "screen_capture", time: ''}
+      { text: "screen_capture", time: '' }
     ];
     setTaskItems(initialTaskItems);
 
@@ -169,7 +170,7 @@ function App() {
     };
 
     loadKeyEvents();
-    checkKeyboard(); 
+    checkKeyboard();
   }, []);
 
   const onDrop = (event) => {
@@ -298,15 +299,15 @@ function App() {
 
   const DownloadScreenShot = async () => {
     const url = 'http://127.0.0.1/screen/download';
-  
+
     const response = await fetch(url, {
       method: 'GET',
     });
-  
+
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-  
+
     const blob = await response.blob();
     const downloadUrl = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -335,23 +336,14 @@ function App() {
             )}
             <TaskList taskItems={taskItems} handleDragStart={handleDragStart} />
             <FlowList flowItems={flowItems} onDrop={onDrop} handleDragOver={handleDragOver} />
-            <div>
-              <label>Iteration count </label>
-              <input
-                type="number"
-                value={repeatCount}
-                onChange={(e) => setRepeatCount(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Current Iteration count : {currentCount}</label>
-
-            </div>
-            <div>
-              <p>{isPlaying ? "Playing..." : "Setting up a flow list..."}</p>
-            </div>
+            <IterationControl
+              repeatCount={repeatCount}
+              setRepeatCount={setRepeatCount}
+              currentCount={currentCount}
+              isPlaying={isPlaying}
+            />
             <ControlButtons handleButtonClick={handleButtonClick} handleButtonRun={handleButtonRun} handleButtonClear={handleButtonClear} handleButtonReload={handleButtonReload}
-              saveToFile={saveToFile} loadFromFile={loadFromFile} DownloadScreenShot={DownloadScreenShot}/>
+              saveToFile={saveToFile} loadFromFile={loadFromFile} DownloadScreenShot={DownloadScreenShot} />
             <button onClick={installKeyboard}>Install Keyboard</button>
             <button onClick={resetKeyboard}>Reset Keyboard</button>
             <p>Keyboard Status: {keyboardStatus ? "True" : "False"}</p>
