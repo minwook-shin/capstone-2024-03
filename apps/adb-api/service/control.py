@@ -5,8 +5,12 @@ import requests
 from easy_adb import run_adb_server, download_adb_binary
 from ppadb.client import Client as AdbClient
 
+from utils.custom_logger import CustomLogger
 from utils.file import create_directory
 from utils.generator import generate_unique_value
+
+logger_worker = CustomLogger().start_worker()
+logger = logger_worker.get_logger()
 
 
 class ADB:
@@ -23,11 +27,14 @@ class ADB:
         devices = client.devices()
 
         if len(devices) == 0:
-            print("No devices connected. ADB functionality will be disabled.")
+            logger.debug("No devices connected. ADB functionality will be disabled.")
             self.device = None
         else:
             device = devices[0]
             self.device = device
+
+        logger.debug('Complete ADB Initialization Task')
+        logger_worker.end_worker()
 
     def get_screen_capture(self, file_name=None):
         """
@@ -43,6 +50,9 @@ class ADB:
         with open(file_name, 'wb') as fp:
             fp.write(result)
 
+        logger.debug('Complete screen capture task')
+        logger_worker.end_worker()
+
     def execute_adb_scroll_up(self):
         """
         Execute the ADB command to scroll up on the device.
@@ -53,6 +63,9 @@ class ADB:
         self.device.shell('input swipe 300 300 500 1000')
         sleep(1)
 
+        logger.debug('Complete scroll up task')
+        logger_worker.end_worker()
+
     def execute_adb_scroll_down(self):
         """
         Execute the ADB command to scroll down on the device.
@@ -62,6 +75,9 @@ class ADB:
         """
         self.device.shell('input swipe 500 1000 300 300')
         sleep(1)
+
+        logger.debug('Complete scroll down task')
+        logger_worker.end_worker()
 
     def is_adb_enabled(self):
         """
@@ -83,6 +99,9 @@ class ADB:
         self.device.shell(f'input tap {x} {y}')
         sleep(1)
 
+        logger.debug('Complete single click task')
+        logger_worker.end_worker()
+
     def execute_adb_long_press(self, x, y):
         """
         Execute the ADB command to long press on the device.
@@ -94,6 +113,9 @@ class ADB:
         self.device.shell(f'input swipe {x} {y} {x} {y} 500')
         sleep(1)
 
+        logger.debug('Complete long press task')
+        logger_worker.end_worker()
+
     def execute_adb_short_cut(self, key_event):
         """
         Execute the ADB command to input a key event on the device.
@@ -103,6 +125,9 @@ class ADB:
         """
         self.device.shell(f'input {key_event}')
         sleep(1)
+
+        logger.debug('Complete short cut task')
+        logger_worker.end_worker()
 
     def execute_adb_input_text(self, input_text):
         """
@@ -114,6 +139,9 @@ class ADB:
         sleep(1)
         self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg {input_text}')
         sleep(1)
+
+        logger.debug('Complete input text task')
+        logger_worker.end_worker()
 
     def install_adb_keyboard(self):
         """
@@ -130,6 +158,9 @@ class ADB:
         self.device.shell('ime set com.android.adbkeyboard/.AdbIME')
         sleep(1)
 
+        logger.debug('Complete install ADB keyboard')
+        logger_worker.end_worker()
+
     def reset_adb_keyboard(self):
         """
         Reset the input method to the default keyboard.
@@ -138,6 +169,9 @@ class ADB:
         sleep(1)
         self.device.shell('ime reset')
         sleep(1)
+
+        logger.debug('Complete reset ADB keyboard')
+        logger_worker.end_worker()
 
     def check_adb_keyboard(self):
         """

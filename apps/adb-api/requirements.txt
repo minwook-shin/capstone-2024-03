@@ -4,3 +4,4 @@ pure-python-adb==0.3.0.dev0
 uwsgi
 f-scheduler==0.1.0
 flasgger==0.9.7b2
+q-logger-py==0.0.3
