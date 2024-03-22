@@ -317,15 +317,6 @@ function App() {
     document.body.removeChild(link);
   };
 
-  const handleMouseMove = (event) => {
-    const imgElement = document.getElementById('uploaded-image');
-    const scaleX = imgElement.naturalWidth / imgElement.offsetWidth;
-    const scaleY = imgElement.naturalHeight / imgElement.offsetHeight;
-
-    const realX = Math.round(event.nativeEvent.offsetX * scaleX);
-    const realY = Math.round(event.nativeEvent.offsetY * scaleY);
-    alert(`input tap ${realX} ${realY}`);
-  };
   return (
     <div className="App">
       <header className="App-header">
@@ -365,7 +356,7 @@ function App() {
             <button onClick={resetKeyboard}>Reset Keyboard</button>
             <p>Keyboard Status: {keyboardStatus ? "True" : "False"}</p>
           </div>
-          <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} handleMouseMove={handleMouseMove} />
+          <ScreenViewer imageSrc={imageSrc} isLoading={isLoading} />
         </div>
       </header>
     </div>
