@@ -15,7 +15,7 @@ function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying
                 <label>Current Iteration count : {currentCount}</label>
             </div>
             <div>
-                <p>{isPlaying ? "Playing..." : "Setting up a flow list..."}</p>
+            <label>{isPlaying ? "Playing..." : "Setting up a flow list..."}</label>
             </div>
         </div>
     );

@@ -1,6 +1,10 @@
 import React from 'react';
 
-function TaskList({ taskItems, handleDragStart }) {
+function TaskList({ taskItems}) {
+
+  const handleDragStart = (event, item) => {
+    event.dataTransfer.setData("text/plain", JSON.stringify(item));
+  };
     return (
         <div className="task">
             <h2>Available Tasks (Drag)</h2>

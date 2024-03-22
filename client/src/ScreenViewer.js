@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+const { ipcRenderer } = window;
 
-function ScreenViewer({ imageSrc, isLoading }) {
+function ScreenViewer() {
+    const [imageSrc, setImageSrc] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        setIsLoading(true);
+        ipcRenderer.send("screen");
+        ipcRenderer.on("screen", (_, args) => {
+            const blob = new Blob([args.screen], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            setImageSrc(url);
+            setIsLoading(false);
+        });
+    }, []);
     const handleMouseMove = (event) => {
         const imgElement = document.getElementById('uploaded-image');
         const scaleX = imgElement.naturalWidth / imgElement.offsetWidth;
@@ -11,8 +24,13 @@ function ScreenViewer({ imageSrc, isLoading }) {
         alert(`input tap ${realX} ${realY}`);
     };
 
+    const handleButtonReload = () => {
+        ipcRenderer.send("screen");
+      };
+
     return (
         <div>
+            <button onClick={handleButtonReload}>refresh Screen</button><br />
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
