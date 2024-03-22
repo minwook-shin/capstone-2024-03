@@ -108,8 +108,16 @@ sudo apt-get install nodejs
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
+
+## 실기기의 ADB USB 디버깅 설정
+
+1. 안드로이드의 설정 메뉴로 이동합니다.
+
+2. "개발자 옵션"으로 이동한 후, "USB 디버깅" 옵션을 찾아서 활성화합니다.
+
+3. 컴퓨터와 기기를 USB 케이블로 연결합니다.
 
 ## 문서
 
