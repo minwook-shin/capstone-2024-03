@@ -255,7 +255,7 @@ def long_press():
     return {'message': 'long_press added', 'x': x, 'y': y, 'time': time}, 200
 
 
-@controller.route('/short_cut', methods=['POST'])
+@controller.route('/key_event', methods=['POST'])
 def short_cut():
     """
     Execute a shortcut on the device.
@@ -264,7 +264,7 @@ def short_cut():
       - in: body
         name: body
         schema:
-          id: short_cut
+          id: key_event
           required:
             - key_event
             - task_id
@@ -406,7 +406,7 @@ def delay_seconds():
     return {'message': 'delay added', 'time': time}, 200
 
 
-@controller.route('/iteration', methods=['POST'])
+@controller.route('/loop', methods=['POST'])
 def functions_iterator():
     """
     Add a function to the task queue.
@@ -415,7 +415,7 @@ def functions_iterator():
       - in: body
         name: body
         schema:
-          id: iteration
+          id: loop
           required:
             - functions
             - task_id
@@ -443,7 +443,7 @@ def functions_iterator():
         "delay": delay,
         "scroll_down": control_obj.execute_adb_scroll_down,
         "scroll_up": control_obj.execute_adb_scroll_up,
-        "short_cut": control_obj.execute_adb_short_cut,
+        "key_event": control_obj.execute_adb_short_cut,
         "screen_capture": control_obj.get_screen_capture,
         "input_text": control_obj.execute_adb_input_text,
         "long_press": control_obj.execute_adb_long_press,

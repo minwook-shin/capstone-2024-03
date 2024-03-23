@@ -4,7 +4,7 @@ function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying
     return (
         <div>
             <div>
-                <label>Iteration count </label>
+                <label>Total Loop count </label>
                 <input
                     type="number"
                     value={repeatCount}
@@ -12,7 +12,7 @@ function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying
                 />
             </div>
             <div>
-                <label>Current Iteration count : {currentCount}</label>
+                <label>Current Total Loop count : {currentCount}</label>
             </div>
             <div>
             <label>{isPlaying ? "Playing..." : "Setting up a flow list..."}</label>

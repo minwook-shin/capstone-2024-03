@@ -13,9 +13,9 @@ function App() {
     { text: "scroll_down", time: '' },
     { text: "single_click", x: '', y: '', time: '' },
     { text: "long_press", x: '', y: '', time: '' },
-    { text: "short_cut", key_event: '', time: '' },
+    { text: "key_event", key_event: '', time: '' },
     { text: "delay", time: '' },
-    { text: "iteration", time: '', functions: [] },
+    { text: "loop", time: '', functions: [] },
     { text: "input_text", time: '', input_text: '' },
     { text: "screen_capture", time: '' }
   ], []);

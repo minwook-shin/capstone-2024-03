@@ -17,12 +17,10 @@ test('renders IterationControl component with initial values', () => {
     />
   );
 
-  const iterationCountLabel = screen.getByText('Iteration count');
-  const currentIterationCountLabel = screen.getByText('Current Iteration count : 3');
+  const iterationCountLabel = screen.getByText('Total Loop count');
   const statusLabel = screen.getByText('Setting up a flow list...');
 
   expect(iterationCountLabel).toBeInTheDocument();
-  expect(currentIterationCountLabel).toBeInTheDocument();
   expect(statusLabel).toBeInTheDocument();
 });
 

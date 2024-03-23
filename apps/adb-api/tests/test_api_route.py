@@ -69,18 +69,18 @@ class TestController(unittest.TestCase):
     def test_short_cut_adds_task(self):
         """
         Test case for the shortcut route.
-        This test case sends a POST request to the '/short_cut' route with a JSON payload.
+        This test case sends a POST request to the '/key_event' route with a JSON payload.
         """
-        response = self.client.post('/short_cut', json={'key_event': "keyevent 1", 'task_id': 'task1', 'time': 1})
+        response = self.client.post('/key_event', json={'key_event': "keyevent 1", 'task_id': 'task1', 'time': 1})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'short_cut added', 'key_event':  "keyevent 1", 'time': 1})
 
     def test_iterate_adds_task(self):
         """
-        Test case for the iterate route.
-        This test case sends a POST request to the '/iteration' route with a JSON payload.
+        Test case for the loop route.
+        This test case sends a POST request to the '/loop' route with a JSON payload.
         """
-        response = self.client.post('/iteration', json={'time': 1, 'task_id': 'task1', 'functions': '[]'})
+        response = self.client.post('/loop', json={'time': 1, 'task_id': 'task1', 'functions': '[]'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'function added', 'iterations': 1, 'function': []})
 

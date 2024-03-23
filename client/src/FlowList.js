@@ -124,10 +124,10 @@ function FlowList({ taskItems, initialTaskItems }) {
           body.x = parseInt(newItem.x, 10);
           body.y = parseInt(newItem.y, 10);
         }
-        else if (newItem.text === 'short_cut') {
+        else if (newItem.text === 'key_event') {
           body.key_event = newItem.key_event;
         }
-        else if (newItem.text === 'iteration') {
+        else if (newItem.text === 'loop') {
           body.functions = newItem.functions;
           body.time = newItem.time;
         }
