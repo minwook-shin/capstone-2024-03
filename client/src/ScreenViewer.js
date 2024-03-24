@@ -24,6 +24,7 @@ function ScreenViewer() {
 
         const realX = Math.round(event.nativeEvent.offsetX * scaleX);
         const realY = Math.round(event.nativeEvent.offsetY * scaleY);
+        ipcRenderer.send("screen");
         alert(`input tap ${realX} ${realY}`);
     };
 
