@@ -19,13 +19,16 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 
 ## 영상
 
-_발표 영상은 [깃허브 리포지토리](https://github.com/kookmin-sw/capstone-2024-03)의 Readme.md 파일을 확인 부탁드립니다._
+* 캡스톤 디자인 2024 03팀 중간 발표
+
+[![캡스톤 디자인 2024 03팀 중간 시연](https://img.youtube.com/vi/0gcAZPV-hl8/0.jpg)](https://www.youtube.com/watch?v=0gcAZPV-hl8)
+
 
 ## 팀 소개
 
 |이름|프로필 사진 | 역할 | 깃허브|
 | - | - | - | - | 
-| **신민욱 (\*\*\*\*1640 )** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | 서버, 클라이언트, 문서화 | [https://github.com/minwook-shin](https://github.com/minwook-shin) | 
+| **신민욱 (\*\*\*\*1640 )** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | 서버, 클라이언트, 문서, 테스트 | [https://github.com/minwook-shin](https://github.com/minwook-shin) | 
 | **임덕규 (산학 멘토)** | <img src="https://avatars.githubusercontent.com/u/1933975?v=4" width="100" height="100"/> | 프로젝트 멘토링 | [https://github.com/RavenKyu](https://github.com/RavenKyu) |
 
 ## 개발 환경 설정 및 사용법
