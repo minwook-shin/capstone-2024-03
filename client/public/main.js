@@ -2,25 +2,33 @@
 const { BrowserWindow, app, ipcMain, screen } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
-const axios = require('axios');
+const { Worker } = require('worker_threads');
+
 
 const BASE_URL = 'http://127.0.0.1:3000';
 
 let mainWindow = null;
 
-async function fetchImage() {
-    try {
-        const response = await axios.get('http://127.0.0.1/screen', {
-            responseType: 'arraybuffer',
-            headers: {
-                'Accept': 'image/png'
-            }
+const http = require('http');
+
+function fetchImage() {
+    return new Promise((resolve, reject) => {
+        http.get('http://127.0.0.1/screen', (response) => {
+            const chunks = [];
+            response.on('data', (chunk) => {
+                chunks.push(chunk);
+            });
+
+            response.on('end', () => {
+                const result = Buffer.concat(chunks);
+                const arrayBuffer = Uint8Array.from(result).buffer;
+                resolve(arrayBuffer);
+            });
+        }).on('error', (error) => {
+            console.error('Error fetching image:', error);
+            reject(error);
         });
-        const imageBuffer = Buffer.from(response.data, 'binary');
-        return imageBuffer;
-    } catch (error) {
-        console.error('Error fetching image:', error);
-    }
+    });
 }
 
 const createWindow = () => {
@@ -44,6 +52,19 @@ const createWindow = () => {
     } else {
         mainWindow.loadFile(path.join(__dirname, './build/index.html'));
     }
+
+    const worker = new Worker(`
+    const { parentPort } = require('worker_threads');
+    setInterval(() => {
+        parentPort.postMessage('refresh');
+    }, 10000);
+  `, { eval: true });
+
+    worker.on('message', (msg) => {
+        if (msg === 'refresh') {
+            mainWindow.webContents.send('refresh');
+        }
+    });
 
     ipcMain.on("screen", event => {
         fetchImage().then(data => {
