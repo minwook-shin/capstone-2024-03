@@ -1,4 +1,5 @@
 import cv2
+import easyocr
 import numpy as np
 
 
@@ -54,3 +55,58 @@ def draw_point_on_image(image_input, x, y):
     # Draw a circle at the coordinates
     cv2.circle(img, (x, y), radius=50, color=(0, 0, 255), thickness=-1)
     return img
+
+
+def read_text_from_image(image_input):
+    """
+    This function reads text from an image using OCR.
+
+    Parameters:
+    image_input (bytes): The input image in bytes.
+
+    Returns:
+    str: The text read from the image.
+    """
+    reader = easyocr.Reader(['ko', 'en'])
+    result = reader.readtext(image_input)
+    return result
+
+
+def get_text_center_coordinates(coordinates):
+    """
+    calculates the center coordinates of the text
+
+    Parameters:
+    coordinates (list):
+
+    Returns:
+    dict: A dictionary where the keys are the texts and the values are dictionaries containing the x and y
+          coordinates of the center of the text.
+    """
+    result = {}
+    for i, info in enumerate(coordinates):
+        coords, text, _ = info
+        coords = np.array(coords)
+        center_x = (coords[0][0] + coords[2][0]) // 2
+        center_y = (coords[0][1] + coords[2][1]) // 2
+        result[text] = {"x": int(center_x), "y": int(center_y)}
+    return result
+
+
+def extract_texts_in_rectangle(json_data, top_left, bottom_right):
+    """
+    extracts the texts that are inside a specified rectangle.
+
+    Parameters:
+    json_data (dict):
+    top_left (tuple):
+    bottom_right (tuple):
+
+    Returns:
+    list: A list of texts that are inside the specified rectangle.
+    """
+    texts_in_rectangle = []
+    for text, center in json_data.items():
+        if top_left[0] <= center['x'] <= bottom_right[0] and top_left[1] <= center['y'] <= bottom_right[1]:
+            texts_in_rectangle.append(text)
+    return texts_in_rectangle
