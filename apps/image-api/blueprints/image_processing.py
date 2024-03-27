@@ -15,7 +15,7 @@ def hello_world():
     return {"message": "ProcessImage is running."}
 
 
-@ProcessImage.route('/process', methods=['POST'])
+@ProcessImage.route('/template_matching', methods=['POST'])
 def process_image():
     """
     Process an image and return the x, y coordinates of the processed part.

@@ -97,10 +97,21 @@ function FlowList({ taskItems, initialTaskItems }) {
   };
 
   const onInputChange = (event) => {
-    setInputValues({
-      ...inputValues,
-      [event.target.name]: event.target.value,
-    });
+    if (event.target.files) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setInputValues({
+          ...inputValues,
+          template: fileReader.result,
+        });
+      };
+      fileReader.readAsArrayBuffer(event.target.files[0]);
+    } else {
+      setInputValues({
+        ...inputValues,
+        [event.target.name]: event.target.value,
+      });
+    }
   };
 
   const onInputConfirm = async () => {
@@ -137,6 +148,27 @@ function FlowList({ taskItems, initialTaskItems }) {
         else if (newItem.text === 'long_press') {
           body.x = parseInt(newItem.x, 10);
           body.y = parseInt(newItem.y, 10);
+        }
+        else if (newItem.text === 'template_matching') {
+          const formData = new FormData();
+          const blob = new Blob([newItem.template], {type: 'image/png'});
+          formData.append('template', blob, 'template.png');
+          formData.append('task_id', task_id);
+      
+          fetch(`${API_URL}/template_matching`, {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.error(error));
+          return;
+        }
+        else if (newItem.text === 'extract_text') {
+          body.top_left_x = parseInt(newItem.top_left_x, 10);
+          body.top_left_y = parseInt(newItem.top_left_y, 10);
+          body.bottom_right_x = parseInt(newItem.bottom_right_x, 10);
+          body.bottom_right_y = parseInt(newItem.bottom_right_y, 10);
         }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
@@ -226,7 +258,7 @@ function FlowList({ taskItems, initialTaskItems }) {
         {flowItems.map(item => (
           <li key={item.id}>
             {Object.entries(item).map(([key, value]) => {
-              if (key === 'id') return null;
+              if (key === 'id' || value instanceof ArrayBuffer) return null;
               if (key === 'text') return <span key={key}>{value}</span>;
               return <span key={key}>{" | " + key}: {value} </span>;
             })}

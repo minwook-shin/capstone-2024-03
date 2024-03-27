@@ -181,3 +181,16 @@ class ADB:
         bool: True if the ADB keyboard is enabled, False otherwise.
         """
         return "com.android.adbkeyboard/.AdbIME" in self.device.shell("ime list -a -s")
+
+    def template_matching_using_screen(self, template):
+        """
+        Perform template matching using the screen capture.
+
+        Returns:
+        bool: True if the template is found, False otherwise.
+        """
+        result = self.device.screencap()
+        response = requests.post('http://localhost:81/template_matching',
+                                 files={'image': result, 'template': template})
+        print(response.json())
+        self.execute_adb_single_click(response.json()['center_x'], response.json()['center_y'])
