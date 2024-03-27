@@ -20,8 +20,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "python": "cd ../apps/adb-api && uwsgi --ini uwsgi.ini",
+    "image": "cd ../apps/image-api && uwsgi --ini uwsgi.ini",
+    "adb" : "~/adb/platform-tools/adb start-server",
     "electron": "wait-on http://127.0.0.1 && wait-on http://127.0.0.1:3000 && electron .",
-    "dev": "concurrently \"yarn python\" \"yarn start\" \"yarn electron\""
+    "dev": "concurrently \"yarn adb\" \"yarn python\" \"yarn image\" \"yarn start\" \"yarn electron\""
   },
   "eslintConfig": {
     "extends": [
