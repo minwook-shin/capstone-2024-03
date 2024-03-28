@@ -29,6 +29,8 @@ def find_matches(image_input, template_input):
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     # minimum and maximum values and their locations
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    if max_val < 0.7:
+        return {"x": -1, "y": -1, "center_x": -1, "center_y": -1, "score": max_val}
     # top left corner of the match
     top_left = max_loc
     # bottom right corner of the match
