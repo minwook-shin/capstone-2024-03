@@ -13,6 +13,26 @@ function FlowList({ taskItems, initialTaskItems }) {
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
 
+  function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+
+  function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
   const handleDragOver = (event) => {
     event.preventDefault();
   };
@@ -61,16 +81,32 @@ function FlowList({ taskItems, initialTaskItems }) {
       });
       for (const item of newFlowItems) {
         const { text, ...rest } = item;
-        await fetch(`${API_URL}/${text}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...rest, task_id: Date.now() }),
-        });
+        const task_id = Date.now();
+
+        if (text === 'template_matching') {
+          const formData = new FormData();
+          const blob = new Blob([base64ToArrayBuffer(rest.template)], { type: 'image/png' });
+          formData.append('template', blob, 'template.png');
+          formData.append('task_id', task_id.toString());
+
+          fetch(`${API_URL}/template_matching`, {
+            method: 'POST',
+            body: formData
+          })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+        } else {
+          await fetch(`${API_URL}/${text}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ...rest, task_id }),
+          });
+        }
       }
     };
-
     reader.readAsText(file);
     event.target.value = '';
   };
@@ -122,7 +158,12 @@ function FlowList({ taskItems, initialTaskItems }) {
       return;
     } else {
       const newItem = { ...pendingItem, ...inputValues };
-      setFlowItems([...flowItems, newItem]);
+      const newItemBase64 = {
+        ...newItem,
+        template: newItem.template ? arrayBufferToBase64(newItem.template) : newItem.template,
+      };
+
+      setFlowItems([...flowItems, newItemBase64]);
       setInputVisible(false);
       setPendingItem(null);
 
@@ -151,17 +192,17 @@ function FlowList({ taskItems, initialTaskItems }) {
         }
         else if (newItem.text === 'template_matching') {
           const formData = new FormData();
-          const blob = new Blob([newItem.template], {type: 'image/png'});
+          const blob = new Blob([newItem.template], { type: 'image/png' });
           formData.append('template', blob, 'template.png');
           formData.append('task_id', task_id);
-      
+
           fetch(`${API_URL}/template_matching`, {
             method: 'POST',
             body: formData
           })
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(error => console.error(error));
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
           return;
         }
         else if (newItem.text === 'extract_text') {
@@ -258,8 +299,11 @@ function FlowList({ taskItems, initialTaskItems }) {
         {flowItems.map(item => (
           <li key={item.id}>
             {Object.entries(item).map(([key, value]) => {
-              if (key === 'id' || value instanceof ArrayBuffer) return null;
+              if (key === 'id') return null;
               if (key === 'text') return <span key={key}>{value}</span>;
+              if (key === 'template') {
+                return <img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />;
+              }
               return <span key={key}>{" | " + key}: {value} </span>;
             })}
           </li>
