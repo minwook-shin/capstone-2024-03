@@ -448,6 +448,7 @@ def functions_iterator():
         "screen_capture": control_obj.get_screen_capture,
         "input_text": control_obj.execute_adb_input_text,
         "long_press": control_obj.execute_adb_long_press,
+        "template_matching": control_obj.template_matching_using_screen
     }
     functions = json.loads(functions)
 
