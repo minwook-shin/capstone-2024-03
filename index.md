@@ -148,13 +148,13 @@ npm run adb-start
 해당 프로젝트를 진행하면서 아래 라이브러리를 제작하였으며, 지속 관리를 위하여 각자 분리된 오픈소스 패키지로 CI/CD 및 자동 배포를 진행할 수 있도록 구축하였습니다.
 
 * easy-adb : 안드로이드 디버그 브릿지 서버를 쉽게 구동하기 위한 패키지
-    * https://pypi.org/project/easy-adb/
+    * [https://pypi.org/project/easy-adb/](https://pypi.org/project/easy-adb/)
 
 * f-scheduler : 파이썬 함수를 원하는 순서대로 실행하기 위한 스케줄러 패키지
-    * https://pypi.org/project/f-scheduler/
+    * [https://pypi.org/project/f-scheduler/](https://pypi.org/project/f-scheduler)
 
 * q-logger-py : 표준 라이브러리보다 빠르고 쓰레드 지향적인 로거 패키지
-    * https://pypi.org/project/q-logger-py/
+    * [https://pypi.org/project/q-logger-py/](https://pypi.org/project/q-logger-py)
 
 
 ## 문서
