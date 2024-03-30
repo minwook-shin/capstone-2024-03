@@ -1,4 +1,5 @@
 import os
+import subprocess
 from time import sleep
 
 import requests
@@ -16,15 +17,31 @@ logger = logger_worker.get_logger()
 class ADB:
     def __init__(self):
         self.apk_path = 'https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk'
-        download_adb_binary(agreement=True)
-        run_adb_server()
-        home_directory = os.path.expanduser("~")
-        current_path = os.environ.get('PATH')
-        adb_path = os.path.expanduser(os.path.join(home_directory, "adb/platform-tools/adb"))
-        os.environ['PATH'] = f"{adb_path}:{current_path}"
+        try:
+            adb_path = subprocess.check_output(['which', 'adb']).decode('utf-8').strip()
+            adb_available = bool(adb_path)
+        except subprocess.CalledProcessError:
+            adb_available = False
 
-        client = AdbClient(host="127.0.0.1", port=5037)
-        devices = client.devices()
+        print(f"ADB Available: {adb_available}")
+
+        if not adb_available:
+            print("ADB is not available. Downloading ADB binary and starting ADB server.")
+            download_adb_binary(agreement=True)
+            run_adb_server()
+            home_directory = os.path.expanduser("~")
+            current_path = os.environ.get('PATH')
+            adb_path = os.path.expanduser(os.path.join(home_directory, "adb/platform-tools/adb"))
+            os.environ['PATH'] = f"{adb_path}:{current_path}"
+
+        try:
+            client = AdbClient(host="127.0.0.1", port=5037)
+            devices = client.devices()
+        except Exception as _:
+            print("ADB server is not running. will automatically launch the ADB server.")
+            subprocess.call(["adb", "start-server"])
+            client = AdbClient(host="127.0.0.1", port=5037)
+            devices = client.devices()
 
         if len(devices) == 0:
             logger.debug("No devices connected. ADB functionality will be disabled.")
