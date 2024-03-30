@@ -2,10 +2,12 @@ from flasgger import Swagger
 from flask import Flask
 
 from blueprints.control import controller
+from blueprints.manage import manager
 
 app = Flask(__name__)
 
 app.register_blueprint(controller)
+app.register_blueprint(manager)
 swagger = Swagger(app)
 
 
