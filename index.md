@@ -125,6 +125,22 @@ npm run dev
 
 3. 컴퓨터와 기기를 USB 케이블로 연결합니다.
 
+4. (optional) 사전 패키징된 adb 바이너리를 설치합니다.
+
+* MacOS, Linux
+
+```bash
+sh ./scripts/adb_installer.sh
+npm run adb-start
+```
+
+* Windows
+
+```powershell
+powershell -noexit "& ""scripts\adb_installer.ps1"""
+npm run adb-start
+```
+
 # Related Library
 
 ## Python PYPI Release
