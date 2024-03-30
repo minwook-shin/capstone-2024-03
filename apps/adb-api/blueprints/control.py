@@ -448,7 +448,7 @@ def functions_iterator():
         "screen_capture": control_obj.get_screen_capture,
         "input_text": control_obj.execute_adb_input_text,
         "long_press": control_obj.execute_adb_long_press,
-        "template_matching": control_obj.template_matching_using_screen
+        "image_matching": control_obj.template_matching_using_screen
     }
     functions = json.loads(functions)
 
@@ -508,7 +508,7 @@ def check_adb_keyboard():
     return {'ADB keyboard installed': control_obj.check_adb_keyboard()}, 200
 
 
-@controller.route('/template_matching', methods=['POST'])
+@controller.route('/image_matching', methods=['POST'])
 def template_matching():
     """
     Perform template matching on the device screen using the provided template image.
@@ -522,7 +522,7 @@ def template_matching():
       - in: body
         name: body
         schema:
-          id: template_matching
+          id: image_matching
           required:
             - task_id
           properties:

@@ -83,13 +83,13 @@ function FlowList({ taskItems, initialTaskItems }) {
         const { text, ...rest } = item;
         const task_id = Date.now();
 
-        if (text === 'template_matching') {
+        if (text === 'image_matching') {
           const formData = new FormData();
           const blob = new Blob([base64ToArrayBuffer(rest.template)], { type: 'image/png' });
           formData.append('template', blob, 'template.png');
           formData.append('task_id', task_id.toString());
 
-          fetch(`${API_URL}/template_matching`, {
+          fetch(`${API_URL}/image_matching`, {
             method: 'POST',
             body: formData
           })
@@ -191,13 +191,13 @@ function FlowList({ taskItems, initialTaskItems }) {
           body.x = parseInt(newItem.x, 10);
           body.y = parseInt(newItem.y, 10);
         }
-        else if (newItem.text === 'template_matching') {
+        else if (newItem.text === 'image_matching') {
           const formData = new FormData();
           const blob = new Blob([newItem.template], { type: 'image/png' });
           formData.append('template', blob, 'template.png');
           formData.append('task_id', task_id);
 
-          fetch(`${API_URL}/template_matching`, {
+          fetch(`${API_URL}/image_matching`, {
             method: 'POST',
             body: formData
           })
