@@ -15,12 +15,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
-exclude:
-  - apps/
-  - client/
-  - docker/
-  - scripts/
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,6 +32,13 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
+      - name: Modify _config.yml
+        run: |
+          echo "exclude:" >> _config.yml
+          echo "  - apps/" >> _config.yml
+          echo "  - client/" >> _config.yml
+          echo "  - docker/" >> _config.yml
+          echo "  - scripts/" >> _config.yml
       - name: Build with Jekyll
         run: jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
