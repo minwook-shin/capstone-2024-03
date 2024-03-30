@@ -211,3 +211,21 @@ class ADB:
                                  files={'image': result, 'template': template})
         print(response.json())
         self.execute_adb_single_click(response.json()['center_x'], response.json()['center_y'])
+
+    def extract_text_using_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y):
+        """
+        Perform extract text using the screen capture.
+
+        Returns:
+        bool: True if the extracted text is found, False otherwise.
+        """
+        result = self.device.screencap()
+        data = {
+            "top_left_x": int(top_left_x),
+            "top_left_y": int(top_left_y),
+            "bottom_right_x": int(bottom_right_x),
+            "bottom_right_y": int(bottom_right_y)
+            }
+        response = requests.post('http://localhost:81/extract_texts',
+                                 files={'image': result}, data=data)
+        print(response.json())
