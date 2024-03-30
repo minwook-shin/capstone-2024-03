@@ -158,10 +158,11 @@ function FlowList({ taskItems, initialTaskItems }) {
       return;
     } else {
       const newItem = { ...pendingItem, ...inputValues };
-      const newItemBase64 = {
-        ...newItem,
-        template: newItem.template ? arrayBufferToBase64(newItem.template) : newItem.template,
-      };
+      const newItemBase64 = { ...newItem };
+
+      if (newItem.template) {
+        newItemBase64.template = arrayBufferToBase64(newItem.template);
+      }
 
       setFlowItems([...flowItems, newItemBase64]);
       setInputVisible(false);
@@ -301,7 +302,7 @@ function FlowList({ taskItems, initialTaskItems }) {
             {Object.entries(item).map(([key, value]) => {
               if (key === 'id') return null;
               if (key === 'text') return <span key={key}>{value}</span>;
-              if (key === 'template') {
+              if (key === 'template' && value) {
                 return <img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />;
               }
               return <span key={key}>{" | " + key}: {value} </span>;
