@@ -1,11 +1,7 @@
-import tempfile
-
-import cv2
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify
 from werkzeug.datastructures import FileStorage
 
-from service.image_processing import find_matches, draw_point_on_image
-from service.image_processing import read_text_from_image, get_text_center_coordinates, extract_texts_in_rectangle
+from service.image_processing import find_matches, extract_texts_in_rectangle
 
 ProcessImage = Blueprint('image processing', __name__)
 
@@ -60,47 +56,6 @@ def process_image():
     return jsonify(result)
 
 
-@ProcessImage.route('/draw_point', methods=['POST'])
-def draw_point_route():
-    """
-    Draw a point on an image and return the image.
-    ---
-    parameters:
-      - in: formData
-        name: image
-        type: file
-        required: true
-        description: The image to draw a point on
-      - in: formData
-        name: x
-        type: integer
-        required: true
-        description: The x coordinate of the point
-      - in: formData
-        name: y
-        type: integer
-        required: true
-        description: The y coordinate of the point
-    responses:
-      200:
-        description: Return the image with the point drawn
-        content:
-          image/png:
-            schema:
-              type: string
-              format: binary
-    """
-    image_file: FileStorage = request.files['image']
-    x = int(request.form['x'])
-    y = int(request.form['y'])
-    image_bytes = image_file.read()
-    result_image = draw_point_on_image(image_bytes, x, y)
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
-    cv2.imwrite(temp_file.name, result_image)
-
-    return send_file(temp_file.name, mimetype='image/png')
-
-
 @ProcessImage.route('/extract_texts', methods=['POST'])
 def extract_texts_route():
     """
@@ -152,8 +107,6 @@ def extract_texts_route():
     bottom_right_x = int(request.form['bottom_right_x'])
     bottom_right_y = int(request.form['bottom_right_y'])
     image_bytes = image_file.read()
-    coordinates_and_text = read_text_from_image(image_bytes)
-    json_data = get_text_center_coordinates(coordinates_and_text)
-    texts = extract_texts_in_rectangle(json_data, (top_left_x, top_left_y),
+    texts = extract_texts_in_rectangle(image_bytes, (top_left_x, top_left_y),
                                        (bottom_right_x, bottom_right_y))
     return jsonify({"texts": texts})

@@ -1,9 +1,10 @@
-import cv2
-import easyocr
-import numpy as np
+import base64
+import pickle
+from datetime import datetime
+
+from image_finder import ImageFinder
 
 
-# https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html
 def find_matches(image_input, template_input):
     """
     This function finds matches of a template in an image using template matching.
@@ -16,32 +17,15 @@ def find_matches(image_input, template_input):
     dict: A dictionary containing the coordinates of the top left corner of the match,
           the coordinates of the center of the match, and the match score.
     """
-    # Convert the image bytes to grayscale
-    npimg = np.fromstring(image_input, np.uint8)
-    img_rgb = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
-    img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-    # Convert the template bytes to image
-    npimg = np.fromstring(template_input, np.uint8)
-    template = cv2.imdecode(npimg, cv2.IMREAD_GRAYSCALE)
-    # Get the width and height of the template
-    w, h = template.shape[::-1]
-    # template matching
-    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-    # minimum and maximum values and their locations
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    if max_val < 0.7:
-        return {"x": -1, "y": -1, "center_x": -1, "center_y": -1, "score": max_val}
-    # top left corner of the match
-    top_left = max_loc
-    # bottom right corner of the match
-    bottom_right = (top_left[0] + w, top_left[1] + h)
-    center = ((top_left[0] + bottom_right[0]) // 2, (top_left[1] + bottom_right[1]) // 2)
-    return {"x": top_left[0], "y": top_left[1], "center_x": center[0], "center_y": center[1], "score": max_val}
+    finder = ImageFinder(image=image_input)
+    image_coop = finder.find_image_in_screen(template=template_input, threshold=0.7)
+    return image_coop
 
 
-def draw_point_on_image(image_input, x, y):
+def __draw_point_on_image(image_input, x, y):
     """
     This function draws a point on an image at the coordinates.
+    private function for internal use only.
 
     Parameters:
     image_input (bytes): The input image in bytes.
@@ -51,51 +35,32 @@ def draw_point_on_image(image_input, x, y):
     Returns:
     ndarray: The image with the point drawn.
     """
-    # Convert the image bytes to image
-    npimg = np.fromstring(image_input, np.uint8)
-    img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
-    # Draw a circle at the coordinates
-    cv2.circle(img, (x, y), radius=50, color=(0, 0, 255), thickness=-1)
-    return img
+    finder = ImageFinder(image=image_input)
+    return_image = finder.draw_point(x=x, y=y, color=(0, 0, 255), thickness=-1, radius=50)
+    return return_image
 
 
-def read_text_from_image(image_input):
+def __draw_rectangle_on_image(image_input, top_left_x, top_left_y, bottom_right_x, bottom_right_y):
     """
-    This function reads text from an image using OCR.
+    This function draws a rectangle on an image with the specified coordinates.
+    private function for internal use only.
 
     Parameters:
     image_input (bytes): The input image in bytes.
+    top_left (tuple): The coordinates of the top left corner of the rectangle.
+    bottom_right (tuple): The coordinates of the bottom right corner of the rectangle.
 
     Returns:
-    str: The text read from the image.
+    ndarray: The image with the rectangle drawn.
     """
-    reader = easyocr.Reader(['ko', 'en'])
-    result = reader.readtext(image_input)
-    return result
+    finder = ImageFinder(image=image_input)
+    return_image = finder.draw_rectangle(top_left_x=top_left_x, top_left_y=top_left_y,
+                                         bottom_right_x=bottom_right_x, bottom_right_y=bottom_right_y,
+                                         color=(0, 0, 255), thickness=2)
+    return return_image
 
 
-def get_text_center_coordinates(coordinates):
-    """
-    calculates the center coordinates of the text
-
-    Parameters:
-    coordinates (list):
-
-    Returns:
-    dict: A dictionary where the keys are the texts and the values are dictionaries containing the x and y
-          coordinates of the center of the text.
-    """
-    result = {}
-    for i, info in enumerate(coordinates):
-        coords, text, _ = info
-        coords = np.array(coords)
-        center_x = (coords[0][0] + coords[2][0]) // 2
-        center_y = (coords[0][1] + coords[2][1]) // 2
-        result[text] = {"x": int(center_x), "y": int(center_y)}
-    return result
-
-
-def extract_texts_in_rectangle(json_data, top_left, bottom_right):
+def extract_texts_in_rectangle(image_input, top_left, bottom_right):
     """
     extracts the texts that are inside a specified rectangle.
 
@@ -107,8 +72,42 @@ def extract_texts_in_rectangle(json_data, top_left, bottom_right):
     Returns:
     list: A list of texts that are inside the specified rectangle.
     """
-    texts_in_rectangle = []
-    for text, center in json_data.items():
-        if top_left[0] <= center['x'] <= bottom_right[0] and top_left[1] <= center['y'] <= bottom_right[1]:
-            texts_in_rectangle.append(text)
+    finder = ImageFinder(image=image_input)
+    texts_in_rectangle = finder.find_text_in_rectangle(top_left_x=top_left[0], top_left_y=top_left[1],
+                                                       bottom_right_x=bottom_right[0], bottom_right_y=bottom_right[1],
+                                                       lang=['ko', 'en'])
+    return_image = finder.draw_rectangle(top_left_x=top_left[0], top_left_y=top_left[1],
+                                         bottom_right_x=bottom_right[0], bottom_right_y=bottom_right[1],
+                                         color=(0, 255, 0), thickness=3)
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        import os
+        root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        api_data_path = os.path.join(root_dir, 'api_data.pkl')
+        with open(api_data_path, 'rb') as f:
+            api_data = pickle.load(f)
+    except (FileNotFoundError, EOFError):
+        api_data = {}
+    result_base64 = base64.b64encode(return_image).decode('utf-8')
+
+    if timestamp not in api_data:
+        api_data[timestamp] = []
+    api_data[timestamp].append({
+        'response': texts_in_rectangle,
+        'image': result_base64
+    })
+
+    with open(api_data_path, 'wb') as f:
+        pickle.dump(api_data, f)
     return texts_in_rectangle
+
+# if __name__ == '__main__':
+#     with open('../tests/test_image.png', 'rb') as f:
+#         image_input = f.read()
+#     byte_image = __draw_point_on_image(image_input=image_input, x=806, y=595)
+#     with open('test.png', 'wb') as f:
+#         f.write(byte_image)
+#     byte_image = __draw_rectangle_on_image(image_input=image_input, top_left_x=0, top_left_y=1700,
+#                                            bottom_right_x=1000, bottom_right_y=2000)
+#     with open('test_rectangle.png', 'wb') as f:
+#         f.write(byte_image)

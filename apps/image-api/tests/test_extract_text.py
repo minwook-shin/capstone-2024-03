@@ -1,61 +1,49 @@
 import unittest
+from unittest.mock import patch
 
+import cv2
 import numpy as np
 
-from service.image_processing import get_text_center_coordinates, extract_texts_in_rectangle
+from service.image_processing import extract_texts_in_rectangle, find_matches
 
 
 class TestImageProcessingTextFunctions(unittest.TestCase):
     def setUp(self):
-        self.json_data = {
-            'text1': {'x': 50, 'y': 50},
-            'text2': {'x': 150, 'y': 150},
-            'text3': {'x': 250, 'y': 250},
-            'text4': {'x': 350, 'y': 350},
-            'text5': {'x': 450, 'y': 450}
-        }
-        self.coordinates = [
-            (np.array([[0, 0], [100, 0], [100, 100], [0, 100]]), 'text1', 0.9),
-            (np.array([[100, 100], [200, 100], [200, 200], [100, 200]]), 'text2', 0.9),
-            (np.array([[200, 200], [300, 200], [300, 300], [200, 300]]), 'text3', 0.9),
-            (np.array([[300, 300], [400, 300], [400, 400], [300, 400]]), 'text4', 0.9),
-            (np.array([[400, 400], [500, 400], [500, 500], [400, 500]]), 'text5', 0.9)
+        # Create a black image and a smaller white template
+        self.image = cv2.imencode(".png", np.zeros((100, 100), dtype=np.uint8))[1].tobytes()
+        self.template = cv2.imencode(".png", 255 * np.ones((50, 50), dtype=np.uint8))[1].tobytes()
+
+    def test_find_image_in_screen_with_existing_template(self):
+        result = find_matches(self.image, self.template)
+        self.assertEqual(result["x"], 0)
+        self.assertEqual(result["y"], 0)
+        self.assertEqual(result["center_x"], 25)
+        self.assertEqual(result["center_y"], 25)
+        self.assertEqual(result["score"], 1.0)
+
+    @patch('easyocr.Reader')
+    def test_find_text_in_rectangle_happy_path(self, mock_reader):
+        mock_reader.return_value.readtext.return_value = [
+            ([(10, 10), (20, 10), (20, 20), (10, 20)], 'text1', 0.9),
+            ([(30, 30), (40, 30), (40, 40), (30, 40)], 'text2', 0.9)
         ]
+        result = extract_texts_in_rectangle(image_input=b'sample_image_data', top_left=(0, 0), bottom_right=(50, 50))
+        self.assertEqual(result, ['text1', 'text2'])
 
-        self.json_data_2 = {
-            '[3/21-3/24 사은품 증정] 다이스 슈퍼소님 헤': {'x': 500, 'y': 1850},
-            '어드라이어 HD15 (세라미 핑리로즈 골드)': {'x': 500, 'y': 1850},
-            '499,000원': {'x': 500, 'y': 1850}}
-        self.coordinates_2 = [
-            (np.array([[0, 1700], [1000, 1700], [1000, 2000], [0, 2000]]), '[3/21-3/24 사은품 증정] 다이스 슈퍼소님 헤', 0.9),
-            (np.array([[0, 1700], [1000, 1700], [1000, 2000], [0, 2000]]), '어드라이어 HD15 (세라미 핑리로즈 골드)', 0.9),
-            (np.array([[0, 1700], [1000, 1700], [1000, 2000], [0, 2000]]), '499,000원', 0.9)
+    @patch('easyocr.Reader')
+    def test_find_text_in_rectangle_no_text_in_rectangle(self, mock_reader):
+        mock_reader.return_value.readtext.return_value = [
+            ([(60, 60), (70, 60), (70, 70), (60, 70)], 'text1', 0.9),
+            ([(80, 80), (90, 80), (90, 90), (80, 90)], 'text2', 0.9)
         ]
+        result = extract_texts_in_rectangle(image_input=b'sample_image_data', top_left=(0, 0), bottom_right=(50, 50))
+        self.assertEqual(result, [])
 
-    def test_get_text_center_coordinates_returns_correct_values(self):
-        result = get_text_center_coordinates(self.coordinates)
-        self.assertEqual(result, self.json_data)
-        result = get_text_center_coordinates(self.coordinates_2)
-        self.assertEqual(result, self.json_data_2)
-
-    def test_extract_texts_in_rectangle_returns_correct_values_for_full_overlap(self):
-        texts = extract_texts_in_rectangle(self.json_data, (0, 0), (500, 500))
-        self.assertEqual(texts, ['text1', 'text2', 'text3', 'text4', 'text5'])
-
-    def test_extract_texts_in_rectangle_returns_correct_values_for_partial_overlap(self):
-        texts = extract_texts_in_rectangle(self.json_data, (100, 100), (400, 400))
-        self.assertEqual(texts, ['text2', 'text3', 'text4'])
-
-    def test_extract_texts_in_rectangle_returns_correct_values_for_no_overlap(self):
-        texts = extract_texts_in_rectangle(self.json_data, (500, 500), (600, 600))
-        self.assertEqual(texts, [])
-
-    def test_extract_texts_in_rectangle_returns_correct_values_for_edge_overlap(self):
-        texts = extract_texts_in_rectangle(self.json_data, (400, 400), (500, 500))
-        self.assertEqual(texts, ['text5'])
-
-    def test_extract_texts_in_rectangle_returns_correct_values_for_given_example(self):
-        texts = extract_texts_in_rectangle(self.json_data_2, (0, 1700), (1000, 2000))
-        self.assertEqual(texts, ['[3/21-3/24 사은품 증정] 다이스 슈퍼소님 헤',
-                                 '어드라이어 HD15 (세라미 핑리로즈 골드)',
-                                 '499,000원'])
+    @patch('easyocr.Reader')
+    def test_find_text_in_rectangle_partial_text_in_rectangle(self, mock_reader):
+        mock_reader.return_value.readtext.return_value = [
+            ([(10, 10), (20, 10), (20, 20), (10, 20)], 'text1', 0.9),
+            ([(80, 80), (90, 80), (90, 90), (80, 90)], 'text2', 0.9)
+        ]
+        result = extract_texts_in_rectangle(image_input=b'sample_image_data', top_left=(0, 0), bottom_right=(50, 50))
+        self.assertEqual(result, ['text1'])

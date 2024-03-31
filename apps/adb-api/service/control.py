@@ -1,11 +1,6 @@
 import os
-import base64
-import datetime
-import cv2
-import numpy as np
 import subprocess
 from time import sleep
-import pickle
 import requests
 from easy_adb import run_adb_server, download_adb_binary
 from ppadb.client import Client as AdbClient
@@ -230,31 +225,6 @@ class ADB:
             "bottom_right_x": int(bottom_right_x),
             "bottom_right_y": int(bottom_right_y)
             }
-        response = requests.post('http://localhost:81/extract_texts',
-                                 files={'image': result}, data=data)
-        result = bytes(result)
-        nparr = np.fromstring(result, np.uint8)
-        img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        top_left = (int(top_left_x), int(top_left_y))
-        bottom_right = (int(bottom_right_x), int(bottom_right_y))
+        requests.post('http://localhost:81/extract_texts',
+                      files={'image': result}, data=data)
 
-        img_np = cv2.rectangle(img_np, top_left, bottom_right, (0, 255, 0), 3)
-        _, im_buf_arr = cv2.imencode(".png", img_np)
-        byte_im = im_buf_arr.tobytes()
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        try:
-            with open('api_data.pkl', 'rb') as f:
-                api_data = pickle.load(f)
-        except (FileNotFoundError, EOFError):
-            api_data = {}
-        result_base64 = base64.b64encode(byte_im).decode('utf-8')
-
-        if timestamp not in api_data:
-            api_data[timestamp] = []
-        api_data[timestamp].append({
-            'response': response.json(),
-            'image': result_base64
-        })
-
-        with open('api_data.pkl', 'wb') as f:
-            pickle.dump(api_data, f)

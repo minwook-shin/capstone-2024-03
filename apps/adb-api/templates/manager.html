@@ -49,7 +49,7 @@
             {% for dict_item in data_list %}
             <tr>
                 <td class="text-cell">
-                    {% for text in dict_item['response']['texts'] %}
+                    {% for text in dict_item['response'] %}
                     {{ text }}<br>
                     {% endfor %}
                 </td>
