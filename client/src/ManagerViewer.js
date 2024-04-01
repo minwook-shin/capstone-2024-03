@@ -7,7 +7,7 @@ function ManagerViewer() {
     };
     return (
         <div>
-            <button onClick={handleClickShowManager}>Show Manager Windows</button><br />
+            <button onClick={handleClickShowManager}>Show Scenario Result</button><br />
         </div>
     );
 }
