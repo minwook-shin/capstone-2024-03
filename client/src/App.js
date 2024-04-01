@@ -4,6 +4,7 @@ import TaskList from './TaskList';
 import FlowList from './FlowList';
 import ControlButtons from './ControlButtons';
 import ScreenViewer from './ScreenViewer';
+import ManagerViewer from './ManagerViewer';
 
 function App() {
   const [taskItems, setTaskItems] = useState([]);
@@ -35,6 +36,7 @@ function App() {
             <FlowList taskItems={taskItems}  initialTaskItems={initialTaskItems}/>
             <ControlButtons />
           </div>
+          <ManagerViewer />
           <ScreenViewer />
         </div>
       </header>
