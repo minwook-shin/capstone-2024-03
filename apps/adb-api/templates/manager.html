@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Variable Manager</title>
+    <title>Scenario Result</title>
     <style>
         table {
             width: 100%;
@@ -33,10 +33,10 @@
 </head>
 
 <body>
-    <h1>Variable Manager</h1>
-    <button onclick="window.location.href='manager/download'">Download Archive</button>
-    <button onclick="fetch('manager/clear')">Clear Archive</button>
-    <button onclick="window.location.href='manager'">Refresh</button>
+    <h1>Scenario Result</h1>
+    <button onclick="window.location.href='manager/download'">Download Result</button>
+    <button onclick="fetch('manager/clear')">Clear Result</button>
+    <button onclick="window.location.href='manager'">Refresh Result</button>
     {% for timestamp, data_list in data.items() %}
     <h2>{{ timestamp }}</h2>
     <table>
