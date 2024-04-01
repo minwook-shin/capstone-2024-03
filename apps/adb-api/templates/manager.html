@@ -35,7 +35,7 @@
 <body>
     <h1>Variable Manager</h1>
     <button onclick="window.location.href='manager/download'">Download Archive</button>
-    <button onclick="window.location.href='manager/clear'">Clear Archive</button>
+    <button onclick="fetch('manager/clear')">Clear Archive</button>
     <button onclick="window.location.href='manager'">Refresh</button>
     {% for timestamp, data_list in data.items() %}
     <h2>{{ timestamp }}</h2>
