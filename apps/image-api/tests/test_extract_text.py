@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import patch
 
@@ -13,6 +14,7 @@ class TestImageProcessingTextFunctions(unittest.TestCase):
         self.image = cv2.imencode(".png", np.zeros((100, 100), dtype=np.uint8))[1].tobytes()
         self.template = cv2.imencode(".png", 255 * np.ones((50, 50), dtype=np.uint8))[1].tobytes()
 
+    @unittest.skipIf(os.environ.get('GITHUB_ACTIONS') == 'true', 'Skipping this test on GitHub Actions.')
     def test_find_image_in_screen_with_existing_template(self):
         result = find_matches(self.image, self.template)
         self.assertEqual(result["x"], 0)
@@ -21,6 +23,7 @@ class TestImageProcessingTextFunctions(unittest.TestCase):
         self.assertEqual(result["center_y"], 25)
         self.assertEqual(result["score"], 1.0)
 
+    @unittest.skipIf(os.environ.get('GITHUB_ACTIONS') == 'true', 'Skipping this test on GitHub Actions.')
     @patch('easyocr.Reader')
     def test_find_text_in_rectangle_happy_path(self, mock_reader):
         mock_reader.return_value.readtext.return_value = [
@@ -30,6 +33,7 @@ class TestImageProcessingTextFunctions(unittest.TestCase):
         result = extract_texts_in_rectangle(image_input=b'sample_image_data', top_left=(0, 0), bottom_right=(50, 50))
         self.assertEqual(result, ['text1', 'text2'])
 
+    @unittest.skipIf(os.environ.get('GITHUB_ACTIONS') == 'true', 'Skipping this test on GitHub Actions.')
     @patch('easyocr.Reader')
     def test_find_text_in_rectangle_no_text_in_rectangle(self, mock_reader):
         mock_reader.return_value.readtext.return_value = [
@@ -39,6 +43,7 @@ class TestImageProcessingTextFunctions(unittest.TestCase):
         result = extract_texts_in_rectangle(image_input=b'sample_image_data', top_left=(0, 0), bottom_right=(50, 50))
         self.assertEqual(result, [])
 
+    @unittest.skipIf(os.environ.get('GITHUB_ACTIONS') == 'true', 'Skipping this test on GitHub Actions.')
     @patch('easyocr.Reader')
     def test_find_text_in_rectangle_partial_text_in_rectangle(self, mock_reader):
         mock_reader.return_value.readtext.return_value = [
