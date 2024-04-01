@@ -4,6 +4,7 @@ import zipfile
 
 from f_scheduler import DAG, IterFunctionOperator, Converter
 from flask import Blueprint, request, send_file
+from werkzeug.datastructures import FileStorage
 
 from service.control import ADB
 from service.extra import delay
@@ -447,6 +448,8 @@ def functions_iterator():
         "screen_capture": control_obj.get_screen_capture,
         "input_text": control_obj.execute_adb_input_text,
         "long_press": control_obj.execute_adb_long_press,
+        "image_matching": control_obj.template_matching_using_screen,
+        "extract_text": control_obj.extract_text_using_screen,
     }
     functions = json.loads(functions)
 
@@ -504,3 +507,74 @@ def check_adb_keyboard():
         description: Is ADB keyboard installed.
     """
     return {'ADB keyboard installed': control_obj.check_adb_keyboard()}, 200
+
+
+@controller.route('/image_matching', methods=['POST'])
+def template_matching():
+    """
+    Perform template matching on the device screen using the provided template image.
+    ---
+    parameters:
+      - in: formData
+        name: template
+        type: file
+        description: The template image file to be used for matching.
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: image_matching
+          required:
+            - task_id
+          properties:
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Template matching operation added successfully.
+    """
+    template: FileStorage = request.files.get('template')
+    task_id = request.form.get('task_id')
+    template_bytes = template.read()
+    dag.add_task(IterFunctionOperator(function=control_obj.template_matching_using_screen,
+                                      param=(template_bytes,),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'template_matching added', 'template_path': template.filename}, 200
+
+@controller.route('/extract_text', methods=['POST'])
+def extract_text():
+    """
+    Extract text from an image using OCR.
+    ---
+    parameters:
+      - in: formData
+        name: image
+        type: file
+        description: The image file to extract text from.
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: extract_text
+          required:
+            - task_id
+          properties:
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Text extraction operation added successfully.
+    """
+    top_left_x = request.json.get('top_left_x')
+    top_left_y = request.json.get('top_left_y')
+    bottom_right_x = request.json.get('bottom_right_x')
+    bottom_right_y = request.json.get('bottom_right_y')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.extract_text_using_screen,
+                                      param=(top_left_x, top_left_y, bottom_right_x, bottom_right_y),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'text extraction added', 'arguments': f'{top_left_x}, {top_left_y}, {bottom_right_x}, {bottom_right_y}'}, 200

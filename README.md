@@ -155,6 +155,9 @@ npm run adb-start
 * q-logger-py : 표준 라이브러리보다 빠르고 쓰레드 지향적인 로거 패키지
     * https://pypi.org/project/q-logger-py/
 
+* image-finder: 터미널에서만 동작하는 OpenCV 기반 이미지 좌표 및 텍스트 추출하는 패키지
+    * https://pypi.org/project/image-finder/
+
 ## 문서
 
 해당 프로젝트의 구조 및 API 설계에 대한 내용은 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 를 참고해주세요.

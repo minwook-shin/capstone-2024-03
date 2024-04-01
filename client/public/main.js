@@ -23,6 +23,17 @@ async function fetchImage() {
     }
 }
 
+async function show_manager() {
+    try {
+        if (manager_window && !manager_window.isDestroyed()) {
+            manager_window.show();
+            manager_window.focus();
+        }
+    } catch (error) {
+        console.error('Error showing manager window:', error);
+    }
+}
+
 const createWindow = () => {
     const { height } = screen.getPrimaryDisplay().workAreaSize;
 
@@ -38,12 +49,25 @@ const createWindow = () => {
         }
     });
 
+    manager_window = new BrowserWindow({
+        show: false,
+        parent: mainWindow,
+        resizable: true,
+        width: 800,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
+    });
+
     if (isDev) {
         mainWindow.loadURL(BASE_URL);
         mainWindow.webContents.openDevTools({ mode: 'detach' });
     } else {
         mainWindow.loadFile(path.join(__dirname, './build/index.html'));
     }
+
+    manager_window.loadURL('http://127.0.0.1' + '/manager');
 
     ipcMain.on("screen", event => {
         fetchImage().then(data => {
@@ -55,6 +79,12 @@ const createWindow = () => {
                 screen: ""
             });
         })
+    });
+    ipcMain.on("show_manager", show_manager);
+
+    manager_window.on('close', (event) => {
+        event.preventDefault();
+        manager_window.hide();
     });
 };
 

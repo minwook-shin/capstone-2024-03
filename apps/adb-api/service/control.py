@@ -1,7 +1,6 @@
 import os
 import subprocess
 from time import sleep
-
 import requests
 from easy_adb import run_adb_server, download_adb_binary
 from ppadb.client import Client as AdbClient
@@ -198,3 +197,34 @@ class ADB:
         bool: True if the ADB keyboard is enabled, False otherwise.
         """
         return "com.android.adbkeyboard/.AdbIME" in self.device.shell("ime list -a -s")
+
+    def template_matching_using_screen(self, template):
+        """
+        Perform template matching using the screen capture.
+
+        Returns:
+        bool: True if the template is found, False otherwise.
+        """
+        result = self.device.screencap()
+        response = requests.post('http://localhost:81/template_matching',
+                                 files={'image': result, 'template': template})
+        print(response.json())
+        self.execute_adb_single_click(response.json()['center_x'], response.json()['center_y'])
+
+    def extract_text_using_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y):
+        """
+        Perform extract text using the screen capture.
+
+        Returns:
+        bool: True if the extracted text is found, False otherwise.
+        """
+        result = self.device.screencap()
+        data = {
+            "top_left_x": int(top_left_x),
+            "top_left_y": int(top_left_y),
+            "bottom_right_x": int(bottom_right_x),
+            "bottom_right_y": int(bottom_right_y)
+            }
+        requests.post('http://localhost:81/extract_texts',
+                      files={'image': result}, data=data)
+

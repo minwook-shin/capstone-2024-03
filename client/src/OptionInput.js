@@ -41,10 +41,30 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                         </select>
                     );
                 } 
+                if (key === 'template') {
+                    return (
+                        <input
+                            key={key}
+                            type="file"
+                            name={key}
+                            onChange={onInputChange}
+                            placeholder={`Enter ${key}`}
+                            readOnly={key === 'text'}
+                            onKeyDown={event => {
+                                if (event.key === 'Enter') {
+                                    onInputConfirm();
+                                }
+                                else if (event.key === 'Escape') {
+                                    onInputCancel();
+                                }
+                            }}
+                        />
+                    );
+                }
                 else if (key === 'functions') {
                     return (
                         <textarea
-                        style={{ width: '100%' }}
+                            style={{ width: '100%' }}
                             key={key}
                             type="text"
                             name={key}

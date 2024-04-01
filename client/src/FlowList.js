@@ -13,6 +13,26 @@ function FlowList({ taskItems, initialTaskItems }) {
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
 
+  function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+
+  function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
   const handleDragOver = (event) => {
     event.preventDefault();
   };
@@ -61,16 +81,32 @@ function FlowList({ taskItems, initialTaskItems }) {
       });
       for (const item of newFlowItems) {
         const { text, ...rest } = item;
-        await fetch(`${API_URL}/${text}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...rest, task_id: Date.now() }),
-        });
+        const task_id = Date.now();
+
+        if (text === 'image_matching') {
+          const formData = new FormData();
+          const blob = new Blob([base64ToArrayBuffer(rest.template)], { type: 'image/png' });
+          formData.append('template', blob, 'template.png');
+          formData.append('task_id', task_id.toString());
+
+          fetch(`${API_URL}/image_matching`, {
+            method: 'POST',
+            body: formData
+          })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+        } else {
+          await fetch(`${API_URL}/${text}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ...rest, task_id }),
+          });
+        }
       }
     };
-
     reader.readAsText(file);
     event.target.value = '';
   };
@@ -97,10 +133,21 @@ function FlowList({ taskItems, initialTaskItems }) {
   };
 
   const onInputChange = (event) => {
-    setInputValues({
-      ...inputValues,
-      [event.target.name]: event.target.value,
-    });
+    if (event.target.files) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setInputValues({
+          ...inputValues,
+          template: fileReader.result,
+        });
+      };
+      fileReader.readAsArrayBuffer(event.target.files[0]);
+    } else {
+      setInputValues({
+        ...inputValues,
+        [event.target.name]: event.target.value,
+      });
+    }
   };
 
   const onInputConfirm = async () => {
@@ -111,7 +158,13 @@ function FlowList({ taskItems, initialTaskItems }) {
       return;
     } else {
       const newItem = { ...pendingItem, ...inputValues };
-      setFlowItems([...flowItems, newItem]);
+      const newItemBase64 = { ...newItem };
+
+      if (newItem.template) {
+        newItemBase64.template = arrayBufferToBase64(newItem.template);
+      }
+
+      setFlowItems([...flowItems, newItemBase64]);
       setInputVisible(false);
       setPendingItem(null);
 
@@ -137,6 +190,27 @@ function FlowList({ taskItems, initialTaskItems }) {
         else if (newItem.text === 'long_press') {
           body.x = parseInt(newItem.x, 10);
           body.y = parseInt(newItem.y, 10);
+        }
+        else if (newItem.text === 'image_matching') {
+          const formData = new FormData();
+          const blob = new Blob([newItem.template], { type: 'image/png' });
+          formData.append('template', blob, 'template.png');
+          formData.append('task_id', task_id);
+
+          fetch(`${API_URL}/image_matching`, {
+            method: 'POST',
+            body: formData
+          })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+          return;
+        }
+        else if (newItem.text === 'extract_text') {
+          body.top_left_x = parseInt(newItem.top_left_x, 10);
+          body.top_left_y = parseInt(newItem.top_left_y, 10);
+          body.bottom_right_x = parseInt(newItem.bottom_right_x, 10);
+          body.bottom_right_y = parseInt(newItem.bottom_right_y, 10);
         }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
@@ -228,6 +302,9 @@ function FlowList({ taskItems, initialTaskItems }) {
             {Object.entries(item).map(([key, value]) => {
               if (key === 'id') return null;
               if (key === 'text') return <span key={key}>{value}</span>;
+              if (key === 'template' && value) {
+                return <img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />;
+              }
               return <span key={key}>{" | " + key}: {value} </span>;
             })}
           </li>
