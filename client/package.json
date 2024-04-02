@@ -21,10 +21,11 @@
     "eject": "react-scripts eject",
     "python": "cd ../apps/adb-api && uwsgi --ini uwsgi.ini",
     "image": "cd ../apps/image-api && uwsgi --ini uwsgi.ini",
+    "vm" : "cd ../apps/vm-api && uwsgi --ini uwsgi.ini",
     "adb-start" : "adb start-server",
     "adb-kill" : "adb kill-server",
     "electron": "wait-on http://127.0.0.1 && wait-on http://127.0.0.1:3000 && electron .",
-    "dev": "concurrently \"yarn python\" \"yarn image\" \"yarn start\" \"yarn electron\""
+    "dev": "concurrently \"yarn python\" \"yarn image\" \"yarn vm\" \"yarn start\" \"yarn electron\""
   },
   "eslintConfig": {
     "extends": [
