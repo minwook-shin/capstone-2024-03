@@ -34,6 +34,17 @@ function VariableManager() {
         setVariables(responseData);
     }, []);
 
+    const clearVariable = async () => {
+        await fetch(`http://127.0.0.1:82/vm/vars`, {
+            method: 'DELETE'
+        });
+    }
+    const deleteVariable = async (key) => {
+        await fetch(`http://127.0.0.1:82/vm/var/${key}`, {
+            method: 'DELETE'
+        });
+        fetchVariables();
+    };
     const handleKeyClick = (key) => {
         const str = `{{_local['${key}']}}`;
         navigator.clipboard.writeText(str);
@@ -51,6 +62,7 @@ function VariableManager() {
                 <input type="text" value={value} onChange={handleValueChange} placeholder="Value" />
                 <button type="submit">Submit</button>
                 <button onClick={fetchVariables}>Refresh</button>
+                <button onClick={clearVariable}>Clear</button>
                 <table style={{ margin: '0 auto' }}>
                     <thead>
                         <tr>
@@ -63,6 +75,7 @@ function VariableManager() {
                             <tr key={key}>
                                 <td onClick={() => handleKeyClick(key)}>{key}</td>
                                 <td>{value}</td>
+                                <td><button onClick={() => deleteVariable(key)}>Delete</button></td>
                             </tr>
                         ))}
                     </tbody>
