@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 const { ipcRenderer } = window;
 
-function ScreenViewer() {
+function ScreenViewer({setDragCoords, setClickCoords}) {
     const [imageSrc, setImageSrc] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [dragStart, setDragStart] = useState(null);
@@ -41,6 +41,8 @@ function ScreenViewer() {
         } catch (error) {
             console.error(error);
         }
+        setDragCoords({ top_left_x: dragStart.x, top_left_y: dragStart.y, bottom_right_x: coords.x, bottom_right_y: coords.y });
+        setClickCoords({ x: dragStart.x, y: dragStart.y });
         alert(`Save variable : ${dragStart.x}, ${dragStart.y} to ${coords.x}, ${coords.y}`);
     };
 

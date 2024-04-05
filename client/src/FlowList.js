@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
 
 const API_URL = 'http://127.0.0.1';
 
-function FlowList({ taskItems, initialTaskItems }) {
+function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
   const [currentCount, setCurrentCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
@@ -150,6 +150,16 @@ function FlowList({ taskItems, initialTaskItems }) {
     }
   };
 
+  useEffect(() => {
+      if (pendingItem && (pendingItem.text === 'single_click' || pendingItem.text === 'long_press')) {
+        setInputValues({ ...inputValues, ...clickCoords });
+      } else if (pendingItem && pendingItem.text === 'extract_text') {
+        setInputValues({ ...inputValues, ...dragCoords });
+      } else {
+        setInputValues({ ...inputValues });
+      }
+    }, [dragCoords, clickCoords, pendingItem]);
+
   const onInputConfirm = async () => {
     const allFieldsFilled = Object.values(inputValues).every(value => value != null && value !== '');
 
@@ -284,7 +294,11 @@ function FlowList({ taskItems, initialTaskItems }) {
   return (<div>
     {inputVisible && (
       <OptionInput
-        inputValues={inputValues}
+        inputValues={
+          pendingItem.text === 'extract_text' ? { ...inputValues, ...dragCoords } :
+          (pendingItem.text === 'single_click' || pendingItem.text === 'long_press') ? { ...inputValues, ...clickCoords } :
+          inputValues
+        }
         onInputChange={onInputChange}
         onInputConfirm={onInputConfirm}
         onInputCancel={onInputCancel}

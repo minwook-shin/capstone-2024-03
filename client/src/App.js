@@ -9,6 +9,8 @@ import VariableManager from "./VariableManager";
 
 function App() {
   const [taskItems, setTaskItems] = useState([]);
+  const [clickCoords, setClickCoords] = useState({ x: 0, y: 0});
+  const [dragCoords, setDragCoords] = useState({ top_left_x: 0, top_left_y: 0, bottom_right_x: 0, bottom_right_y: 0});
 
   const initialTaskItems = useMemo(() => [
     { text: "scroll_up", time: 1 },
@@ -35,11 +37,11 @@ function App() {
         <div>
           <div>
             <TaskList taskItems={taskItems} />
-            <FlowList taskItems={taskItems}  initialTaskItems={initialTaskItems}/>
+            <FlowList taskItems={taskItems}  initialTaskItems={initialTaskItems} dragCoords={dragCoords} clickCoords={clickCoords}/>
             <ControlButtons />
           </div>
           <ManagerViewer />
-          <ScreenViewer />
+          <ScreenViewer setDragCoords={setDragCoords} setClickCoords={setClickCoords}/>
           <VariableManager />
         </div>
       </header>
