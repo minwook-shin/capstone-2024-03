@@ -17,8 +17,8 @@ test('renders IterationControl component with initial values', () => {
     />
   );
 
-  const iterationCountLabel = screen.getByText('Total Loop count');
-  const statusLabel = screen.getByText('Setting up a flow list...');
+  const iterationCountLabel = screen.getByText('총 반복 횟수 :');
+  const statusLabel = screen.getByText('시나리오 실행 대기하는 중...');
 
   expect(iterationCountLabel).toBeInTheDocument();
   expect(statusLabel).toBeInTheDocument();
@@ -39,7 +39,7 @@ test('displays "Playing..." when isPlaying is true', () => {
     />
   );
 
-  const statusLabel = screen.getByText('Playing...');
+  const statusLabel = screen.getByText('재생하는 중...');
 
   expect(statusLabel).toBeInTheDocument();
 });
@@ -59,7 +59,7 @@ test('displays "Setting up a flow list..." when isPlaying is false', () => {
     />
   );
 
-  const statusLabel = screen.getByText('Setting up a flow list...');
+  const statusLabel = screen.getByText('시나리오 실행 대기하는 중...');
 
   expect(statusLabel).toBeInTheDocument();
 });

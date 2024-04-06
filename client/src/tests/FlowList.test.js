@@ -5,8 +5,8 @@ import FlowList from '../FlowList';
 test('renders FlowList component with initial state', () => {
   render(<FlowList taskItems={[]} initialTaskItems={[]} />);
 
-  expect(screen.getByText('Run Flow')).toBeInTheDocument();
-  expect(screen.getByText('Clear Flow')).toBeInTheDocument();
+  expect(screen.getByText('실행')).toBeInTheDocument();
+  expect(screen.getByText('초기화')).toBeInTheDocument();
 });
 
 
@@ -19,7 +19,7 @@ test('allows running the flow items', async () => {
 
   render(<FlowList taskItems={[]} initialTaskItems={[]} flowItems={flowItems} />);
 
-  fireEvent.click(screen.getByText('Run Flow'));
+  fireEvent.click(screen.getByText('실행'));
 
   await waitFor(() => {
     expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
