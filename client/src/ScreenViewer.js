@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 const { ipcRenderer } = window;
 
-function ScreenViewer() {
+function ScreenViewer({setDragCoords, setClickCoords}) {
     const [imageSrc, setImageSrc] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [dragStart, setDragStart] = useState(null);
@@ -15,12 +15,35 @@ function ScreenViewer() {
         setIsDragging(true);
     };
 
-    const handleMouseUp = (event) => {
+    const handleMouseUp = async (event) => {
         if (!isDragging) return;
         const coords = getRealXY(event);
         setDragEnd(coords);
         setIsDragging(false);
-        alert(`Dragged from ${dragStart.x}, ${dragStart.y} to ${coords.x}, ${coords.y}`);
+        const data = {
+            top_left_x: dragStart.x,
+            top_left_y: dragStart.y,
+            bottom_right_x: coords.x,
+            bottom_right_y: coords.y,
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:82/vm/vars', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const responseData = await response.json();
+            console.log(responseData);
+        } catch (error) {
+            console.error(error);
+        }
+        setDragCoords({ top_left_x: dragStart.x, top_left_y: dragStart.y, bottom_right_x: coords.x, bottom_right_y: coords.y });
+        setClickCoords({ x: dragStart.x, y: dragStart.y });
+        alert(`Save variable : ${dragStart.x}, ${dragStart.y} to ${coords.x}, ${coords.y}`);
     };
 
     const handleMouseMove = (event) => {

@@ -450,6 +450,7 @@ def functions_iterator():
         "long_press": control_obj.execute_adb_long_press,
         "image_matching": control_obj.template_matching_using_screen,
         "extract_text": control_obj.extract_text_using_screen,
+        "user_variable": control_obj.add_user_variable
     }
     functions = json.loads(functions)
 
@@ -578,3 +579,38 @@ def extract_text():
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
     return {'message': 'text extraction added', 'arguments': f'{top_left_x}, {top_left_y}, {bottom_right_x}, {bottom_right_y}'}, 200
+
+
+@controller.route('/user_variable', methods=['POST'])
+def user_variable():
+    """
+    Add a user variable to the task queue.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: user_variable
+          required:
+            - variable_name
+            - variable_value
+            - task_id
+          properties:
+            variable_name:
+              type: string
+              description: The name of the variable.
+            variable_value:
+              type: string
+              description: The value of the variable.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    variable_name = request.json.get('variable_name')
+    variable_value = request.json.get('variable_value')
+    task_id = request.json.get('task_id')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.add_user_variable, param=(variable_name, variable_value),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'user_variable added', 'variable_name': variable_name, 'variable_value': variable_value}, 200

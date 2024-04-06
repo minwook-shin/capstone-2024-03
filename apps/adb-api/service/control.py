@@ -13,6 +13,18 @@ logger_worker = CustomLogger().start_worker()
 logger = logger_worker.get_logger()
 
 
+def convert_template_string(template_string):
+    url = "http://127.0.0.1:82/vm/render"
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    data = {
+        "template_string": template_string,
+    }
+    return requests.post(url, headers=headers, data=data).text
+
+
 class ADB:
     def __init__(self):
         self.apk_path = 'https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk'
@@ -112,6 +124,9 @@ class ADB:
         x (int): The x-coordinate of the click.
         y (int): The y-coordinate of the click.
         """
+        x = convert_template_string(x)
+        y = convert_template_string(y)
+
         self.device.shell(f'input tap {x} {y}')
         sleep(1)
 
@@ -126,6 +141,8 @@ class ADB:
         x (int): The x-coordinate of the click.
         y (int): The y-coordinate of the click.
         """
+        x = convert_template_string(x)
+        y = convert_template_string(y)
         self.device.shell(f'input swipe {x} {y} {x} {y} 500')
         sleep(1)
 
@@ -152,8 +169,9 @@ class ADB:
         Parameters:
         input_text (str): The text to be input.
         """
+        input_text = str(convert_template_string(input_text))
         sleep(1)
-        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg {input_text}')
+        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{input_text}"')
         sleep(1)
 
         logger.debug('Complete input text task')
@@ -218,6 +236,10 @@ class ADB:
         Returns:
         bool: True if the extracted text is found, False otherwise.
         """
+        top_left_x = convert_template_string(top_left_x)
+        top_left_y = convert_template_string(top_left_y)
+        bottom_right_x = convert_template_string(bottom_right_x)
+        bottom_right_y = convert_template_string(bottom_right_y)
         result = self.device.screencap()
         data = {
             "top_left_x": int(top_left_x),
@@ -228,3 +250,13 @@ class ADB:
         requests.post('http://localhost:81/extract_texts',
                       files={'image': result}, data=data)
 
+    def add_user_variable(self, key, value):
+        """
+        Add a user variable to the ADB API.
+
+        Parameters:
+        key (str): The key of the user variable.
+        value (str): The value of the user variable.
+        """
+        data = {"key": key ,"value": value}
+        requests.post('http://localhost:82/vm/var', data=data)

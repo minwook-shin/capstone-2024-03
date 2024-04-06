@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
 
 const API_URL = 'http://127.0.0.1';
 
-function FlowList({ taskItems, initialTaskItems }) {
+function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
   const [currentCount, setCurrentCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
@@ -150,6 +150,16 @@ function FlowList({ taskItems, initialTaskItems }) {
     }
   };
 
+  useEffect(() => {
+      if (pendingItem && (pendingItem.text === 'single_click' || pendingItem.text === 'long_press')) {
+        setInputValues({ ...inputValues, ...clickCoords });
+      } else if (pendingItem && pendingItem.text === 'extract_text') {
+        setInputValues({ ...inputValues, ...dragCoords });
+      } else {
+        setInputValues({ ...inputValues });
+      }
+    }, [dragCoords, clickCoords, pendingItem]);
+
   const onInputConfirm = async () => {
     const allFieldsFilled = Object.values(inputValues).every(value => value != null && value !== '');
 
@@ -174,8 +184,8 @@ function FlowList({ taskItems, initialTaskItems }) {
         const body = { time, task_id };
 
         if (newItem.text === 'single_click') {
-          body.x = parseInt(newItem.x, 10);
-          body.y = parseInt(newItem.y, 10);
+          body.x = isNaN(parseInt(newItem.x, 10)) ? newItem.x : parseInt(newItem.x, 10);
+          body.y = isNaN(parseInt(newItem.y, 10)) ? newItem.y : parseInt(newItem.y, 10);
         }
         else if (newItem.text === 'key_event') {
           body.key_event = newItem.key_event;
@@ -188,8 +198,8 @@ function FlowList({ taskItems, initialTaskItems }) {
           body.input_text = newItem.input_text;
         }
         else if (newItem.text === 'long_press') {
-          body.x = parseInt(newItem.x, 10);
-          body.y = parseInt(newItem.y, 10);
+          body.x = isNaN(parseInt(newItem.x, 10)) ? newItem.x : parseInt(newItem.x, 10);
+          body.y = isNaN(parseInt(newItem.y, 10)) ? newItem.y : parseInt(newItem.y, 10);
         }
         else if (newItem.text === 'image_matching') {
           const formData = new FormData();
@@ -207,10 +217,14 @@ function FlowList({ taskItems, initialTaskItems }) {
           return;
         }
         else if (newItem.text === 'extract_text') {
-          body.top_left_x = parseInt(newItem.top_left_x, 10);
-          body.top_left_y = parseInt(newItem.top_left_y, 10);
-          body.bottom_right_x = parseInt(newItem.bottom_right_x, 10);
-          body.bottom_right_y = parseInt(newItem.bottom_right_y, 10);
+          body.top_left_x = isNaN(parseInt(newItem.top_left_x, 10)) ? newItem.top_left_x : parseInt(newItem.top_left_x, 10);
+          body.top_left_y = isNaN(parseInt(newItem.top_left_y, 10)) ? newItem.top_left_y : parseInt(newItem.top_left_y, 10);
+          body.bottom_right_x = isNaN(parseInt(newItem.bottom_right_x, 10)) ? newItem.bottom_right_x : parseInt(newItem.bottom_right_x, 10);
+          body.bottom_right_y = isNaN(parseInt(newItem.bottom_right_y, 10)) ? newItem.bottom_right_y : parseInt(newItem.bottom_right_y, 10);
+        }
+        else if (newItem.text === 'user_variable') {
+          body.variable_name = newItem.variable_name;
+          body.variable_value = newItem.variable_value;
         }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
@@ -280,7 +294,11 @@ function FlowList({ taskItems, initialTaskItems }) {
   return (<div>
     {inputVisible && (
       <OptionInput
-        inputValues={inputValues}
+        inputValues={
+          pendingItem.text === 'extract_text' ? { ...inputValues, ...dragCoords } :
+          (pendingItem.text === 'single_click' || pendingItem.text === 'long_press') ? { ...inputValues, ...clickCoords } :
+          inputValues
+        }
         onInputChange={onInputChange}
         onInputConfirm={onInputConfirm}
         onInputCancel={onInputCancel}

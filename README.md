@@ -158,6 +158,9 @@ npm run adb-start
 * image-finder: 터미널에서만 동작하는 OpenCV 기반 이미지 좌표 및 텍스트 추출하는 패키지
     * https://pypi.org/project/image-finder/
 
+* flask-variable-manager: Flask 확장 어플리케이션으로 동작하는 변수 관리 프로젝트
+    * https://pypi.org/project/flask-variable-manager/
+
 ## 문서
 
 해당 프로젝트의 구조 및 API 설계에 대한 내용은 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 를 참고해주세요.

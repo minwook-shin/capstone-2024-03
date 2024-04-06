@@ -5,22 +5,26 @@ import FlowList from './FlowList';
 import ControlButtons from './ControlButtons';
 import ScreenViewer from './ScreenViewer';
 import ManagerViewer from './ManagerViewer';
+import VariableManager from "./VariableManager";
 
 function App() {
   const [taskItems, setTaskItems] = useState([]);
+  const [clickCoords, setClickCoords] = useState({ x: 0, y: 0});
+  const [dragCoords, setDragCoords] = useState({ top_left_x: 0, top_left_y: 0, bottom_right_x: 0, bottom_right_y: 0});
 
   const initialTaskItems = useMemo(() => [
-    { text: "scroll_up", time: '' },
-    { text: "scroll_down", time: '' },
-    { text: "single_click", x: '', y: '', time: '' },
-    { text: "long_press", x: '', y: '', time: '' },
-    { text: "key_event", key_event: '', time: '' },
-    { text: "delay", time: '' },
-    { text: "loop", time: '', functions: [] },
-    { text: "input_text", time: '', input_text: '' },
-    { text: "screen_capture", time: '' },
+    { text: "scroll_up", time: 1 },
+    { text: "scroll_down", time: 1 },
+    { text: "single_click", x: '', y: '', time: 1 },
+    { text: "long_press", x: '', y: '', time: 1 },
+    { text: "key_event", key_event: '', time: 1 },
+    { text: "delay", time: 1 },
+    { text: "loop", time: 1, functions: [] },
+    { text: "input_text", time: 1, input_text: '' },
+    { text: "screen_capture", time: 1 },
     { text: "image_matching", time: 1, template: ''},
     { text: "extract_text", time: 1, top_left_x: '', top_left_y: '', bottom_right_x: '', bottom_right_y: ''},
+    { text: "user_variable", time: 1, variable_name: '', variable_value: ''}
   ], []);
 
   useEffect(() => {
@@ -33,11 +37,12 @@ function App() {
         <div>
           <div>
             <TaskList taskItems={taskItems} />
-            <FlowList taskItems={taskItems}  initialTaskItems={initialTaskItems}/>
+            <FlowList taskItems={taskItems}  initialTaskItems={initialTaskItems} dragCoords={dragCoords} clickCoords={clickCoords}/>
             <ControlButtons />
           </div>
           <ManagerViewer />
-          <ScreenViewer />
+          <ScreenViewer setDragCoords={setDragCoords} setClickCoords={setClickCoords}/>
+          <VariableManager />
         </div>
       </header>
     </div>

@@ -6,13 +6,13 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
 
     useEffect(() => {
         const loadKeyEvents = async () => {
-          const response = await fetch('./key_event.json');
-          const data = await response.json();
-          setKeyEvents(data.key_events);
+            const response = await fetch('./key_event.json');
+            const data = await response.json();
+            setKeyEvents(data.key_events);
         };
-    
+
         loadKeyEvents();
-      }, []);
+    }, []);
     return (
         <>
             {Object.keys(inputValues).map((key) => {
@@ -40,7 +40,7 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                             ))}
                         </select>
                     );
-                } 
+                }
                 if (key === 'template') {
                     return (
                         <input
