@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
+import { Grid, Box } from '@mui/material';
 
 const API_URL = 'http://127.0.0.1';
 
@@ -151,14 +152,16 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
   };
 
   useEffect(() => {
+    setInputValues(inputValues => {
       if (pendingItem && (pendingItem.text === 'single_click' || pendingItem.text === 'long_press')) {
-        setInputValues({ ...inputValues, ...clickCoords });
+        return { ...inputValues, ...clickCoords };
       } else if (pendingItem && pendingItem.text === 'extract_text') {
-        setInputValues({ ...inputValues, ...dragCoords });
+        return { ...inputValues, ...dragCoords };
       } else {
-        setInputValues({ ...inputValues });
+        return { ...inputValues };
       }
-    }, [dragCoords, clickCoords, pendingItem]);
+    });
+  }, [dragCoords, clickCoords, pendingItem]);
 
   const onInputConfirm = async () => {
     const allFieldsFilled = Object.values(inputValues).every(value => value != null && value !== '');
@@ -280,24 +283,24 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
     setCurrentCount(0);
     setIsPlaying(false);
   };
-  const handleButtonClick = async () => {
-    const response = await fetch(`${API_URL}/tasks`, {
-      method: 'GET'
-    });
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const jsonResponse = await response.json();
-    console.log(JSON.stringify(flowItems));
-    console.log(JSON.stringify(jsonResponse));
-  };
+  // const handleButtonClick = async () => {
+  //   const response = await fetch(`${API_URL}/tasks`, {
+  //     method: 'GET'
+  //   });
+  //   if (!response.ok) {
+  //     throw new Error('Network response was not ok');
+  //   }
+  //   const jsonResponse = await response.json();
+  //   console.log(JSON.stringify(flowItems));
+  //   console.log(JSON.stringify(jsonResponse));
+  // };
   return (<div>
     {inputVisible && (
       <OptionInput
         inputValues={
           pendingItem.text === 'extract_text' ? { ...inputValues, ...dragCoords } :
-          (pendingItem.text === 'single_click' || pendingItem.text === 'long_press') ? { ...inputValues, ...clickCoords } :
-          inputValues
+            (pendingItem.text === 'single_click' || pendingItem.text === 'long_press') ? { ...inputValues, ...clickCoords } :
+              inputValues
         }
         onInputChange={onInputChange}
         onInputConfirm={onInputConfirm}
@@ -309,11 +312,8 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       onDrop={onDrop}
       onDragOver={handleDragOver}
     >
-      <button onClick={handleButtonRun}>Run Flow</button>
-      <button onClick={handleButtonClear}>Clear Flow</button>
-      <button onClick={saveToFile}>Save to File</button>
-      <input type="file" onChange={loadFromFile} />
-      <h2>List of Flows to run (Drop)</h2>
+
+      <h2>시나리오 배치 (놓기)</h2>
       <ol>
         {flowItems.map(item => (
           <li key={item.id}>
@@ -327,15 +327,31 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
             })}
           </li>
         ))}
+        <br />
       </ol>
     </div>
-    <IterationControl
-      repeatCount={repeatCount}
-      setRepeatCount={setRepeatCount}
-      currentCount={currentCount}
-      isPlaying={isPlaying}
-    />
-    <button onClick={handleButtonClick}> DEBUG : Print JSON</button>
+    <Grid container spacing={0}>
+    <Box padding={1}>
+      <Grid item xs={12} sm={12} md={12}>
+        <button onClick={handleButtonRun}>실행</button>
+        <button onClick={handleButtonClear}>초기화</button>
+        <button onClick={saveToFile}>저장</button>
+        <input type="file" onChange={loadFromFile} />
+      </Grid>
+      </Box>
+      <Box padding={1}>
+      <Grid item xs={12} sm={12} md={12}>
+        <IterationControl
+          repeatCount={repeatCount}
+          setRepeatCount={setRepeatCount}
+          currentCount={currentCount}
+          isPlaying={isPlaying}
+        />
+      </Grid>
+      </Box>
+      {/* <button onClick={handleButtonClick}> DEBUG : Print JSON</button> */}
+
+    </Grid>
   </div>
   );
 }

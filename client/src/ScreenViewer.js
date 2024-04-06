@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 const { ipcRenderer } = window;
 
+export const handleButtonReload = () => {
+    ipcRenderer.send("screen");
+};
+
 function ScreenViewer({setDragCoords, setClickCoords}) {
     const [imageSrc, setImageSrc] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -73,18 +77,19 @@ function ScreenViewer({setDragCoords, setClickCoords}) {
         });
     }, []);
 
-    const handleButtonReload = () => {
-        ipcRenderer.send("screen");
-    };
+    
 
     return (
-        <div>
-            <button onClick={handleButtonReload}>refresh Screen</button><br />
-            {isLoading ? (
+        <div style={{ width: '100%', height: '100%' }}>
+            <div>{isLoading ? (
                 <label>Loading...</label>
             ) : (
-                <label>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="Uploaded" style={{ maxWidth: "25%", maxHeight: "25%" }} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} />}</label>
-            )}
+                <label>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="Uploaded" style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain' 
+                }}  onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} />}</label>
+            )}</div>
         </div>
     );
 }

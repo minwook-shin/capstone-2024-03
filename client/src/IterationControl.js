@@ -4,7 +4,7 @@ function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying
     return (
         <div>
             <div>
-                <label>Total Loop count </label>
+                <label>총 반복 횟수 : </label>
                 <input
                     type="number"
                     value={repeatCount}
@@ -12,10 +12,10 @@ function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying
                 />
             </div>
             <div>
-                <label>Current Total Loop count : {currentCount}</label>
+                <label>현재 진행 중인 반복 횟수 : {currentCount}</label>
             </div>
             <div>
-            <label>{isPlaying ? "Playing..." : "Setting up a flow list..."}</label>
+            <label>{isPlaying ? "재생하는 중..." : "시나리오 실행 대기하는 중..."}</label>
             </div>
         </div>
     );
