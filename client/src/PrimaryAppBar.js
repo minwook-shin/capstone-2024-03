@@ -54,6 +54,8 @@ export default function PrimaryAppBar() {
     const DraggableArea = styled('div')({
         '-webkit-app-region': 'drag',
         flexGrow: 1,
+        width: '100%',
+        height: '100%'
     });
 
     const menuId = 'primary-search-account-menu';
@@ -84,8 +86,8 @@ export default function PrimaryAppBar() {
                         >
                             2024 캡스톤 03 스튜디오
                         </Typography>
+                        <Box sx={{ flexGrow: 1 }} />
                     </DraggableArea>
-                    <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: 'flex' }}>
                         <Tooltip title="시나리오에서 스크린샷 내려받기">
                             <IconButton size="large" color="inherit" onClick={DownloadScreenShot}>
