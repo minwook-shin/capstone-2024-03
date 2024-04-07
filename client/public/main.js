@@ -38,7 +38,7 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         resizable: true,
         width: 1000,
-        height: 700,
+        height: 800,
         autoHideMenuBar: true,
         titleBarStyle: 'hidden',
         webPreferences: {
