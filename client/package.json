@@ -16,6 +16,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
+    "react-window": "^1.8.10",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -25,9 +26,9 @@
     "eject": "react-scripts eject",
     "python": "cd ../apps/adb-api && uwsgi --ini uwsgi.ini",
     "image": "cd ../apps/image-api && uwsgi --ini uwsgi.ini",
-    "vm" : "cd ../apps/vm-api && uwsgi --ini uwsgi.ini",
-    "adb-start" : "adb start-server",
-    "adb-kill" : "adb kill-server",
+    "vm": "cd ../apps/vm-api && uwsgi --ini uwsgi.ini",
+    "adb-start": "adb start-server",
+    "adb-kill": "adb kill-server",
     "electron": "wait-on http://127.0.0.1 && wait-on http://127.0.0.1:3000 && electron .",
     "dev": "concurrently \"yarn python\" \"yarn image\" \"yarn vm\" \"yarn start\" \"yarn electron\""
   },
