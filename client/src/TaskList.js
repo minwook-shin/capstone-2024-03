@@ -17,7 +17,7 @@ function TaskList({ taskItems }) {
             <Tooltip title="작업을 추가하려면 '시나리오 목록'으로 끌어서 놓으세요." placement="right-start" arrow>
                 <ListItem
                     key={item.id}
-                    style={{ ...style, border: '0.5px solid #ddd', borderLeft: 'none', borderRight: 'none' }}
+                    style={{ ...style, border: '0.5px solid #ddd', borderLeft: 'none', borderRight: 'none', borderTop: 'none'}}
                     draggable
                     onDragStart={(event) => handleDragStart(event, item)}
                 >

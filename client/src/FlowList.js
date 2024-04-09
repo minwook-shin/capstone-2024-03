@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
-import { Grid, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import SendTimeExtensionIcon from '@mui/icons-material/SendTimeExtension';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -326,63 +326,61 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       onDrop={onDrop}
       onDragOver={handleDragOver}
     >
-      <h2> <SendTimeExtensionIcon  style={{ verticalAlign: 'middle' }}/> 시나리오 목록</h2>
+      <h2> <SendTimeExtensionIcon style={{ verticalAlign: 'middle' }} /> 시나리오 목록</h2>
       {flowItems.length === 0 &&
-          <Box padding={1} sx={{ color: 'grey.500', justifyContent: 'center'}}><Typography><AddTaskIcon fontSize="small" style={{ verticalAlign: 'middle' }}/> 작업을 추가해주세요.</Typography>
-          </Box>
-        }
-       <List>
-      {flowItems.map(item => (
-        <ListItem key={item.id} style={{ border: '0.5px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
-          {Object.entries(item).map(([key, value]) => {
-            if (key === 'id') return null;
-            if (key === 'text') return null;
-            if (key === 'display_text') {
+        <Box padding={0.5} sx={{ color: 'grey.500', justifyContent: 'center' }}><Typography><AddTaskIcon fontSize="small" style={{ verticalAlign: 'middle' }} /> 작업을 추가해주세요.</Typography>
+        </Box>
+      }
+      <List>
+        {flowItems.map(item => (
+          <ListItem key={item.id} style={{ border: '0.5px solid #ddd', borderLeft: 'none', borderRight: 'none', borderTop: 'none' }}>
+            {Object.entries(item).map(([key, value]) => {
+              if (key === 'id') return null;
+              if (key === 'text') return null;
+              if (key === 'display_text') {
+                return (
+                  <Tooltip title={value} arrow>
+                    <ListItemText primary={<Typography variant="caption" >{value.length > 5 ? value.substring(0, 5) + '...' : value} </Typography>} />
+                  </Tooltip>
+                );
+              }
+              if (key === 'template' && value) {
+                return <ListItemText secondary={<img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />} />;
+              }
               return (
-                <Tooltip title={value} arrow>
-                  <ListItemText primary={<Typography variant="caption" >{value.length > 5 ? value.substring(0, 5) + '...' : value} </Typography>} />
+                <Tooltip title={`${key}: ${value}`} arrow>
+                  <ListItemText secondary={<Typography variant="caption" >{`${key.length > 5 ? key.substring(0, 5) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
                 </Tooltip>
               );
-            }
-            if (key === 'template' && value) {
-              return <ListItemText secondary={<img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />} />;
-            }
-            return (
-              <Tooltip title={`${key}: ${value}`} arrow>
-                <ListItemText secondary={<Typography variant="caption" >{`${key.length > 5 ? key.substring(0, 5) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
-              </Tooltip>
-            );
-          })}
-        </ListItem>
-      ))}
-    </List>
+            })}
+          </ListItem>
+        ))}
+      </List>
     </div>
-      <Grid item xs={12} sm={12} md={12}>
-        <IterationControl
-          repeatCount={repeatCount}
-          setRepeatCount={setRepeatCount}
-          currentCount={currentCount}
-          isPlaying={isPlaying}
-        />
-      </Grid>
+    <IterationControl
+      repeatCount={repeatCount}
+      setRepeatCount={setRepeatCount}
+      currentCount={currentCount}
+      isPlaying={isPlaying}
+    />
     <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }}>
       <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button onClick={handleButtonRun}><PlayCircleOutlineIcon/></Button>
+        <Button onClick={handleButtonRun}><PlayCircleOutlineIcon /></Button>
       </Tooltip>
       <Tooltip title="시나리오의 모든 작업을 지우려면 '초기화' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button onClick={handleButtonClear}><HighlightOffIcon/></Button>
+        <Button onClick={handleButtonClear}><HighlightOffIcon /></Button>
       </Tooltip>
       <Tooltip title="시나리오를 파일로 내보내려면 '저장' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button onClick={saveToFile}><SaveIcon/></Button>
+        <Button onClick={saveToFile}><SaveIcon /></Button>
       </Tooltip>
       <Tooltip title="파일에서 시나리오를 불러오려면 '복원' 버튼을 클릭합니다." placement="bottom-start" arrow>
         <Button component="label">
-          <SettingsBackupRestoreIcon/>
-          <input type="file" onChange={loadFromFile} style={{ display: 'none' }}/>
+          <SettingsBackupRestoreIcon />
+          <input type="file" onChange={loadFromFile} style={{ display: 'none' }} />
         </Button>
       </Tooltip>
     </ButtonGroup>
-    
+
     {/* <button onClick={handleButtonClick}> DEBUG : Print JSON</button> */}
 
   </div>
