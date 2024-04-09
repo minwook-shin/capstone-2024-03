@@ -29,7 +29,7 @@ function TaskList({ taskItems }) {
 
     return (
         <div className="task" style={{ width: '100%' }}>
-            <h2> <DragIndicatorIcon /> 사용 가능한 작업</h2>
+            <h2> <DragIndicatorIcon  style={{ verticalAlign: 'middle' }}/> 사용 가능한 작업</h2>
             <FixedSizeList
                 height={350}
                 width="100%"

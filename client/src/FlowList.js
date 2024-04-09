@@ -11,6 +11,11 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import SaveIcon from '@mui/icons-material/Save';
+import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
+
 
 const API_URL = 'http://127.0.0.1';
 
@@ -321,9 +326,9 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       onDrop={onDrop}
       onDragOver={handleDragOver}
     >
-      <h2> <SendTimeExtensionIcon /> 시나리오 목록</h2>
+      <h2> <SendTimeExtensionIcon  style={{ verticalAlign: 'middle' }}/> 시나리오 목록</h2>
       {flowItems.length === 0 &&
-          <Box padding={1} sx={{ color: 'grey.500', justifyContent: 'center'}}><Typography><AddTaskIcon/> 작업을 추가해주세요.</Typography>
+          <Box padding={1} sx={{ color: 'grey.500', justifyContent: 'center'}}><Typography><AddTaskIcon fontSize="small" style={{ verticalAlign: 'middle' }}/> 작업을 추가해주세요.</Typography>
           </Box>
         }
        <List>
@@ -352,26 +357,6 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       ))}
     </List>
     </div>
-    <ButtonGroup variant="text" aria-label="Basic button group" sx={{ display: 'flex' }}>
-      <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button onClick={handleButtonRun}>실행</Button>
-      </Tooltip>
-      <Tooltip title="시나리오의 모든 작업을 지우려면 '초기화' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button onClick={handleButtonClear}>초기화</Button>
-      </Tooltip>
-      <Tooltip title="시나리오를 파일로 내보내려면 '저장' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button onClick={saveToFile}>저장</Button>
-      </Tooltip>
-      <Tooltip title="파일에서 시나리오를 불러오려면 '복원' 버튼을 클릭합니다." placement="bottom-start" arrow>
-        <Button component="label"> 복원
-          <input
-            type="file"
-            onChange={loadFromFile}
-            hidden
-          />
-        </Button> </Tooltip>
-    </ButtonGroup>
-    <Box padding={1}>
       <Grid item xs={12} sm={12} md={12}>
         <IterationControl
           repeatCount={repeatCount}
@@ -380,7 +365,24 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
           isPlaying={isPlaying}
         />
       </Grid>
-    </Box>
+    <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }}>
+      <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button onClick={handleButtonRun}><PlayCircleOutlineIcon/></Button>
+      </Tooltip>
+      <Tooltip title="시나리오의 모든 작업을 지우려면 '초기화' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button onClick={handleButtonClear}><HighlightOffIcon/></Button>
+      </Tooltip>
+      <Tooltip title="시나리오를 파일로 내보내려면 '저장' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button onClick={saveToFile}><SaveIcon/></Button>
+      </Tooltip>
+      <Tooltip title="파일에서 시나리오를 불러오려면 '복원' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button component="label">
+          <SettingsBackupRestoreIcon/>
+          <input type="file" onChange={loadFromFile} style={{ display: 'none' }}/>
+        </Button>
+      </Tooltip>
+    </ButtonGroup>
+    
     {/* <button onClick={handleButtonClick}> DEBUG : Print JSON</button> */}
 
   </div>
