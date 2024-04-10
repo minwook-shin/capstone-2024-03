@@ -5,7 +5,7 @@ import { FixedSizeList } from 'react-window';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import Tooltip from '@mui/material/Tooltip';
 
-function TaskList({ taskItems }) {
+function TaskList({ taskItems, className }) {
     const handleDragStart = (event, item) => {
         event.dataTransfer.setData("text/plain", JSON.stringify(item));
     };
@@ -28,8 +28,8 @@ function TaskList({ taskItems }) {
     };
 
     return (
-        <div className="task" style={{ width: '100%' }}>
-            <h2> <DragIndicatorIcon  style={{ verticalAlign: 'middle' }}/> 사용 가능한 작업</h2>
+        <div style={{ width: '100%' }} className={className}>
+            <h2> <DragIndicatorIcon  style={{ verticalAlign: 'middle' }}/> 사용 가능한 작업 </h2>
             <FixedSizeList
                 height={350}
                 width="100%"

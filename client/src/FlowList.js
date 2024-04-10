@@ -19,7 +19,7 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 
 const API_URL = 'http://127.0.0.1';
 
-function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
+function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, className, className2}) {
   const [currentCount, setCurrentCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
@@ -322,9 +322,9 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       />
     )}
     <div
-      className="flow"
       onDrop={onDrop}
       onDragOver={handleDragOver}
+      className={className}
     >
       <h2> <SendTimeExtensionIcon style={{ verticalAlign: 'middle' }} /> 시나리오 목록</h2>
       {flowItems.length === 0 &&
@@ -363,7 +363,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       currentCount={currentCount}
       isPlaying={isPlaying}
     />
-    <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }}>
+    <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }} className={className2}>
       <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>
         <Button onClick={handleButtonRun}><PlayCircleOutlineIcon /></Button>
       </Tooltip>

@@ -16,6 +16,7 @@ import { handleButtonReload } from './ScreenViewer.js';
 import { resetKeyboard, installKeyboard, DownloadScreenShot } from './ControlButtons.js';
 import { handleClickShowManager } from './ManagerViewer.js';
 import Tooltip from '@mui/material/Tooltip';
+import HelpIcon from '@mui/icons-material/Help';
 
 
 import { useCallback, useState } from 'react';
@@ -23,7 +24,7 @@ import { useCallback, useState } from 'react';
 
 
 
-export default function PrimaryAppBar() {
+export default function PrimaryAppBar({ className, setRun }) {
     async function fetchData(url, options = {}) {
         const response = await fetch(url, options);
         if (!response.ok) {
@@ -88,7 +89,7 @@ export default function PrimaryAppBar() {
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
                     </DraggableArea>
-                    <Box sx={{ display: 'flex' }}>
+                    <Box sx={{ display: 'flex' }} className={className}>
                         <Tooltip title="시나리오에서 스크린샷 내려받기">
                             <IconButton size="large" color="inherit" onClick={DownloadScreenShot}>
                                 <CloudDownloadIcon />
@@ -106,11 +107,15 @@ export default function PrimaryAppBar() {
                                 <RefreshIcon />
                             </IconButton>
                         </Tooltip>
+                        <Tooltip title="도움말 확인">
+                            <IconButton size="large" color="inherit" onClick={() => setRun(true)}>
+                                <HelpIcon />
+                            </IconButton>
+                        </Tooltip>
 
                         <IconButton size="large" edge="end" onClick={handleProfileMenuOpen} color="inherit">
                             <AdbIcon />
                         </IconButton>
-
                         <IconButton
                             size="large"
                             edge="end"
