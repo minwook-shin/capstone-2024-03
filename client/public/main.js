@@ -41,6 +41,7 @@ const createWindow = () => {
         height: 800,
         autoHideMenuBar: true,
         titleBarStyle: 'hidden',
+        icon: path.join(__dirname, 'favicon.ico'),
         webPreferences: {
             devTools: isDev,
             nodeIntegration: true,
