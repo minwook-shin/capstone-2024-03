@@ -1,5 +1,5 @@
 # 2024 capstone 03
-
+![](./client/public/logo192.png)
 [![Python package](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml)
 [![Node.js CI](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/node.js.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/node.js.yml)
 
