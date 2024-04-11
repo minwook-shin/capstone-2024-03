@@ -1,7 +1,10 @@
 # 2024 capstone 03
-![](./client/public/logo192.png)
+
 [![Python package](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml)
 [![Node.js CI](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/node.js.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/node.js.yml)
+
+![](./client/public/logo192.png)
+<img src="app_ui.png" width="300" height="auto"/>
 
 본 프로젝트는 Python 3.10, 3.11, 3.12 / NodeJS 18, 20 버전의 CI/CD 테스트를 진행하고 있습니다.
 
