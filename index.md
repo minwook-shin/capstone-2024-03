@@ -141,6 +141,12 @@ powershell -noexit "& ""scripts\adb_installer.ps1"""
 npm run adb-start
 ```
 
+## 빌드 및 사용법
+
+React, Electron 빌드를 완료하면, 다음과 같이 어플리케이션이 생성됩니다 : 
+
+![](app_preview.png)
+
 # Related Library
 
 ## Python PYPI Release
