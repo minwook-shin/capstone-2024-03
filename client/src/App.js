@@ -74,8 +74,8 @@ function App() {
           </Grid>
 
           <Grid item xs={12} sm={12} md={4}>
-            <Box boxShadow={3} padding={1} className="screen_target">
-              <ScreenViewer setDragCoords={setDragCoords} setClickCoords={setClickCoords} />
+            <Box boxShadow={3} padding={1}>
+              <ScreenViewer setDragCoords={setDragCoords} setClickCoords={setClickCoords}  className="screen_target"/>
             </Box>
           </Grid>
         </Grid>

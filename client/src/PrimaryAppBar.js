@@ -77,7 +77,7 @@ export default function PrimaryAppBar({ className, setRun }) {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="fixed">
                 <Toolbar>
                     <DraggableArea>
                         <Typography
@@ -85,7 +85,7 @@ export default function PrimaryAppBar({ className, setRun }) {
                             noWrap
                             component="div"
                         >
-                            2024 캡스톤 03 스튜디오
+                            Studio (Buzzni & Minwook)
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
                     </DraggableArea>
@@ -127,6 +127,7 @@ export default function PrimaryAppBar({ className, setRun }) {
                     </Box>
                 </Toolbar>
             </AppBar>
+            <Toolbar />
             {renderMenu}
         </Box>
     );

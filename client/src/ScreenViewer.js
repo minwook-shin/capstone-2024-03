@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
-import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 
 const { ipcRenderer } = window;
 
@@ -8,7 +8,7 @@ export const handleButtonReload = () => {
     ipcRenderer.send("screen");
 };
 
-function ScreenViewer({ setDragCoords, setClickCoords }) {
+function ScreenViewer({ setDragCoords, setClickCoords ,className}) {
     const [imageSrc, setImageSrc] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [dragStart, setDragStart] = useState(null);
@@ -95,9 +95,9 @@ function ScreenViewer({ setDragCoords, setClickCoords }) {
     return (
         <div style={{ width: '100%', height: '100%' }}>
             <div>{isLoading ? (
-                <CircularProgress color="inherit" />
+                <LinearProgress color="inherit" />
             ) : (
-                <label>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="스마트폰이 인식되지 않습니다." style={{
+                <label className={className}>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="스마트폰이 인식되지 않습니다." style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'contain'
