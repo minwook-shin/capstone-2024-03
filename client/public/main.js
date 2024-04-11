@@ -35,12 +35,13 @@ async function show_manager() {
 }
 
 const createWindow = () => {
-    const { height } = screen.getPrimaryDisplay().workAreaSize;
-
     mainWindow = new BrowserWindow({
         resizable: true,
-        width: 800,
-        height: height,
+        width: 1000,
+        height: 800,
+        autoHideMenuBar: true,
+        titleBarStyle: 'hidden',
+        icon: path.join(__dirname, 'favicon.ico'),
         webPreferences: {
             devTools: isDev,
             nodeIntegration: true,

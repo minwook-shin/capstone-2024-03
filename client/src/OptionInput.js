@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { TextField, Select, MenuItem, TextareaAutosize, Tooltip } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import { Box } from '@mui/material';
 
-
-function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel}) {
+function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel }) {
     const [keyEvents, setKeyEvents] = useState({});
 
     useEffect(() => {
@@ -13,17 +15,19 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
 
         loadKeyEvents();
     }, []);
+
     return (
         <>
             {Object.keys(inputValues).map((key) => {
+                if (key === 'text') { return null; }
+                if (key === 'display_text') { return (<Box padding={1} sx={{ color: 'grey.500', justifyContent: 'center' }}><Typography> {inputValues[key]} 값을 설정하는 중...</Typography></Box>); }
                 if (key === 'key_event') {
                     return (
-                        <select
+                        <Select fullWidth
                             key={key}
                             name={key}
                             value={inputValues[key]}
                             onChange={onInputChange}
-                            readOnly={key === 'text'}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     onInputConfirm();
@@ -34,22 +38,22 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                             }}
                         >
                             {Object.entries(keyEvents).map(([eventKey, eventValue]) => (
-                                <option key={eventKey} value={eventValue}>
+                                <MenuItem key={eventKey} value={eventValue}>
                                     {eventKey}
-                                </option>
+                                </MenuItem>
                             ))}
-                        </select>
+                        </Select>
                     );
                 }
                 if (key === 'template') {
                     return (
-                        <input
+                        <TextField fullWidth
+                            label={key}
                             key={key}
                             type="file"
                             name={key}
                             onChange={onInputChange}
-                            placeholder={`Enter ${key}`}
-                            readOnly={key === 'text'}
+                            placeholder={`${key} 값을 입력하세요.`}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     onInputConfirm();
@@ -58,20 +62,20 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                                     onInputCancel();
                                 }
                             }}
+                            sx={{ my: 0.5 }}
                         />
                     );
                 }
                 else if (key === 'functions') {
                     return (
-                        <textarea
+                        <TextareaAutosize fullWidth
                             style={{ width: '100%' }}
                             key={key}
-                            type="text"
                             name={key}
+                            label={key}
                             value={inputValues[key]}
                             onChange={onInputChange}
-                            placeholder='Drag & drop here and create a list with brackets : [{"text": "scroll_down", "time": "2"}, ...]'
-                            readOnly={key === 'text'}
+                            placeholder='여기에 Drag & drop 하고, 다음과 같이 목록을 만드세요 : [{"text": "scroll_down", "time": "2"}, ...]'
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     onInputConfirm();
@@ -83,16 +87,17 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                         />
                     );
                 }
-                else {
+                if (key === 'x' || key === 'y' || key === 'top_left_x' || key === 'top_left_y' || key === 'bottom_right_x' || key === 'bottom_right_y') {
                     return (
-                        <input
+                        <Tooltip title="안드로이드 스크린을 누르거나, 드래그하여 좌표 값을 변경하세요." placement="right-start" arrow>
+                        <TextField fullWidth
                             key={key}
                             type="text"
                             name={key}
+                            label={key}
                             value={inputValues[key]}
                             onChange={onInputChange}
-                            placeholder={`Enter ${key}`}
-                            readOnly={key === 'text'}
+                            placeholder={`${key} 값을 입력하세요.`}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     onInputConfirm();
@@ -101,6 +106,31 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                                     onInputCancel();
                                 }
                             }}
+                            sx={{ my: 0.5 }}
+                            disabled="true"
+                        />
+                        </Tooltip>
+                    );
+                }
+                else {
+                    return (
+                        <TextField fullWidth
+                            key={key}
+                            type="text"
+                            name={key}
+                            label={key}
+                            value={inputValues[key]}
+                            onChange={onInputChange}
+                            placeholder={`${key} 값을 입력하세요.`}
+                            onKeyDown={event => {
+                                if (event.key === 'Enter') {
+                                    onInputConfirm();
+                                }
+                                else if (event.key === 'Escape') {
+                                    onInputCancel();
+                                }
+                            }}
+                            sx={{ my: 0.5 }}
                         />
                     );
                 }

@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
+import { Box } from '@mui/material';
+import SendTimeExtensionIcon from '@mui/icons-material/SendTimeExtension';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import SaveIcon from '@mui/icons-material/Save';
+import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
+
 
 const API_URL = 'http://127.0.0.1';
 
-function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
+function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, className, className2}) {
   const [currentCount, setCurrentCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
@@ -151,14 +166,16 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
   };
 
   useEffect(() => {
+    setInputValues(inputValues => {
       if (pendingItem && (pendingItem.text === 'single_click' || pendingItem.text === 'long_press')) {
-        setInputValues({ ...inputValues, ...clickCoords });
+        return { ...inputValues, ...clickCoords };
       } else if (pendingItem && pendingItem.text === 'extract_text') {
-        setInputValues({ ...inputValues, ...dragCoords });
+        return { ...inputValues, ...dragCoords };
       } else {
-        setInputValues({ ...inputValues });
+        return { ...inputValues };
       }
-    }, [dragCoords, clickCoords, pendingItem]);
+    });
+  }, [dragCoords, clickCoords, pendingItem]);
 
   const onInputConfirm = async () => {
     const allFieldsFilled = Object.values(inputValues).every(value => value != null && value !== '');
@@ -280,24 +297,24 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
     setCurrentCount(0);
     setIsPlaying(false);
   };
-  const handleButtonClick = async () => {
-    const response = await fetch(`${API_URL}/tasks`, {
-      method: 'GET'
-    });
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const jsonResponse = await response.json();
-    console.log(JSON.stringify(flowItems));
-    console.log(JSON.stringify(jsonResponse));
-  };
+  // const handleButtonClick = async () => {
+  //   const response = await fetch(`${API_URL}/tasks`, {
+  //     method: 'GET'
+  //   });
+  //   if (!response.ok) {
+  //     throw new Error('Network response was not ok');
+  //   }
+  //   const jsonResponse = await response.json();
+  //   console.log(JSON.stringify(flowItems));
+  //   console.log(JSON.stringify(jsonResponse));
+  // };
   return (<div>
     {inputVisible && (
       <OptionInput
         inputValues={
           pendingItem.text === 'extract_text' ? { ...inputValues, ...dragCoords } :
-          (pendingItem.text === 'single_click' || pendingItem.text === 'long_press') ? { ...inputValues, ...clickCoords } :
-          inputValues
+            (pendingItem.text === 'single_click' || pendingItem.text === 'long_press') ? { ...inputValues, ...clickCoords } :
+              inputValues
         }
         onInputChange={onInputChange}
         onInputConfirm={onInputConfirm}
@@ -305,29 +322,40 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       />
     )}
     <div
-      className="flow"
       onDrop={onDrop}
       onDragOver={handleDragOver}
+      className={className}
     >
-      <button onClick={handleButtonRun}>Run Flow</button>
-      <button onClick={handleButtonClear}>Clear Flow</button>
-      <button onClick={saveToFile}>Save to File</button>
-      <input type="file" onChange={loadFromFile} />
-      <h2>List of Flows to run (Drop)</h2>
-      <ol>
+      <h2> <SendTimeExtensionIcon style={{ verticalAlign: 'middle' }} /> 시나리오 목록</h2>
+      {flowItems.length === 0 &&
+        <Box padding={0.5} sx={{ color: 'grey.500', justifyContent: 'center' }}><Typography><AddTaskIcon fontSize="small" style={{ verticalAlign: 'middle' }} /> 작업을 추가해주세요.</Typography>
+        </Box>
+      }
+      <List>
         {flowItems.map(item => (
-          <li key={item.id}>
+          <ListItem key={item.id} style={{ border: '0.5px solid #ddd', borderLeft: 'none', borderRight: 'none', borderTop: 'none' }}>
             {Object.entries(item).map(([key, value]) => {
               if (key === 'id') return null;
-              if (key === 'text') return <span key={key}>{value}</span>;
-              if (key === 'template' && value) {
-                return <img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />;
+              if (key === 'text') return null;
+              if (key === 'display_text') {
+                return (
+                  <Tooltip title={value} arrow>
+                    <ListItemText primary={<Typography variant="caption" >{value.length > 5 ? value.substring(0, 5) + '...' : value} </Typography>} />
+                  </Tooltip>
+                );
               }
-              return <span key={key}>{" | " + key}: {value} </span>;
+              if (key === 'template' && value) {
+                return <ListItemText secondary={<img src={`data:image/png;base64,${value}`} alt="template" style={{ width: '15%', height: '15%' }} />} />;
+              }
+              return (
+                <Tooltip title={`${key}: ${value}`} arrow>
+                  <ListItemText secondary={<Typography variant="caption" >{`${key.length > 5 ? key.substring(0, 5) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
+                </Tooltip>
+              );
             })}
-          </li>
+          </ListItem>
         ))}
-      </ol>
+      </List>
     </div>
     <IterationControl
       repeatCount={repeatCount}
@@ -335,7 +363,26 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords }) {
       currentCount={currentCount}
       isPlaying={isPlaying}
     />
-    <button onClick={handleButtonClick}> DEBUG : Print JSON</button>
+    <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }} className={className2}>
+      <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button onClick={handleButtonRun}><PlayCircleOutlineIcon /></Button>
+      </Tooltip>
+      <Tooltip title="시나리오의 모든 작업을 지우려면 '초기화' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button onClick={handleButtonClear}><HighlightOffIcon /></Button>
+      </Tooltip>
+      <Tooltip title="시나리오를 파일로 내보내려면 '저장' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button onClick={saveToFile}><SaveIcon /></Button>
+      </Tooltip>
+      <Tooltip title="파일에서 시나리오를 불러오려면 '복원' 버튼을 클릭합니다." placement="bottom-start" arrow>
+        <Button component="label">
+          <SettingsBackupRestoreIcon />
+          <input type="file" onChange={loadFromFile} style={{ display: 'none' }} />
+        </Button>
+      </Tooltip>
+    </ButtonGroup>
+
+    {/* <button onClick={handleButtonClick}> DEBUG : Print JSON</button> */}
+
   </div>
   );
 }

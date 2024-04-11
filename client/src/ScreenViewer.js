@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import Alert from '@mui/material/Alert';
+import LinearProgress from '@mui/material/LinearProgress';
+
 const { ipcRenderer } = window;
 
-function ScreenViewer({setDragCoords, setClickCoords}) {
+export const handleButtonReload = () => {
+    ipcRenderer.send("screen");
+};
+
+function ScreenViewer({ setDragCoords, setClickCoords ,className}) {
     const [imageSrc, setImageSrc] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [dragStart, setDragStart] = useState(null);
     const [dragEnd, setDragEnd] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [alertOpen, setAlertOpen] = useState(false);
+
 
 
     const handleMouseDown = (event) => {
@@ -43,7 +52,15 @@ function ScreenViewer({setDragCoords, setClickCoords}) {
         }
         setDragCoords({ top_left_x: dragStart.x, top_left_y: dragStart.y, bottom_right_x: coords.x, bottom_right_y: coords.y });
         setClickCoords({ x: dragStart.x, y: dragStart.y });
-        alert(`Save variable : ${dragStart.x}, ${dragStart.y} to ${coords.x}, ${coords.y}`);
+        setAlertOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setAlertOpen(false);
     };
 
     const handleMouseMove = (event) => {
@@ -73,17 +90,23 @@ function ScreenViewer({setDragCoords, setClickCoords}) {
         });
     }, []);
 
-    const handleButtonReload = () => {
-        ipcRenderer.send("screen");
-    };
+
 
     return (
-        <div>
-            <button onClick={handleButtonReload}>refresh Screen</button><br />
-            {isLoading ? (
-                <label>Loading...</label>
+        <div style={{ width: '100%', height: '100%' }}>
+            <div>{isLoading ? (
+                <LinearProgress color="inherit" />
             ) : (
-                <label>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="Uploaded" style={{ maxWidth: "25%", maxHeight: "25%" }} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} />}</label>
+                <label className={className}>{imageSrc && <img id="uploaded-image" src={imageSrc} alt="스마트폰이 인식되지 않습니다." style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                }} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} />}</label>
+            )}</div>
+            {alertOpen && (
+                <Alert onClose={handleClose} severity="success">
+                    저장된 좌표 : {dragStart.x}, {dragStart.y} to {dragEnd.x}, {dragEnd.y}
+                </Alert>
             )}
         </div>
     );

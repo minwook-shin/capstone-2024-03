@@ -1,4 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { TextField, Button, ButtonGroup, Table, TableBody, TableCell, TableHead, TableRow, Grid, Tooltip } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import ClearIcon from '@mui/icons-material/Clear';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CheckIcon from '@mui/icons-material/Check';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 function VariableManager() {
     const [key, setKey] = useState('');
@@ -15,6 +21,9 @@ function VariableManager() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (key.trim() === '') {
+            return;
+        }
         const formData = new URLSearchParams();
         formData.append('key', key);
         formData.append('value', value);
@@ -26,6 +35,9 @@ function VariableManager() {
             },
             body: formData
         });
+        setKey('');
+        setValue('');
+        fetchVariables();
     };
 
     const fetchVariables = useCallback(async () => {
@@ -38,6 +50,9 @@ function VariableManager() {
         await fetch(`http://127.0.0.1:82/vm/vars`, {
             method: 'DELETE'
         });
+        setKey('');
+        setValue('');
+        fetchVariables();
     }
     const deleteVariable = async (key) => {
         await fetch(`http://127.0.0.1:82/vm/var/${key}`, {
@@ -58,31 +73,41 @@ function VariableManager() {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <input type="text" value={key} onChange={handleKeyChange} placeholder="Key" />
-                <input type="text" value={value} onChange={handleValueChange} placeholder="Value" />
-                <button type="submit">Submit</button>
-                <button onClick={fetchVariables}>Refresh</button>
-                <button onClick={clearVariable}>Clear</button>
-                <table style={{ margin: '0 auto' }}>
-                    <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.entries(variables).map(([key, value]) => (
-                            <tr key={key}>
-                                <td onClick={() => handleKeyClick(key)}>{key}</td>
-                                <td>{value}</td>
-                                <td><button onClick={() => deleteVariable(key)}>Delete</button></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <Grid container>
+                    <Grid item xs={6}>
+                        <TextField fullWidth variant="standard" value={key} onChange={handleKeyChange} placeholder="Key" />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField fullWidth variant="standard" value={value} onChange={handleValueChange} placeholder="Value" />
+                    </Grid>
+                </Grid>
+                <ButtonGroup   variant="text" aria-label="Basic button group" sx={{ display: 'flex' }} fullWidth color="primary">
+                    <Button type="submit"><CheckIcon/></Button>
+                    <Button onClick={fetchVariables}><RefreshIcon/></Button>
+                    <Button onClick={clearVariable}><ClearIcon/></Button>
+                </ButtonGroup>
+                {Object.keys(variables).length > 0 && (
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>변수명</TableCell>
+                                    <TableCell>값</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {Object.entries(variables).map(([key, value]) => (
+                                    <TableRow key={key}>
+                                        <Tooltip title="클릭하시면 변수를 바로 사용할 수 있도록 복사해드려요." placement="bottom-start" arrow>
+                                        <TableCell onClick={() => handleKeyClick(key)}><ContentCopyIcon fontSize="small" style={{ verticalAlign: 'middle' }}/> {key}</TableCell>
+                                        </Tooltip>
+                                        <TableCell>{value}</TableCell>
+                                        <TableCell><Button variant="outlined" onClick={() => deleteVariable(key)}><DeleteForeverIcon/></Button></TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                )}
             </form>
-
-
         </div>
     );
 }
