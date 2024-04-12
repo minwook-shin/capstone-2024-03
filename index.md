@@ -40,19 +40,6 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 
 ### 서버
 
-#### Windows
-
-1. 파이썬 3.10 ~ 3.12 설치: 
-
-[Python 공식 웹사이트](https://www.python.org/downloads/)에서 Python 3.10 ~ 3.12 버전을 내려받고 설치
-
-2. 가상환경 생성: 
-
-```powershell
-python -m venv .venv
-.\venv\Scripts\activate
-```
-
 #### macOS
 
 1. 파이썬 3.10 ~ 3.12 설치:
@@ -86,7 +73,7 @@ source venv/bin/activate
 #### 모든 플랫폼
 
 ```bash
-pip install -r apps/adb-api/requirements.txt
+pip install -r apps/requirements.txt 
 ```
 
 ### 클라이언트
