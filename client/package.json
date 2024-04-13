@@ -12,18 +12,17 @@
     "@fontsource/nanum-gothic": "^5.0.17",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^15.0.1",
+    "@testing-library/user-event": "^14.5.2",
     "axios": "^1.6.8",
-    "electron-is-dev": "^2.0.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
-    "react-joyride": "^2.8.0",
+    "react-joyride": "^2.8.1",
     "react-scripts": "5.0.1",
     "react-window": "^1.8.10",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^3.5.2"
   },
   "build": {
     "appId": "com.minwook-shin.capstone_2024_03_client",
@@ -100,9 +99,8 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "electron": "^29.0.0",
-    "electron-builder": "^24.12.0",
-    "electron-is-dev": "^2.0.0",
+    "electron": "^29.3.0",
+    "electron-builder": "^24.13.3",
     "wait-on": "^7.2.0"
   }
 }

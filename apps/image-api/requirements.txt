@@ -1,4 +1,0 @@
-flask==3.0.2
-flasgger==0.9.7b2
-image-finder==0.0.1
-uwsgi

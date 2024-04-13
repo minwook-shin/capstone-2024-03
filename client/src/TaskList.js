@@ -28,15 +28,16 @@ function TaskList({ taskItems, className }) {
     };
 
     return (
-        <div style={{ width: '100%' }} className={className}>
+        <div style={{ width: '100%' }}>
             <h2> <DragIndicatorIcon  style={{ verticalAlign: 'middle' }}/> 사용 가능한 작업 </h2>
             <FixedSizeList
-                height={350}
+                height={500}
                 width="100%"
                 itemSize={40}
                 itemCount={taskItems.length}
                 children={renderRow}
             />
+            <label className={className}></label>
         </div>
     );
 }
