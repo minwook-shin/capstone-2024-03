@@ -451,7 +451,8 @@ def functions_iterator():
         "image_matching": control_obj.template_matching_using_screen,
         "extract_text": control_obj.extract_text_using_screen,
         "user_variable": control_obj.add_user_variable,
-        "python_runner": control_obj.run_python_script
+        "python_runner": control_obj.run_python_script,
+        "adb_command": control_obj.execute_adb_command,
     }
     functions = json.loads(functions)
 
@@ -681,3 +682,35 @@ def conditional_exit():
                                          task_id=task_id))
     ordered_tasks.append(task_id)
     return {'message': 'conditional_exit added', 'condition_variable': condition_variable}, 200
+
+
+@controller.route('/adb_command', methods=['POST'])
+def adb_command():
+    """
+    Execute an ADB command on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: adb_command
+          required:
+            - command
+            - task_id
+          properties:
+            command:
+              type: string
+              description: The ADB command to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    command = request.json.get('command')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_command, param=(command,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'adb_command added', 'command': command}, 200
+  

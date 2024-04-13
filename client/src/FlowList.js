@@ -251,6 +251,9 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
           body.condition_variable = newItem.condition_variable;
           body.condition_value = newItem.condition_value;
         }
+        else if (newItem.text === 'adb_command') {
+          body.command = newItem.command;
+        }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
       }

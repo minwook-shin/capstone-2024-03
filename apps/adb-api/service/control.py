@@ -283,3 +283,16 @@ class ADB:
         data = requests.get('http://localhost:82/vm/var').json()
         if data.get(condition_variable, None) == condition_value:
             return False
+
+    def execute_adb_command(self, command):
+        """
+        Execute an ADB command on the device.
+
+        Parameters:
+        command (str): The ADB command to be executed.
+        """
+        self.device.shell(command)
+        sleep(1)
+
+        logger.debug('Complete ADB command task')
+        logger_worker.end_worker()
