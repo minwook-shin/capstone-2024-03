@@ -95,50 +95,56 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                 }
                 else if (key === 'code') {
                     return (
-                        <TextField
-                            fullWidth
-                            style={{ width: '100%' }}
-                            key={key}
-                            name={key}
-                            label={key}
-                            value={inputValues[key]}
-                            onChange={onInputChange}
-                            placeholder="from flask import g; g.local['user_var'] = 'sample';  data = user_var; return data"
-                            onKeyDown={event => {
-                                if (event.key === 'Escape') {
-                                    onInputCancel();
-                                }
-                            }}
-                            InputProps={{
-                                rows: 3,
-                                multiline: true,
-                                inputComponent: 'textarea'
-                            }}
-                        />
+                        <Tooltip title="텍스트 마지막에 'return'이 존재할 때만 Enter를 눌러 입력을 완료할 수 있습니다." placement="right-start" arrow>
+                            <TextField fullWidth
+                                style={{ width: '100%' }}
+                                key={key}
+                                name={key}
+                                label={key}
+                                value={inputValues[key]}
+                                onChange={onInputChange}
+                                placeholder="from flask import g; g.local['user_var'] = 'sample';  data = user_var; return data"
+                                onKeyDown={event => {
+                                    if (event.key === 'Enter') {
+                                        if (inputValues[key].trim().endsWith('return')) {
+                                            onInputConfirm();
+                                        }
+                                    }
+                                    else if (event.key === 'Escape') {
+                                        onInputCancel();
+                                    }
+                                }}
+                                InputProps={{
+                                    rows: 3,
+                                    multiline: true,
+                                    inputComponent: 'textarea'
+                                }}
+                            />
+                        </Tooltip>
                     );
                 }
                 if (key === 'x' || key === 'y' || key === 'top_left_x' || key === 'top_left_y' || key === 'bottom_right_x' || key === 'bottom_right_y') {
                     return (
                         <Tooltip title="안드로이드 스크린을 누르거나, 드래그하여 좌표 값을 변경하세요." placement="right-start" arrow>
-                        <TextField fullWidth
-                            key={key}
-                            type="text"
-                            name={key}
-                            label={key}
-                            value={inputValues[key]}
-                            onChange={onInputChange}
-                            placeholder={`${key} 값을 입력하세요.`}
-                            onKeyDown={event => {
-                                if (event.key === 'Enter') {
-                                    onInputConfirm();
-                                }
-                                else if (event.key === 'Escape') {
-                                    onInputCancel();
-                                }
-                            }}
-                            sx={{ my: 0.5 }}
-                            disabled="true"
-                        />
+                            <TextField fullWidth
+                                key={key}
+                                type="text"
+                                name={key}
+                                label={key}
+                                value={inputValues[key]}
+                                onChange={onInputChange}
+                                placeholder={`${key} 값을 입력하세요.`}
+                                onKeyDown={event => {
+                                    if (event.key === 'Enter') {
+                                        onInputConfirm();
+                                    }
+                                    else if (event.key === 'Escape') {
+                                        onInputCancel();
+                                    }
+                                }}
+                                sx={{ my: 0.5 }}
+                                disabled="true"
+                            />
                         </Tooltip>
                     );
                 }
