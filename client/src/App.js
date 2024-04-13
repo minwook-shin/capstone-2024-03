@@ -45,7 +45,7 @@ function App() {
   };
 
   return (
-    <body>
+    <div>
       <Joyride steps={steps} run={run}
         callback={handleJoyrideCallback}
         continuous
@@ -80,7 +80,7 @@ function App() {
           </Grid>
         </Grid>
       </Container>
-    </body>
+    </div>
   );
 }
 

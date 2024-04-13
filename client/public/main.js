@@ -1,7 +1,6 @@
 
 const { BrowserWindow, app, ipcMain, screen } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
 const axios = require('axios');
 
 const BASE_URL = 'http://127.0.0.1:3000';
@@ -43,7 +42,6 @@ const createWindow = () => {
         titleBarStyle: 'hidden',
         icon: path.join(__dirname, 'favicon.ico'),
         webPreferences: {
-            devTools: isDev,
             nodeIntegration: true,
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: false,
@@ -61,12 +59,8 @@ const createWindow = () => {
         }
     });
 
-    if (isDev) {
-        mainWindow.loadURL(BASE_URL);
-        mainWindow.webContents.openDevTools({ mode: 'detach' });
-    } else {
-        mainWindow.loadFile(path.join(__dirname, './build/index.html'));
-    }
+    mainWindow.loadURL(BASE_URL);
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
 
     manager_window.loadURL('http://127.0.0.1' + '/manager');
 

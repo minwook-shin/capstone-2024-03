@@ -53,7 +53,7 @@ export default function PrimaryAppBar({ className, setRun }) {
         setAnchorEl(null);
     };
     const DraggableArea = styled('div')({
-        '-webkit-app-region': 'drag',
+        WebkitAppRegion: 'drag',
         flexGrow: 1,
         width: '100%',
         height: '100%'

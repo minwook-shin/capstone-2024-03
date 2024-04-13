@@ -22,6 +22,10 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 
 ## 영상
 
+* 캡스톤 디자인 2024 03팀 최종 발표
+
+_업로드 예정_
+
 * 캡스톤 디자인 2024 03팀 중간 발표
 
 [![캡스톤 디자인 2024 03팀 중간 시연](https://img.youtube.com/vi/0gcAZPV-hl8/0.jpg)](https://www.youtube.com/watch?v=0gcAZPV-hl8)
@@ -48,13 +52,6 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 brew install python@3.12
 ```
 
-2. 가상환경 생성:
-
-```bash
-python3 -m venv .venv
-source venv/bin/activate
-```
-
 #### Linux
 
 1. 파이썬 3.10 ~ 3.12 설치:
@@ -63,16 +60,13 @@ source venv/bin/activate
 sudo apt-get install python3.12
 ```
 
-2. 가상환경 생성:
+#### 모든 플랫폼
+
+가상환경 생성 및 의존 패키지 설치:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-```
-
-#### 모든 플랫폼
-
-```bash
 pip install -r apps/requirements.txt 
 ```
 
@@ -121,14 +115,6 @@ npm run dev
 
 ```bash
 sh ./scripts/adb_installer.sh
-npm run adb-start
-```
-
-* Windows
-
-```powershell
-powershell -noexit "& ""scripts\adb_installer.ps1"""
-npm run adb-start
 ```
 
 ## 빌드 및 사용법
