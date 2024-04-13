@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
 import { Box } from '@mui/material';
@@ -284,9 +284,19 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
     setFlowItems([]);
   };
 
+  const stopLoopRef = useRef(false);
+
+  const handleStopIconClick = () => {
+    stopLoopRef.current = true;
+  };
+
   const handleButtonRun = async () => {
     setIsPlaying(true);
+    stopLoopRef.current = false;
     for (let i = 0; i < repeatCount; i++) {
+      if (stopLoopRef.current) {
+        break;
+      }
       setCurrentCount(i + 1);
 
       const response = await fetch(`${API_URL}/run`, {
@@ -366,6 +376,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
       setRepeatCount={setRepeatCount}
       currentCount={currentCount}
       isPlaying={isPlaying}
+      handleStopIconClick={handleStopIconClick}
     />
     <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }} className={className2}>
       <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>
