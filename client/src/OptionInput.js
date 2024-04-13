@@ -103,7 +103,8 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                                 label={key}
                                 value={inputValues[key]}
                                 onChange={onInputChange}
-                                placeholder="from flask import g; g.local['user_var'] = 'sample';  data = user_var; return data"
+                                placeholder="return로 끝낼 수 있는 파이썬 코드를 입력하세요."
+                                helperText="변수 사용하기 : data = user_var; 변수 입력하기 : from flask import g; g.local['user_var'] = 'sample'; 완료하기: return"
                                 onKeyDown={event => {
                                     if (event.key === 'Enter') {
                                         if (inputValues[key].trim().endsWith('return')) {

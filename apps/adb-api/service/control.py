@@ -252,7 +252,7 @@ class ADB:
 
     def add_user_variable(self, key, value):
         """
-        Add a user variable to the ADB API.
+        Add a user variable to the VM API.
 
         Parameters:
         key (str): The key of the user variable.
@@ -260,3 +260,12 @@ class ADB:
         """
         data = {"key": key ,"value": value}
         requests.post('http://localhost:82/vm/var', data=data)
+
+    def run_python_script(self, code):
+        """
+        Run a Python script on the VM API.
+
+        Parameters:
+        script (str): The Python script to be executed.
+        """
+        requests.post('http://localhost:82/py/runner', data=code)

@@ -450,7 +450,8 @@ def functions_iterator():
         "long_press": control_obj.execute_adb_long_press,
         "image_matching": control_obj.template_matching_using_screen,
         "extract_text": control_obj.extract_text_using_screen,
-        "user_variable": control_obj.add_user_variable
+        "user_variable": control_obj.add_user_variable,
+        "python_runner": control_obj.run_python_script
     }
     functions = json.loads(functions)
 
@@ -614,3 +615,38 @@ def user_variable():
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
     return {'message': 'user_variable added', 'variable_name': variable_name, 'variable_value': variable_value}, 200
+
+
+@controller.route('/python_runner', methods=['POST'])
+def python_runner():
+    """
+    Run a python script on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: python_runner
+          required:
+            - code
+            - time
+            - task_id
+          properties:
+            code:
+              type: string
+              description: The python script to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+            time:
+              type: integer
+              description: The number of times to run the script.
+    """
+    code = request.json.get('code')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.run_python_script, param=(code,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'python_runner added', 'code': code}, 200
