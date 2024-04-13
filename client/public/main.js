@@ -37,7 +37,7 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         resizable: true,
         width: 1000,
-        height: 800,
+        height: 700,
         autoHideMenuBar: true,
         titleBarStyle: 'hidden',
         icon: path.join(__dirname, 'favicon.ico'),
