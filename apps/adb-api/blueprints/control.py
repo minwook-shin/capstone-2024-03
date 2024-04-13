@@ -2,7 +2,7 @@ import json
 import os
 import zipfile
 
-from f_scheduler import DAG, IterFunctionOperator, Converter
+from f_scheduler import DAG, IterFunctionOperator, Converter, DefaultFunctionOperator
 from flask import Blueprint, request, send_file
 from werkzeug.datastructures import FileStorage
 
@@ -463,6 +463,7 @@ def functions_iterator():
                 params = {k: v for k, v in function.items() if k != 'text'}
                 time = int(function.get('time', 1))
                 params = {k: v for k, v in params.items() if k != 'time'}
+                params.pop('display_text', None)
                 for _ in range(time):
                     function_to_call(**params)
 
@@ -651,3 +652,32 @@ def python_runner():
                                       task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
     return {'message': 'python_runner added', 'code': code}, 200
+
+@controller.route('/conditional_exit', methods=['POST'])
+def conditional_exit():
+    """
+    Exit the loop based on the condition.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: conditional_exit
+          required:
+            - condition
+            - task_id
+          properties:
+            condition:
+              type: string
+              description: The condition to exit the loop.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    condition_variable = request.json.get('condition_variable')
+    condition_value = request.json.get('condition_value')
+    task_id = request.json.get('task_id')
+    dag.add_task(DefaultFunctionOperator(function=control_obj.conditional_exit, param=(condition_variable, condition_value),
+                                         task_id=task_id))
+    ordered_tasks.append(task_id)
+    return {'message': 'conditional_exit added', 'condition_variable': condition_variable}, 200

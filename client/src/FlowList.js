@@ -247,6 +247,10 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
         else if (newItem.text === 'python_runner') {
           body.code = newItem.code;
         }
+        else if (newItem.text === 'conditional_exit') {
+          body.condition_variable = newItem.condition_variable;
+          body.condition_value = newItem.condition_value;
+        }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
       }
