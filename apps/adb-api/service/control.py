@@ -229,7 +229,7 @@ class ADB:
         print(response.json())
         self.execute_adb_single_click(response.json()['center_x'], response.json()['center_y'])
 
-    def extract_text_using_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y):
+    def extract_text_using_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name):
         """
         Perform extract text using the screen capture.
 
@@ -240,15 +240,18 @@ class ADB:
         top_left_y = convert_template_string(top_left_y)
         bottom_right_x = convert_template_string(bottom_right_x)
         bottom_right_y = convert_template_string(bottom_right_y)
+        variable_name = convert_template_string(variable_name)
         result = self.device.screencap()
         data = {
             "top_left_x": int(top_left_x),
             "top_left_y": int(top_left_y),
             "bottom_right_x": int(bottom_right_x),
-            "bottom_right_y": int(bottom_right_y)
+            "bottom_right_y": int(bottom_right_y),
             }
-        requests.post('http://localhost:81/extract_texts',
-                      files={'image': result}, data=data)
+        res = requests.post('http://localhost:81/extract_texts',
+                      files={'image': result}, data=data).json()
+        data = {"key": variable_name ,"value": " ".join(res["texts"])}
+        requests.post('http://localhost:82/vm/var', data=data)
 
     def add_user_variable(self, key, value):
         """

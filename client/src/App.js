@@ -28,7 +28,7 @@ function App() {
     { display_text: "텍스트 키보드 입력", text: "input_text", time: 1, input_text: '' },
     { display_text: "안드로이드 화면 캡쳐", text: "screen_capture", time: 1 },
     { display_text: "이미지 위치 클릭", text: "image_matching", time: 1, template: '' },
-    { display_text: "지정 범위 텍스트 추출", text: "extract_text", top_left_x: '', top_left_y: '', bottom_right_x: '', bottom_right_y: '', time: 1 },
+    { display_text: "지정 범위 텍스트 추출", text: "extract_text", top_left_x: '', top_left_y: '', bottom_right_x: '', bottom_right_y: '', variable_name: '', time: 1 },
     { display_text: "시나리오 사용자 변수 부여", text: "user_variable", variable_name: '', variable_value: '', time: 1 },
     { display_text: "파이썬 스크립트 실행", text: "python_runner", time: 1, code: ''}
   ], []);

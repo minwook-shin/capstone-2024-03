@@ -29,27 +29,6 @@ function ScreenViewer({ setDragCoords, setClickCoords ,className}) {
         const coords = getRealXY(event);
         setDragEnd(coords);
         setIsDragging(false);
-        const data = {
-            top_left_x: dragStart.x,
-            top_left_y: dragStart.y,
-            bottom_right_x: coords.x,
-            bottom_right_y: coords.y,
-        };
-
-        try {
-            const response = await fetch('http://127.0.0.1:82/vm/vars', {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            const responseData = await response.json();
-            console.log(responseData);
-        } catch (error) {
-            console.error(error);
-        }
         setDragCoords({ top_left_x: dragStart.x, top_left_y: dragStart.y, bottom_right_x: coords.x, bottom_right_y: coords.y });
         setClickCoords({ x: dragStart.x, y: dragStart.y });
         setAlertOpen(true);

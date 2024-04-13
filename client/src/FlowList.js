@@ -238,6 +238,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
           body.top_left_y = isNaN(parseInt(newItem.top_left_y, 10)) ? newItem.top_left_y : parseInt(newItem.top_left_y, 10);
           body.bottom_right_x = isNaN(parseInt(newItem.bottom_right_x, 10)) ? newItem.bottom_right_x : parseInt(newItem.bottom_right_x, 10);
           body.bottom_right_y = isNaN(parseInt(newItem.bottom_right_y, 10)) ? newItem.bottom_right_y : parseInt(newItem.bottom_right_y, 10);
+          body.variable_name = newItem.variable_name;
         }
         else if (newItem.text === 'user_variable') {
           body.variable_name = newItem.variable_name;

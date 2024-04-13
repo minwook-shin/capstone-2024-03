@@ -574,9 +574,10 @@ def extract_text():
     top_left_y = request.json.get('top_left_y')
     bottom_right_x = request.json.get('bottom_right_x')
     bottom_right_y = request.json.get('bottom_right_y')
+    variable_name = request.json.get('variable_name')
     task_id = request.json.get('task_id')
     dag.add_task(IterFunctionOperator(function=control_obj.extract_text_using_screen,
-                                      param=(top_left_x, top_left_y, bottom_right_x, bottom_right_y),
+                                      param=(top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name),
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
     return {'message': 'text extraction added', 'arguments': f'{top_left_x}, {top_left_y}, {bottom_right_x}, {bottom_right_y}'}, 200

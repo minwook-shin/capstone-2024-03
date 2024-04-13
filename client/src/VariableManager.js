@@ -100,7 +100,9 @@ function VariableManager() {
                                         <Tooltip title="클릭하시면 변수를 바로 사용할 수 있도록 복사해드려요." placement="bottom-start" arrow>
                                         <TableCell onClick={() => handleKeyClick(key)}><ContentCopyIcon fontSize="small" style={{ verticalAlign: 'middle' }}/> {key}</TableCell>
                                         </Tooltip>
-                                        <TableCell>{value}</TableCell>
+                                        <Tooltip title={value} placement="right-start" arrow>
+                                        <TableCell>{value.length > 8 ? value.substring(0, 8) + '...' : value}</TableCell>
+                                        </Tooltip>
                                         <TableCell><Button variant="outlined" onClick={() => deleteVariable(key)}><DeleteForeverIcon/></Button></TableCell>
                                     </TableRow>
                                 ))}
