@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, Select, MenuItem, TextareaAutosize, Tooltip } from '@mui/material';
+import { TextField, Select, MenuItem, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 
@@ -68,7 +68,13 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                 }
                 else if (key === 'functions') {
                     return (
-                        <TextareaAutosize fullWidth
+                        <TextField
+                            multiline
+                            InputProps={{
+                                rows: 3,
+                                multiline: true,
+                                inputComponent: 'textarea'
+                            }}
                             style={{ width: '100%' }}
                             key={key}
                             name={key}
@@ -83,6 +89,30 @@ function OptionInput({ inputValues, onInputChange, onInputConfirm, onInputCancel
                                 else if (event.key === 'Escape') {
                                     onInputCancel();
                                 }
+                            }}
+                        />
+                    );
+                }
+                else if (key === 'code') {
+                    return (
+                        <TextField
+                            fullWidth
+                            style={{ width: '100%' }}
+                            key={key}
+                            name={key}
+                            label={key}
+                            value={inputValues[key]}
+                            onChange={onInputChange}
+                            placeholder="from flask import g; g.local['user_var'] = 'sample';  data = user_var; return data"
+                            onKeyDown={event => {
+                                if (event.key === 'Escape') {
+                                    onInputCancel();
+                                }
+                            }}
+                            InputProps={{
+                                rows: 3,
+                                multiline: true,
+                                inputComponent: 'textarea'
                             }}
                         />
                     );

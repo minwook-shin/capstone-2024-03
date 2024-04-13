@@ -36,8 +36,8 @@ async function show_manager() {
 const createWindow = () => {
     mainWindow = new BrowserWindow({
         resizable: true,
-        width: 1000,
-        height: 700,
+        width: 1200,
+        height: 850,
         autoHideMenuBar: true,
         titleBarStyle: 'hidden',
         icon: path.join(__dirname, 'favicon.ico'),

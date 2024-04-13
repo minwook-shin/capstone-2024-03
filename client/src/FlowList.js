@@ -243,6 +243,9 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
           body.variable_name = newItem.variable_name;
           body.variable_value = newItem.variable_value;
         }
+        else if (newItem.text === 'python_runner') {
+          body.code = newItem.code;
+        }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
       }
