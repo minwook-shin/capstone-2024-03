@@ -361,7 +361,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
               if (key === 'display_text') {
                 return (
                   <Tooltip title={value} arrow>
-                    <ListItemText primary={<Typography variant="caption" >{value.length > 5 ? value.substring(0, 5) + '...' : value} </Typography>} />
+                    <ListItemText primary={<Typography variant="caption" >{value.length > 7 ? value.substring(0, 7) + '...' : value} </Typography>} />
                   </Tooltip>
                 );
               }
@@ -370,7 +370,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
               }
               return (
                 <Tooltip title={`${key}: ${value}`} arrow>
-                  <ListItemText secondary={<Typography variant="caption" >{`${key.length > 5 ? key.substring(0, 5) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
+                  <ListItemText secondary={<Typography variant="caption" >{`${key.length > 7 ? key.substring(0, 7) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
                 </Tooltip>
               );
             })}
