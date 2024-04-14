@@ -1,9 +1,13 @@
 import os
+import subprocess
 from time import sleep
-
 import requests
 from easy_adb import run_adb_server, download_adb_binary
 from ppadb.client import Client as AdbClient
+from notion_database.database import Database
+from notion_database.properties import Properties
+from notion_database.children import Children
+from notion_database.page import Page
 
 from utils.custom_logger import CustomLogger
 from utils.file import create_directory
@@ -13,18 +17,46 @@ logger_worker = CustomLogger().start_worker()
 logger = logger_worker.get_logger()
 
 
+def convert_template_string(template_string):
+    url = "http://127.0.0.1:82/vm/render"
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    data = {
+        "template_string": template_string,
+    }
+    return requests.post(url, headers=headers, data=data).text
+
+
 class ADB:
     def __init__(self):
         self.apk_path = 'https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk'
-        download_adb_binary(agreement=True)
-        run_adb_server()
-        home_directory = os.path.expanduser("~")
-        current_path = os.environ.get('PATH')
-        adb_path = os.path.expanduser(os.path.join(home_directory, "adb/platform-tools/adb"))
-        os.environ['PATH'] = f"{adb_path}:{current_path}"
+        try:
+            adb_path = subprocess.check_output(['which', 'adb']).decode('utf-8').strip()
+            adb_available = bool(adb_path)
+        except subprocess.CalledProcessError:
+            adb_available = False
 
-        client = AdbClient(host="127.0.0.1", port=5037)
-        devices = client.devices()
+        print(f"ADB Available: {adb_available}")
+
+        if not adb_available:
+            print("ADB is not available. Downloading ADB binary and starting ADB server.")
+            download_adb_binary(agreement=True)
+            run_adb_server()
+            home_directory = os.path.expanduser("~")
+            current_path = os.environ.get('PATH')
+            adb_path = os.path.expanduser(os.path.join(home_directory, "adb/platform-tools/adb"))
+            os.environ['PATH'] = f"{adb_path}:{current_path}"
+
+        try:
+            client = AdbClient(host="127.0.0.1", port=5037)
+            devices = client.devices()
+        except Exception as _:
+            print("ADB server is not running. will automatically launch the ADB server.")
+            subprocess.call(["adb", "start-server"])
+            client = AdbClient(host="127.0.0.1", port=5037)
+            devices = client.devices()
 
         if len(devices) == 0:
             logger.debug("No devices connected. ADB functionality will be disabled.")
@@ -93,6 +125,9 @@ class ADB:
         x (int): The x-coordinate of the click.
         y (int): The y-coordinate of the click.
         """
+        x = convert_template_string(x)
+        y = convert_template_string(y)
+
         self.device.shell(f'input tap {x} {y}')
         sleep(1)
 
@@ -107,6 +142,8 @@ class ADB:
         x (int): The x-coordinate of the click.
         y (int): The y-coordinate of the click.
         """
+        x = convert_template_string(x)
+        y = convert_template_string(y)
         self.device.shell(f'input swipe {x} {y} {x} {y} 500')
         sleep(1)
 
@@ -133,8 +170,9 @@ class ADB:
         Parameters:
         input_text (str): The text to be input.
         """
+        input_text = str(convert_template_string(input_text))
         sleep(1)
-        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg {input_text}')
+        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{input_text}"')
         sleep(1)
 
         logger.debug('Complete input text task')
@@ -178,3 +216,147 @@ class ADB:
         bool: True if the ADB keyboard is enabled, False otherwise.
         """
         return "com.android.adbkeyboard/.AdbIME" in self.device.shell("ime list -a -s")
+
+    def template_matching_using_screen(self, template):
+        """
+        Perform template matching using the screen capture.
+
+        Returns:
+        bool: True if the template is found, False otherwise.
+        """
+        result = self.device.screencap()
+        response = requests.post('http://localhost:81/template_matching',
+                                 files={'image': result, 'template': template})
+        print(response.json())
+        self.execute_adb_single_click(response.json()['center_x'], response.json()['center_y'])
+
+    def extract_text_using_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name):
+        """
+        Perform extract text using the screen capture.
+
+        Returns:
+        bool: True if the extracted text is found, False otherwise.
+        """
+        top_left_x = convert_template_string(top_left_x)
+        top_left_y = convert_template_string(top_left_y)
+        bottom_right_x = convert_template_string(bottom_right_x)
+        bottom_right_y = convert_template_string(bottom_right_y)
+        variable_name = convert_template_string(variable_name)
+        result = self.device.screencap()
+        data = {
+            "top_left_x": int(top_left_x),
+            "top_left_y": int(top_left_y),
+            "bottom_right_x": int(bottom_right_x),
+            "bottom_right_y": int(bottom_right_y),
+            }
+        res = requests.post('http://localhost:81/extract_texts',
+                      files={'image': result}, data=data).json()
+        data = {"key": variable_name ,"value": " ".join(res["texts"])}
+        requests.post('http://localhost:82/vm/var', data=data)
+
+    def add_user_variable(self, variable_name, variable_value):
+        """
+        Add a user variable to the VM API.
+
+        Parameters:
+        key (str): The key of the user variable.
+        value (str): The value of the user variable.
+        """
+        data = {"key": variable_name ,"value": variable_value}
+        requests.post('http://localhost:82/vm/var', data=data)
+
+    def run_python_script(self, code):
+        """
+        Run a Python script on the VM API.
+
+        Parameters:
+        script (str): The Python script to be executed.
+        """
+        requests.post('http://localhost:82/py/runner', data=code)
+
+    def conditional_exit(self, condition_variable, condition_value):
+        """
+        Exit the script if the condition is met.
+
+        Parameters:
+        condition (str): The condition to be checked.
+        """
+        data = requests.get('http://localhost:82/vm/var').json()
+        if data.get(condition_variable, None) == condition_value:
+            return False
+
+    def execute_adb_command(self, command):
+        """
+        Execute an ADB command on the device.
+
+        Parameters:
+        command (str): The ADB command to be executed.
+        """
+        self.device.shell(command)
+        sleep(1)
+
+        logger.debug('Complete ADB command task')
+        logger_worker.end_worker()
+
+    def send_slack(self, incoming_webhook_url, message: str):
+        """
+        Send a message to Slack.
+
+        Parameters:
+        message (str): The message to be sent.
+        """
+        incoming_webhook_url = str(convert_template_string(incoming_webhook_url))
+        message = str(convert_template_string(message))
+        payload = {
+        "username": "MIN Bot",
+        "text": message,
+        "icon_emoji": ":robot_face:",
+        "attachments": [
+            {
+                "fallback": "세부 정보 확인하기",
+                "actions": [
+                    {
+                        "type": "button",
+                        "text": "세부 정보 확인하기",
+                        "url": "http://127.0.0.1/manager"
+                    }
+                ]
+            }]
+        }
+
+        headers = {'Content-Type': 'application/json'}
+        import json
+        response = requests.post(incoming_webhook_url, data=json.dumps(payload), headers=headers)
+
+        if response.status_code != 200:
+            raise ValueError('Request to slack returned an error %s, the response is:\n%s' % (response.status_code, response.text))
+        
+    def create_notion_page(self, token, database_id, title, content):
+        """
+        Create a page in Notion.
+
+        Parameters:
+        token (str): The Notion API token.
+        database_id (str): The ID of the Notion database.
+        title (str): The title of the page.
+        content (str): The content of the page.
+        """
+        token = str(convert_template_string(token))
+        database_id = str(convert_template_string(database_id))
+        title = str(convert_template_string(title))
+        content = str(convert_template_string(content))
+        D = Database(integrations_token=token)
+        D.retrieve_database(database_id=database_id)
+
+        PROPERTY = Properties()
+        PROPERTY.set_title("title", title)
+        PROPERTY.set_select("author", "Min Bot")
+        children = Children()
+        children.set_breadcrumb()
+        children.set_heading_1(title)
+        children.set_paragraph(content)
+        children.set_divider()
+        children.set_callout("Auto generated by : Min Bot")
+        children.set_bookmark("https://github.com/kookmin-sw/capstone-2024-03")
+        P = Page(integrations_token=token)
+        P.create_page(database_id=database_id, properties=PROPERTY, children=children)

@@ -1,13 +1,10 @@
 from flasgger import Swagger
 from flask import Flask
+from flask_variable_manager import VariableManagerExtension
 
-from blueprints.control import controller
-from blueprints.manage import manager
-
+vm = VariableManagerExtension()
 app = Flask(__name__)
-
-app.register_blueprint(controller)
-app.register_blueprint(manager)
+vm.init_app(app)
 swagger = Swagger(app)
 
 

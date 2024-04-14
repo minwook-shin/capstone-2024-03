@@ -3,6 +3,9 @@
 [![Python package](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml)
 [![Node.js CI](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/node.js.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/node.js.yml)
 
+![](./client/public/logo192.png)
+<img src="app_ui.png" width="300" height="auto"/>
+
 본 프로젝트는 Python 3.10, 3.11, 3.12 / NodeJS 18, 20 버전의 CI/CD 테스트를 진행하고 있습니다.
 
 ## 프로젝트 소개
@@ -18,6 +21,10 @@ Automation scenarios are created by users and controlled by android to take over
 Scenario creation is user-friendly forms and drag & drop functionality rather than coding, making it universal to everyone.
 
 ## 영상
+
+* 캡스톤 디자인 2024 03팀 최종 발표
+
+_업로드 예정_
 
 * 캡스톤 디자인 2024 03팀 중간 발표
 
@@ -37,32 +44,12 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 
 ### 서버
 
-#### Windows
-
-1. 파이썬 3.10 ~ 3.12 설치: 
-
-[Python 공식 웹사이트](https://www.python.org/downloads/)에서 Python 3.10 ~ 3.12 버전을 내려받고 설치
-
-2. 가상환경 생성: 
-
-```powershell
-python -m venv .venv
-.\venv\Scripts\activate
-```
-
 #### macOS
 
 1. 파이썬 3.10 ~ 3.12 설치:
 
 ```bash
 brew install python@3.12
-```
-
-2. 가상환경 생성:
-
-```bash
-python3 -m venv .venv
-source venv/bin/activate
 ```
 
 #### Linux
@@ -73,17 +60,14 @@ source venv/bin/activate
 sudo apt-get install python3.12
 ```
 
-2. 가상환경 생성:
+#### 모든 플랫폼
+
+가상환경 생성 및 의존 패키지 설치:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-```
-
-#### 모든 플랫폼
-
-```bash
-pip install -r apps/adb-api/requirements.txt
+pip install -r apps/requirements.txt 
 ```
 
 ### 클라이언트
@@ -124,6 +108,50 @@ npm run dev
 2. "개발자 옵션"으로 이동한 후, "USB 디버깅" 옵션을 찾아서 활성화합니다.
 
 3. 컴퓨터와 기기를 USB 케이블로 연결합니다.
+
+4. (optional) 사전 패키징된 adb 바이너리를 설치합니다.
+
+* MacOS, Linux
+
+```bash
+sh ./scripts/adb_installer.sh
+```
+
+## 빌드 및 사용법
+
+React, Electron 빌드를 완료하면, 다음과 같이 어플리케이션이 생성됩니다 : 
+
+![](app_preview.png)
+
+# Related Library
+
+## Python PYPI Release
+
+해당 프로젝트를 진행하면서 아래 라이브러리를 제작하였으며, 지속 관리를 위하여 각자 분리된 오픈소스 패키지로 CI/CD 및 자동 배포를 진행할 수 있도록 구축하였습니다.
+
+* easy-adb : 안드로이드 디버그 브릿지 서버를 쉽게 구동하기 위한 패키지
+    * [https://pypi.org/project/easy-adb/](https://pypi.org/project/easy-adb/)
+
+* f-scheduler : 파이썬 함수를 원하는 순서대로 실행하기 위한 스케줄러 패키지
+    * [https://pypi.org/project/f-scheduler/](https://pypi.org/project/f-scheduler)
+
+* q-logger-py : 표준 라이브러리보다 빠르고 쓰레드 지향적인 로거 패키지
+    * [https://pypi.org/project/q-logger-py/](https://pypi.org/project/q-logger-py)
+
+* image-finder: 터미널에서만 동작하는 OpenCV 기반 이미지 좌표 및 텍스트 추출하는 패키지
+    * [https://pypi.org/project/image-finder/](https://pypi.org/project/image-finder/)
+
+* flask-variable-manager: Flask 확장 어플리케이션으로 동작하는 변수 관리 프로젝트
+    * [https://pypi.org/project/flask-variable-manager/](https://pypi.org/project/flask-variable-manager/)
+
+
+* notion-database : Python bindings for Notion Database API 
+    * [https://github.com/minwook-shin/notion-database/](https://github.com/minwook-shin/notion-database/)
+
+![](https://assets.piptrends.com/get-widget/notion-database.svg)
+> 주의 : notion-database 패키지는 개인적으로 개발하던 프로젝트로서, 지난 해 소프트웨어융합대학 멘토링의 도움도 받아서 발전시켰습니다.
+타 패키지와 다르게 **LGPL 라이선스**로 관리되고 있으며, 제 3자 라이브러리로 링크해서 사용하는 방식은 **이슈 없음**을 확인했습니다. **단, 직접 수정하고 사용하는 경우는 전체 소스코드를 공개하셔야 합니다.**
+
 
 ## 문서
 

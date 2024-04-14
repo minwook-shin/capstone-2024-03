@@ -2,8 +2,9 @@ import json
 import os
 import zipfile
 
-from f_scheduler import DAG, IterFunctionOperator, Converter
+from f_scheduler import DAG, IterFunctionOperator, Converter, DefaultFunctionOperator
 from flask import Blueprint, request, send_file
+from werkzeug.datastructures import FileStorage
 
 from service.control import ADB
 from service.extra import delay
@@ -447,6 +448,13 @@ def functions_iterator():
         "screen_capture": control_obj.get_screen_capture,
         "input_text": control_obj.execute_adb_input_text,
         "long_press": control_obj.execute_adb_long_press,
+        "image_matching": control_obj.template_matching_using_screen,
+        "extract_text": control_obj.extract_text_using_screen,
+        "user_variable": control_obj.add_user_variable,
+        "python_runner": control_obj.run_python_script,
+        "adb_command": control_obj.execute_adb_command,
+        "slack_message": control_obj.send_slack,
+        "notion_page": control_obj.create_notion_page,
     }
     functions = json.loads(functions)
 
@@ -458,6 +466,7 @@ def functions_iterator():
                 params = {k: v for k, v in function.items() if k != 'text'}
                 time = int(function.get('time', 1))
                 params = {k: v for k, v in params.items() if k != 'time'}
+                params.pop('display_text', None)
                 for _ in range(time):
                     function_to_call(**params)
 
@@ -504,3 +513,273 @@ def check_adb_keyboard():
         description: Is ADB keyboard installed.
     """
     return {'ADB keyboard installed': control_obj.check_adb_keyboard()}, 200
+
+
+@controller.route('/image_matching', methods=['POST'])
+def template_matching():
+    """
+    Perform template matching on the device screen using the provided template image.
+    ---
+    parameters:
+      - in: formData
+        name: template
+        type: file
+        description: The template image file to be used for matching.
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: image_matching
+          required:
+            - task_id
+          properties:
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Template matching operation added successfully.
+    """
+    template: FileStorage = request.files.get('template')
+    task_id = request.form.get('task_id')
+    template_bytes = template.read()
+    dag.add_task(IterFunctionOperator(function=control_obj.template_matching_using_screen,
+                                      param=(template_bytes,),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'template_matching added', 'template_path': template.filename}, 200
+
+@controller.route('/extract_text', methods=['POST'])
+def extract_text():
+    """
+    Extract text from an image using OCR.
+    ---
+    parameters:
+      - in: formData
+        name: image
+        type: file
+        description: The image file to extract text from.
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: extract_text
+          required:
+            - task_id
+          properties:
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Text extraction operation added successfully.
+    """
+    top_left_x = request.json.get('top_left_x')
+    top_left_y = request.json.get('top_left_y')
+    bottom_right_x = request.json.get('bottom_right_x')
+    bottom_right_y = request.json.get('bottom_right_y')
+    variable_name = request.json.get('variable_name')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.extract_text_using_screen,
+                                      param=(top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'text extraction added', 'arguments': f'{top_left_x}, {top_left_y}, {bottom_right_x}, {bottom_right_y}'}, 200
+
+
+@controller.route('/user_variable', methods=['POST'])
+def user_variable():
+    """
+    Add a user variable to the task queue.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: user_variable
+          required:
+            - variable_name
+            - variable_value
+            - task_id
+          properties:
+            variable_name:
+              type: string
+              description: The name of the variable.
+            variable_value:
+              type: string
+              description: The value of the variable.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    variable_name = request.json.get('variable_name')
+    variable_value = request.json.get('variable_value')
+    task_id = request.json.get('task_id')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.add_user_variable, param=(variable_name, variable_value),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'user_variable added', 'variable_name': variable_name, 'variable_value': variable_value}, 200
+
+
+@controller.route('/python_runner', methods=['POST'])
+def python_runner():
+    """
+    Run a python script on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: python_runner
+          required:
+            - code
+            - time
+            - task_id
+          properties:
+            code:
+              type: string
+              description: The python script to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+            time:
+              type: integer
+              description: The number of times to run the script.
+    """
+    code = request.json.get('code')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+
+    dag.add_task(IterFunctionOperator(function=control_obj.run_python_script, param=(code,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    return {'message': 'python_runner added', 'code': code}, 200
+
+@controller.route('/conditional_exit', methods=['POST'])
+def conditional_exit():
+    """
+    Exit the loop based on the condition.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: conditional_exit
+          required:
+            - condition
+            - task_id
+          properties:
+            condition:
+              type: string
+              description: The condition to exit the loop.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    condition_variable = request.json.get('condition_variable')
+    condition_value = request.json.get('condition_value')
+    task_id = request.json.get('task_id')
+    dag.add_task(DefaultFunctionOperator(function=control_obj.conditional_exit, param=(condition_variable, condition_value),
+                                         task_id=task_id))
+    ordered_tasks.append(task_id)
+    return {'message': 'conditional_exit added', 'condition_variable': condition_variable}, 200
+
+
+@controller.route('/adb_command', methods=['POST'])
+def adb_command():
+    """
+    Execute an ADB command on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: adb_command
+          required:
+            - command
+            - task_id
+          properties:
+            command:
+              type: string
+              description: The ADB command to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    command = request.json.get('command')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_command, param=(command,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'adb_command added', 'command': command}, 200
+  
+
+@controller.route('/slack_message', methods=['POST'])
+def slack_message():
+    """
+    Send a message to a Slack channel.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: slack_message
+          required:
+            - message
+            - task_id
+          properties:
+            message:
+              type: string
+              description: The message to be sent.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    message = request.json.get('message')
+    incoming_webhook_url = request.json.get('incoming_webhook_url')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.send_slack, param=(incoming_webhook_url, message,),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'slack_message added', 'message': message}, 200
+  
+  
+@controller.route('/notion_page', methods=['POST'])
+def notion_page():
+    """
+    Create a new page in Notion.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: notion_page
+          required:
+            - page_title
+            - page_content
+            - task_id
+          properties:
+            page_title:
+              type: string
+              description: The title of the page.
+            page_content:
+              type: string
+              description: The content of the page.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    title = request.json.get('title')
+    content = request.json.get('content')
+    task_id = request.json.get('task_id')
+    token = request.json.get('token')
+    database_id = request.json.get('database_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.create_notion_page, param=(token, database_id, title, content),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'notion_page added', 'page_title': title}, 200

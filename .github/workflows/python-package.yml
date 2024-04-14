@@ -27,8 +27,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        if [ -f apps/adb-api/requirements.txt ]; then pip install -r apps/adb-api/requirements.txt; fi
-    - name: Test with unittest
+        if [ -f apps/requirements.txt ]; then pip install -r apps/requirements.txt; fi
+    - name: Test with adb-api unittest
       run: |
         cd apps/adb-api 
+        python3 -m unittest
+    - name: Test with image-api unittest
+      run: |
+        cd apps/image-api
         python3 -m unittest

@@ -1,7 +1,6 @@
 
 const { BrowserWindow, app, ipcMain, screen } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
 const { Worker } = require('worker_threads');
 
 
@@ -31,27 +30,47 @@ function fetchImage() {
     });
 }
 
-const createWindow = () => {
-    const { height } = screen.getPrimaryDisplay().workAreaSize;
+async function show_manager() {
+    try {
+        if (manager_window && !manager_window.isDestroyed()) {
+            manager_window.show();
+            manager_window.focus();
+        }
+    } catch (error) {
+        console.error('Error showing manager window:', error);
+    }
+}
 
+const createWindow = () => {
     mainWindow = new BrowserWindow({
         resizable: true,
-        width: 800,
-        height: height,
+        width: 1200,
+        height: 900,
+        autoHideMenuBar: true,
+        titleBarStyle: 'hidden',
+        icon: path.join(__dirname, 'favicon.ico'),
         webPreferences: {
-            devTools: isDev,
             nodeIntegration: true,
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: false,
         }
     });
 
-    if (isDev) {
-        mainWindow.loadURL(BASE_URL);
-        mainWindow.webContents.openDevTools({ mode: 'detach' });
-    } else {
-        mainWindow.loadFile(path.join(__dirname, './build/index.html'));
-    }
+    manager_window = new BrowserWindow({
+        show: false,
+        parent: mainWindow,
+        resizable: true,
+        width: 800,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
+    });
+
+    mainWindow.loadURL(BASE_URL);
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
+
+    manager_window.loadURL('http://127.0.0.1' + '/manager');
 
     const worker = new Worker(`
     const { parentPort } = require('worker_threads');
@@ -76,6 +95,12 @@ const createWindow = () => {
                 screen: ""
             });
         })
+    });
+    ipcMain.on("show_manager", show_manager);
+
+    manager_window.on('close', (event) => {
+        event.preventDefault();
+        manager_window.hide();
     });
 };
 
