@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<meta charset=utf-8>
 <title>Redirecting...</title>
 <link rel=canonical href="https://minwook-shin.github.io/capstone-2024-03-web/">
 <meta http-equiv=refresh content="0; url=https://minwook-shin.github.io/capstone-2024-03-web/">
