@@ -143,6 +143,14 @@ React, Electron 빌드를 완료하면, 다음과 같이 어플리케이션이 �
 * flask-variable-manager: Flask 확장 어플리케이션으로 동작하는 변수 관리 프로젝트
     * https://pypi.org/project/flask-variable-manager/
 
+* notion-database : Notion 공식 API 기반 Python 3 패키지
+    * https://github.com/minwook-shin/notion-database/
+
+![](https://assets.piptrends.com/get-widget/notion-database.svg)
+> 주의 : notion-database 패키지는 개인적으로 개발하던 프로젝트로서, 지난 해 소프트웨어융합대학 멘토링의 도움도 받아서 발전시켰습니다.
+타 패키지와 다르게 **LGPL 라이선스**로 관리되고 있으며, 제 3자 라이브러리로 링크해서 사용하는 방식은 **이슈 없음**을 확인했습니다. **단, 직접 수정하고 사용하는 경우는 전체 소스코드를 공개하셔야 합니다.**
+
+
 ## 문서
 
 해당 프로젝트의 구조 및 API 설계에 대한 내용은 [위키](https://github.com/kookmin-sw/capstone-2024-03/wiki) 를 참고해주세요.
