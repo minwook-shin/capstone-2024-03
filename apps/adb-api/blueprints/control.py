@@ -453,6 +453,8 @@ def functions_iterator():
         "user_variable": control_obj.add_user_variable,
         "python_runner": control_obj.run_python_script,
         "adb_command": control_obj.execute_adb_command,
+        "slack_message": control_obj.send_slack,
+        "notion_page": control_obj.create_notion_page,
     }
     functions = json.loads(functions)
 
@@ -714,3 +716,70 @@ def adb_command():
     
     return {'message': 'adb_command added', 'command': command}, 200
   
+
+@controller.route('/slack_message', methods=['POST'])
+def slack_message():
+    """
+    Send a message to a Slack channel.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: slack_message
+          required:
+            - message
+            - task_id
+          properties:
+            message:
+              type: string
+              description: The message to be sent.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    message = request.json.get('message')
+    incoming_webhook_url = request.json.get('incoming_webhook_url')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.send_slack, param=(incoming_webhook_url, message,),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'slack_message added', 'message': message}, 200
+  
+  
+@controller.route('/notion_page', methods=['POST'])
+def notion_page():
+    """
+    Create a new page in Notion.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: notion_page
+          required:
+            - page_title
+            - page_content
+            - task_id
+          properties:
+            page_title:
+              type: string
+              description: The title of the page.
+            page_content:
+              type: string
+              description: The content of the page.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    title = request.json.get('title')
+    content = request.json.get('content')
+    task_id = request.json.get('task_id')
+    token = request.json.get('token')
+    database_id = request.json.get('database_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.create_notion_page, param=(token, database_id, title, content),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'notion_page added', 'page_title': title}, 200

@@ -32,7 +32,9 @@ function App() {
     { display_text: "사용자 변수 부여", text: "user_variable", variable_name: '', variable_value: '', time: 1 },
     { display_text: "파이썬 스크립트 실행", text: "python_runner", time: 1, code: ''},
     { display_text: "조건부 종료" , text: "conditional_exit", condition_variable: '', condition_value: ''},
-    { display_text: "ADB 명령어 실행", text: "adb_command", time: 1, command: ''}
+    { display_text: "ADB 명령어 실행", text: "adb_command", time: 1, command: ''},
+    { display_text: "slack 메시지 전송", text: "slack_message", time: 1,  incoming_webhook_url: '', message: ''},
+    { display_text: "Notion 페이지 생성", text: "notion_page", time: 1,  token: '', database_id: '', title: '', content: ''},
   ], []);
 
   useEffect(() => {
