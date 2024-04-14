@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Redirecting...</title>
+<link rel=canonical href="https://minwook-shin.github.io/capstone-2024-03-web/">
+<meta http-equiv=refresh content="0; url=https://minwook-shin.github.io/capstone-2024-03-web/">
+
+만약 넘어가지 않는다면, 수동으로 [새로 구성된 페이지](https://minwook-shin.github.io/capstone-2024-03-web)에 접속하실 수 있습니다.
+
 # 2024 capstone 03
 
 [![Python package](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml/badge.svg)](https://github.com/kookmin-sw/capstone-2024-03/actions/workflows/python-package.yml)
