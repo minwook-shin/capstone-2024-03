@@ -82,9 +82,6 @@ class ADB:
         with open(file_name, 'wb') as fp:
             fp.write(result)
 
-        logger.debug('Complete screen capture task')
-        logger_worker.end_worker()
-
     def execute_adb_scroll_up(self):
         """
         Execute the ADB command to scroll up on the device.
