@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import IterationControl from './IterationControl';
 import OptionInput from './OptionInput';
 import { Box } from '@mui/material';
@@ -247,6 +247,13 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
         else if (newItem.text === 'python_runner') {
           body.code = newItem.code;
         }
+        else if (newItem.text === 'conditional_exit') {
+          body.condition_variable = newItem.condition_variable;
+          body.condition_value = newItem.condition_value;
+        }
+        else if (newItem.text === 'adb_command') {
+          body.command = newItem.command;
+        }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
       }
@@ -284,9 +291,19 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
     setFlowItems([]);
   };
 
+  const stopLoopRef = useRef(false);
+
+  const handleStopIconClick = () => {
+    stopLoopRef.current = true;
+  };
+
   const handleButtonRun = async () => {
     setIsPlaying(true);
+    stopLoopRef.current = false;
     for (let i = 0; i < repeatCount; i++) {
+      if (stopLoopRef.current) {
+        break;
+      }
       setCurrentCount(i + 1);
 
       const response = await fetch(`${API_URL}/run`, {
@@ -344,7 +361,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
               if (key === 'display_text') {
                 return (
                   <Tooltip title={value} arrow>
-                    <ListItemText primary={<Typography variant="caption" >{value.length > 5 ? value.substring(0, 5) + '...' : value} </Typography>} />
+                    <ListItemText primary={<Typography variant="caption" >{value.length > 7 ? value.substring(0, 7) + '...' : value} </Typography>} />
                   </Tooltip>
                 );
               }
@@ -353,7 +370,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
               }
               return (
                 <Tooltip title={`${key}: ${value}`} arrow>
-                  <ListItemText secondary={<Typography variant="caption" >{`${key.length > 5 ? key.substring(0, 5) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
+                  <ListItemText secondary={<Typography variant="caption" >{`${key.length > 7 ? key.substring(0, 7) + '...' : key}: ${value.length > 5 ? value.substring(0, 5) + '...' : value}`}</Typography>} />
                 </Tooltip>
               );
             })}
@@ -366,6 +383,7 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
       setRepeatCount={setRepeatCount}
       currentCount={currentCount}
       isPlaying={isPlaying}
+      handleStopIconClick={handleStopIconClick}
     />
     <ButtonGroup fullWidth variant="text" aria-label="Basic button group" sx={{ display: 'flex' }} className={className2}>
       <Tooltip title="시나리오의 작업을 시작하려면 '실행' 버튼을 클릭합니다." placement="bottom-start" arrow>

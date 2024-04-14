@@ -31,7 +31,7 @@ function TaskList({ taskItems, className }) {
         <div style={{ width: '100%' }}>
             <h2> <DragIndicatorIcon  style={{ verticalAlign: 'middle' }}/> 사용 가능한 작업 </h2>
             <FixedSizeList
-                height={500}
+                height={550}
                 width="100%"
                 itemSize={40}
                 itemCount={taskItems.length}

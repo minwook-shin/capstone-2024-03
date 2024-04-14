@@ -2,7 +2,7 @@ import json
 import os
 import zipfile
 
-from f_scheduler import DAG, IterFunctionOperator, Converter
+from f_scheduler import DAG, IterFunctionOperator, Converter, DefaultFunctionOperator
 from flask import Blueprint, request, send_file
 from werkzeug.datastructures import FileStorage
 
@@ -451,7 +451,8 @@ def functions_iterator():
         "image_matching": control_obj.template_matching_using_screen,
         "extract_text": control_obj.extract_text_using_screen,
         "user_variable": control_obj.add_user_variable,
-        "python_runner": control_obj.run_python_script
+        "python_runner": control_obj.run_python_script,
+        "adb_command": control_obj.execute_adb_command,
     }
     functions = json.loads(functions)
 
@@ -463,6 +464,7 @@ def functions_iterator():
                 params = {k: v for k, v in function.items() if k != 'text'}
                 time = int(function.get('time', 1))
                 params = {k: v for k, v in params.items() if k != 'time'}
+                params.pop('display_text', None)
                 for _ in range(time):
                     function_to_call(**params)
 
@@ -651,3 +653,64 @@ def python_runner():
                                       task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
     return {'message': 'python_runner added', 'code': code}, 200
+
+@controller.route('/conditional_exit', methods=['POST'])
+def conditional_exit():
+    """
+    Exit the loop based on the condition.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: conditional_exit
+          required:
+            - condition
+            - task_id
+          properties:
+            condition:
+              type: string
+              description: The condition to exit the loop.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    condition_variable = request.json.get('condition_variable')
+    condition_value = request.json.get('condition_value')
+    task_id = request.json.get('task_id')
+    dag.add_task(DefaultFunctionOperator(function=control_obj.conditional_exit, param=(condition_variable, condition_value),
+                                         task_id=task_id))
+    ordered_tasks.append(task_id)
+    return {'message': 'conditional_exit added', 'condition_variable': condition_variable}, 200
+
+
+@controller.route('/adb_command', methods=['POST'])
+def adb_command():
+    """
+    Execute an ADB command on the device.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: adb_command
+          required:
+            - command
+            - task_id
+          properties:
+            command:
+              type: string
+              description: The ADB command to be executed.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    command = request.json.get('command')
+    time = request.json.get('time')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_command, param=(command,),
+                                      task_id=task_id, iterations=time))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'adb_command added', 'command': command}, 200
+  

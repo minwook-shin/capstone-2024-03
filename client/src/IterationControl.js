@@ -3,9 +3,11 @@ import TextField from '@mui/material/TextField';
 import Badge from '@mui/material/Badge';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 
-function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying }) {
+
+function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying, handleStopIconClick }) {
     return (
         <Box display="flex" justifyContent="center" alignItems="center">
             <TextField fullWidth margin="dense"
@@ -19,9 +21,19 @@ function IterationControl({ repeatCount, setRepeatCount, currentCount, isPlaying
                     shrink: true,
                 }}
             />
-            <Badge badgeContent={currentCount} color="primary">
-                {isPlaying ? <PlayCircleOutlineIcon fontSize="large" /> : <PauseCircleOutlineIcon fontSize="large" />}
-            </Badge>
+            <Tooltip title="작업이 실행하고 있으면 아이콘을 클릭하여 중지할 수 있습니다." placement="right-start" arrow>
+                <Badge badgeContent={currentCount} color="primary">
+                    {isPlaying ?
+                        <IconButton style={{ padding: 0, color: 'inherit', background: 'none' }} onClick={handleStopIconClick}>
+                            <PlayCircleOutlineIcon fontSize="large" />
+                        </IconButton>
+                        :
+                        <IconButton style={{ padding: 0, color: 'inherit', background: 'none' }}>
+                            <PauseCircleOutlineIcon fontSize="large" />
+                        </IconButton>
+                    }
+                </Badge>
+            </Tooltip>
         </Box>
     );
 }

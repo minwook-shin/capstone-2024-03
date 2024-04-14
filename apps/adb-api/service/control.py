@@ -253,7 +253,7 @@ class ADB:
         data = {"key": variable_name ,"value": " ".join(res["texts"])}
         requests.post('http://localhost:82/vm/var', data=data)
 
-    def add_user_variable(self, key, value):
+    def add_user_variable(self, variable_name, variable_value):
         """
         Add a user variable to the VM API.
 
@@ -261,7 +261,7 @@ class ADB:
         key (str): The key of the user variable.
         value (str): The value of the user variable.
         """
-        data = {"key": key ,"value": value}
+        data = {"key": variable_name ,"value": variable_value}
         requests.post('http://localhost:82/vm/var', data=data)
 
     def run_python_script(self, code):
@@ -272,3 +272,27 @@ class ADB:
         script (str): The Python script to be executed.
         """
         requests.post('http://localhost:82/py/runner', data=code)
+
+    def conditional_exit(self, condition_variable, condition_value):
+        """
+        Exit the script if the condition is met.
+
+        Parameters:
+        condition (str): The condition to be checked.
+        """
+        data = requests.get('http://localhost:82/vm/var').json()
+        if data.get(condition_variable, None) == condition_value:
+            return False
+
+    def execute_adb_command(self, command):
+        """
+        Execute an ADB command on the device.
+
+        Parameters:
+        command (str): The ADB command to be executed.
+        """
+        self.device.shell(command)
+        sleep(1)
+
+        logger.debug('Complete ADB command task')
+        logger_worker.end_worker()
