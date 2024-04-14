@@ -76,7 +76,7 @@ const createWindow = () => {
     const { parentPort } = require('worker_threads');
     setInterval(() => {
         parentPort.postMessage('refresh');
-    }, 10000);
+    }, 15000);
   `, { eval: true });
 
     worker.on('message', (msg) => {
