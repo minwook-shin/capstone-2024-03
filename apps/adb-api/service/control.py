@@ -296,3 +296,36 @@ class ADB:
 
         logger.debug('Complete ADB command task')
         logger_worker.end_worker()
+
+    def send_slack(self, incoming_webhook_url, message: str):
+        """
+        Send a message to Slack.
+
+        Parameters:
+        message (str): The message to be sent.
+        """
+        incoming_webhook_url = str(convert_template_string(incoming_webhook_url))
+        message = str(convert_template_string(message))
+        payload = {
+        "username": "MIN Bot",
+        "text": message,
+        "icon_emoji": ":robot_face:",
+        "attachments": [
+            {
+                "fallback": "세부 정보 확인하기",
+                "actions": [
+                    {
+                        "type": "button",
+                        "text": "세부 정보 확인하기",
+                        "url": "http://127.0.0.1/manager"
+                    }
+                ]
+            }]
+        }
+
+        headers = {'Content-Type': 'application/json'}
+        import json
+        response = requests.post(incoming_webhook_url, data=json.dumps(payload), headers=headers)
+
+        if response.status_code != 200:
+            raise ValueError('Request to slack returned an error %s, the response is:\n%s' % (response.status_code, response.text))

@@ -453,6 +453,7 @@ def functions_iterator():
         "user_variable": control_obj.add_user_variable,
         "python_runner": control_obj.run_python_script,
         "adb_command": control_obj.execute_adb_command,
+        "slack_message": control_obj.send_slack,
     }
     functions = json.loads(functions)
 
@@ -714,3 +715,33 @@ def adb_command():
     
     return {'message': 'adb_command added', 'command': command}, 200
   
+
+@controller.route('/slack_message', methods=['POST'])
+def slack_message():
+    """
+    Send a message to a Slack channel.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: slack_message
+          required:
+            - message
+            - task_id
+          properties:
+            message:
+              type: string
+              description: The message to be sent.
+            task_id:
+              type: string
+              description: The ID of the task.
+    """
+    message = request.json.get('message')
+    incoming_webhook_url = request.json.get('incoming_webhook_url')
+    task_id = request.json.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.send_slack, param=(incoming_webhook_url, message,),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    
+    return {'message': 'slack_message added', 'message': message}, 200

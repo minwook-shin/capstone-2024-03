@@ -254,6 +254,16 @@ function FlowList({ taskItems, initialTaskItems, dragCoords, clickCoords, classN
         else if (newItem.text === 'adb_command') {
           body.command = newItem.command;
         }
+        else if (newItem.text === 'slack_message') {
+          body.incoming_webhook_url = newItem.incoming_webhook_url;
+          body.message = newItem.message;
+        }
+        else if (newItem.text === 'notion_page') {
+          body.token = newItem.token;
+          body.database_id = newItem.database_id;
+          body.title = newItem.title;
+          body.content = newItem.content;
+        }
         const jsonResponse = await apiCall(newItem.text, 'POST', body);
         console.log(jsonResponse);
       }
