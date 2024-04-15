@@ -1,14 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
-import TaskList from "./TaskList";
-import FlowList from "./FlowList";
-import ScreenViewer from "./ScreenViewer";
-import VariableManager from "./VariableManager";
+import TaskList from "./components/TaskList.js";
+import FlowList from "./components/FlowList.js";
+import ScreenViewer from "./components/ScreenViewer.js";
+import VariableManager from "./components/VariableManager.js";
 import { Container, Grid, Box } from "@mui/material";
-import PrimaryAppBar from "./PrimaryAppBar";
+import PrimaryAppBar from "./components/PrimaryAppBar.js";
 import "@fontsource/nanum-gothic";
 import "@fontsource/nanum-gothic/400.css";
 import Joyride from "react-joyride";
-import { steps } from "./intro_step.js";
+import { steps } from "./utils/intro_step.js";
 import { initialTaskData } from "./utils/initialTask.js";
 
 function App() {
