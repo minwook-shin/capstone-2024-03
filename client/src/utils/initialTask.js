@@ -1,0 +1,76 @@
+/**
+ * 초기 작업 데이터를 정의합니다.
+ */
+export const initialTaskData = [
+  { display_text: "위로 스크롤", text: "scroll_up", time: 1 },
+  { display_text: "아래로 스크롤", text: "scroll_down", time: 1 },
+  { display_text: "단일 클릭", text: "single_click", x: "", y: "", time: 1 },
+  { display_text: "길게 클릭", text: "long_press", x: "", y: "", time: 1 },
+  { display_text: "키 이벤트 입력", text: "key_event", key_event: "", time: 1 },
+  { display_text: "지연 시간", text: "delay", time: 1 },
+  { display_text: "반복 작업", text: "loop", time: 1, functions: [] },
+  {
+    display_text: "텍스트 키보드 입력",
+    text: "input_text",
+    time: 1,
+    input_text: "",
+  },
+  { display_text: "안드로이드 화면 캡쳐", text: "screen_capture", time: 1 },
+  {
+    display_text: "이미지 위치 클릭",
+    text: "image_matching",
+    time: 1,
+    template: "",
+  },
+  {
+    display_text: "지정 범위 텍스트 추출",
+    text: "extract_text",
+    top_left_x: "",
+    top_left_y: "",
+    bottom_right_x: "",
+    bottom_right_y: "",
+    variable_name: "",
+    time: 1,
+  },
+  {
+    display_text: "사용자 변수 부여",
+    text: "user_variable",
+    variable_name: "",
+    variable_value: "",
+    time: 1,
+  },
+  {
+    display_text: "파이썬 스크립트 실행",
+    text: "python_runner",
+    time: 1,
+    code: "",
+  },
+  {
+    display_text: "조건부 종료",
+    text: "conditional_exit",
+    condition_variable: "",
+    condition_value: "",
+  },
+  {
+    display_text: "ADB 명령어 실행",
+    text: "adb_command",
+    time: 1,
+    command: "",
+  },
+  {
+    display_text: "slack 메시지 전송",
+    text: "slack_message",
+    time: 1,
+    incoming_webhook_url: "",
+    message: "",
+  },
+  {
+    display_text: "Notion 페이지 생성",
+    text: "notion_page",
+    time: 1,
+    token: "",
+    database_id: "",
+    title: "",
+    content: "",
+  },
+];
