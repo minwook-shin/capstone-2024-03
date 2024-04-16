@@ -96,9 +96,6 @@ function ScreenViewer({ setDragCoords, setClickCoords, className }) {
   useEffect(() => {
     setIsLoading(true);
     ipcRenderer.send("screen");
-    ipcRenderer.on("refresh", () => {
-      ipcRenderer.send("screen");
-    });
     ipcRenderer.on("screen", (_, args) => {
       const blob = new Blob([args.screen], { type: "image/png" });
       const url = URL.createObjectURL(blob);
