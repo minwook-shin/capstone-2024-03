@@ -30,7 +30,7 @@ async function fetchWithMethod(url, method, data = null, isJson = true) {
     if (contentType && contentType.indexOf("application/json") !== -1) {
       return await response.json();
     } else {
-      return await response.text();
+      return response;
     }
   } catch (err) {
     return err;
