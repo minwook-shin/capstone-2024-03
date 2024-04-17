@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import OptionInput from '../OptionInput';
+import OptionInput from '../components/OptionInput';
 
 test('renders OptionInput component with input fields and select dropdown', () => {
   const inputValues = {
