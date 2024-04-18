@@ -20,10 +20,6 @@ template = {
     },
     "version": "1.0.0"
   },
-  "schemes": [
-    "http",
-    "https"
-  ],
 }
 swagger = Swagger(app, template=template)
 
