@@ -2,12 +2,24 @@ import React, { useEffect, useState } from "react";
 import { TextField, Select, MenuItem, Tooltip } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
+import AceEditor from "react-ace";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Button from "@mui/material/Button";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+
+import "ace-builds/src-noconflict/mode-python";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
+import 'brace/mode/json';
+import "ace-builds/webpack-resolver";
 
 function OptionInput({
   inputValues,
   onInputChange,
   onInputConfirm,
   onInputCancel,
+  onInputChangeForCode,
 }) {
   const [keyEvents, setKeyEvents] = useState({});
 
@@ -25,27 +37,9 @@ function OptionInput({
   }, []);
 
   /**
-   * 코드 입력 시 Enter를 누르면 입력을 완료하고, Escape를 누르면 입력을 취소하는 함수
-   * 여러 줄을 입력할 수 있으며, 마지막에 'return'이 존재할 때만 Enter를 눌러 입력을 완료할 수 있음
+   * 키 입력 시 Enter를 누르면 입력을 완료하고, Escape를 누르면 입력을 취소하는 함수
    * @param {*} event
    * @param {*} key
-   * @returns
-   */
-  const handleKeyDownForCode = (event, key) => {
-    if (event.key === "Enter") {
-      if (key === "code" && !inputValues[key].trim().endsWith("return")) {
-        return;
-      }
-      onInputConfirm();
-    } else if (event.key === "Escape") {
-      onInputCancel();
-    }
-  };
-
-  /**
-   * 키 입력 시 Enter를 누르면 입력을 완료하고, Escape를 누르면 입력을 취소하는 함수
-   * @param {*} event 
-   * @param {*} key 
    */
   const handleKeyDown = (event, key) => {
     if (event.key === "Enter") {
@@ -133,29 +127,42 @@ function OptionInput({
           // 여러 줄 입력이 가능하며, 마지막에 'return'이 존재할 때만 Enter를 눌러 입력을 완료할 수 있음
         } else if (key === "code") {
           return (
-            <Tooltip
-              title="텍스트 마지막에 'return'이 존재할 때만 Enter를 눌러 입력을 완료할 수 있습니다."
-              placement="right-start"
-              arrow
-            >
-              <TextField
+            <>
+              <AceEditor
+                mode="python"
+                theme="github"
+                onChange={onInputChangeForCode}
                 fullWidth
                 style={{ width: "100%" }}
                 key={key}
                 name={key}
                 label={key}
                 value={inputValues[key]}
-                onChange={onInputChange}
-                placeholder="return로 끝낼 수 있는 파이썬 코드를 입력하세요."
-                helperText="변수 사용하기 : data = user_var; 변수 입력하기 : from flask import g; g.local['user_var'] = 'sample'; 완료하기: return"
-                onKeyDown={handleKeyDownForCode}
-                InputProps={{
-                  rows: 3,
-                  multiline: true,
-                  inputComponent: "textarea",
-                }}
+                focus={true}
+                enableBasicAutocompletion={true}
+                enableLiveAutocompletion={true}
+                enableSnippets={true}
               />
-            </Tooltip>
+              <Typography>
+                변수 사용하기 : data = user_var; <br />
+                변수 입력하기 : from flask import g; g.local['user_var'] =
+                'sample';
+              </Typography>
+              <ButtonGroup
+                variant="text"
+                aria-label="Basic button group"
+                sx={{ display: "flex" }}
+                fullWidth
+                color="primary"
+              >
+                <Button onClick={onInputConfirm}>
+                  <CheckIcon />
+                </Button>
+                <Button onClick={onInputCancel}>
+                  <ClearIcon />
+                </Button>
+              </ButtonGroup>
+            </>
           );
         }
         // x, y, top_left_x, top_left_y, bottom_right_x, bottom_right_y는 TextField로 렌더링

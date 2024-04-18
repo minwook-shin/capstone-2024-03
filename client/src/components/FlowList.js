@@ -130,6 +130,13 @@ function FlowList({
     }
   };
 
+  const onInputChangeForCode = (event) => {
+    setInputValues({
+      ...inputValues,
+      code: event,
+    });
+  };
+
   useEffect(() => {
     setInputValues((inputValues) => {
       if (
@@ -180,10 +187,10 @@ function FlowList({
     setInputVisible(false);
     setPendingItem(null);
   };
-  
+
   /**
    * 드롭 이벤트
-   * @param {*} event 
+   * @param {*} event
    */
   const onDrop = (event) => {
     event.preventDefault();
@@ -263,6 +270,7 @@ function FlowList({
           onInputChange={onInputChange}
           onInputConfirm={onInputConfirm}
           onInputCancel={onInputCancel}
+          onInputChangeForCode={onInputChangeForCode}
         />
       )}
       <div onDrop={onDrop} onDragOver={handleDragOver} className={className}>

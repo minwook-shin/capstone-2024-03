@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import TaskList from '../TaskList';
+import TaskList from '../components/TaskList';
 
 test('renders TaskList component with task items', () => {
   const taskItems = [

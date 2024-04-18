@@ -5,6 +5,6 @@ pure-python-adb==0.3.0.dev0
 f-scheduler==0.1.0
 q-logger-py==0.0.3
 image-finder==0.0.1
-flask-variable-manager==0.3.1
+flask-variable-manager==0.4.0
 uwsgi==2.0.24
 notion-database==1.2.0
