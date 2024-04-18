@@ -8,7 +8,24 @@ app = Flask(__name__)
 
 app.register_blueprint(controller)
 app.register_blueprint(manager)
-swagger = Swagger(app)
+template = {
+  "swagger": "2.0",
+  "info": {
+    "title": "ADB API",
+    "description": "ADB 서버와 연결된 API",
+    "contact": {
+      "responsibleOrganization": "kookmin-sw",
+      "responsibleDeveloper": "minwook-shin",
+      "url": "https://github.com/kookmin-sw/capstone-2024-03",
+    },
+    "version": "1.0.0"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+}
+swagger = Swagger(app, template=template)
 
 
 @app.after_request
