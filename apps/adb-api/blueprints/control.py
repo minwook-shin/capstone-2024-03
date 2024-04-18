@@ -611,6 +611,9 @@ def user_variable():
             task_id:
               type: string
               description: The ID of the task.
+    responses:
+      200:
+        description: User variable operation added successfully.
     """
     variable_name = request.json.get('variable_name')
     variable_value = request.json.get('variable_value')
@@ -646,6 +649,9 @@ def python_runner():
             time:
               type: integer
               description: The number of times to run the script.
+    responses:
+      200:
+        description: Python script operation added successfully.
     """
     code = request.json.get('code')
     time = request.json.get('time')
@@ -676,6 +682,9 @@ def conditional_exit():
             task_id:
               type: string
               description: The ID of the task.
+    responses:
+      200:
+        description: Conditional exit operation added successfully.
     """
     condition_variable = request.json.get('condition_variable')
     condition_value = request.json.get('condition_value')
@@ -706,6 +715,9 @@ def adb_command():
             task_id:
               type: string
               description: The ID of the task.
+    responses:
+      200:
+        description: ADB command operation added successfully.
     """
     command = request.json.get('command')
     time = request.json.get('time')
@@ -737,6 +749,9 @@ def slack_message():
             task_id:
               type: string
               description: The ID of the task.
+    responses:
+      200:
+        description: Slack message operation added successfully.
     """
     message = request.json.get('message')
     incoming_webhook_url = request.json.get('incoming_webhook_url')
@@ -772,6 +787,9 @@ def notion_page():
             task_id:
               type: string
               description: The ID of the task.
+    responses:
+      200:
+        description: Notion page operation added successfully.
     """
     title = request.json.get('title')
     content = request.json.get('content')
