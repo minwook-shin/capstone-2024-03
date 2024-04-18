@@ -11,6 +11,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
+import 'brace/mode/json';
+import "ace-builds/webpack-resolver";
 
 function OptionInput({
   inputValues,
