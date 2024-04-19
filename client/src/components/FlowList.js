@@ -15,6 +15,12 @@ import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import SaveIcon from "@mui/icons-material/Save";
 import SettingsBackupRestoreIcon from "@mui/icons-material/SettingsBackupRestore";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
 import { arrayBufferToBase64 } from "../utils/converter.js";
 import { add_task_setting, add_backup_setting } from "../task_setting.js";
 
@@ -35,6 +41,39 @@ function FlowList({
   const [flowItems, setFlowItems] = useState([]);
   const [pendingItem, setPendingItem] = useState(null);
   const [inputValues, setInputValues] = useState({});
+
+  const [open, setOpen] = useState(false);
+  const [newParam, setNewParam] = useState([]);
+  const [taskOrder, setTaskOrder] = useState(0);
+
+  /**
+   * update 오픈 이벤트
+   * @param {*} taskOrder 
+   */
+  const handleClickUpdateOpen = (taskOrder) => {
+    setTaskOrder(taskOrder);
+    const { id, display_text, text, time, ...rest } = flowItems[taskOrder];
+    const result = Object.values(rest);
+    console.log(result);
+    setNewParam(result);
+    setOpen(true);
+  };
+   
+  /**
+   * update 닫기 이벤트
+   */
+  const handleUpdateClose = () => {
+    setOpen(false);
+  };
+
+  /**
+   * update 확인 이벤트
+   */
+  const handleUpdateConfirm = () => {
+    setOpen(false);
+    updateTaskItems(newParam, taskOrder);
+    setNewParam("");
+  };
 
   /**
    * 드래그 이벤트 막아주는 함수
@@ -255,6 +294,55 @@ function FlowList({
     setIsPlaying(false);
   };
 
+  /**
+   * 작업 속성 업데이트 이벤트
+   */
+  const updateTaskItems = async (newParam, taskOrder) => {
+    if (Array.isArray(newParam) || !newParam || !flowItems[taskOrder]) {
+      return;
+    }
+    const arr = newParam
+      .split(",")
+      .filter((item) => item !== undefined && item !== "");
+    const result = JSON.stringify(
+      arr.map((item) => (isNaN(item) ? item : Number(item)))
+    );
+    newParam = JSON.parse(result);
+    const { id, display_text, text, time, ...rest } = flowItems[taskOrder];
+    const keys = Object.keys(rest);
+    if (newParam.length < keys.length) {
+      return;
+    }
+    for (let i = 0; i < keys.length; i++) {
+      flowItems[taskOrder][keys[i]] = newParam[i];
+    }
+    const url = "http://127.0.0.1/update";
+    const headers = {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    };
+    const data = {
+      new_param: newParam,
+      task_order: taskOrder,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const jsonData = await response.json();
+      console.log(jsonData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div>
       {inputVisible && (
@@ -294,7 +382,7 @@ function FlowList({
           </Box>
         )}
         <List>
-          {flowItems.map((item) => (
+          {flowItems.map((item, index) => (
             <ListItem
               key={item.id}
               style={{
@@ -303,6 +391,7 @@ function FlowList({
                 borderRight: "none",
                 borderTop: "none",
               }}
+              onClick={() => handleClickUpdateOpen(index)}
             >
               {Object.entries(item).map(([key, value]) => {
                 if (key === "id") return null;
@@ -355,6 +444,35 @@ function FlowList({
           ))}
         </List>
       </div>
+      <Dialog open={open} onClose={handleUpdateClose}>
+        <DialogTitle>옵션 변경</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            선택한 {taskOrder} 번째 옵션의 현재 값입니다.<br /> 
+            값을 변경하고 확인을 눌러주세요.  <br />
+            (옵션은 콤마(,)로 구분하여 입력해주세요.) <br /><br />
+            제공되는 옵션 데이터는 아래와 같은 순서입니다 : <br/ >
+            {flowItems[taskOrder] ? Object.keys(flowItems[taskOrder]).filter(key => !['id', 'display_text', 'text', 'time'].includes(key)).join(', ') : ''}
+
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="옵션"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={newParam}
+            onChange={(e) => setNewParam(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleUpdateClose}>취소</Button>
+          <Button onClick={handleUpdateConfirm}>확인</Button>
+        </DialogActions>
+      </Dialog>
+
       <IterationControl
         repeatCount={repeatCount}
         setRepeatCount={setRepeatCount}

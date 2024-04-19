@@ -2,7 +2,7 @@ flask==3.0.3
 flasgger==0.9.7b2
 easy-adb==0.1.1
 pure-python-adb==0.3.0.dev0
-f-scheduler==0.1.0
+f-scheduler==0.3.0
 q-logger-py==0.0.3
 image-finder==0.0.1
 flask-variable-manager==0.4.1
