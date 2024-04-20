@@ -1,3 +1,22 @@
+import {
+  CaretDoubleUp,
+  CaretDoubleDown,
+  CursorClick,
+  Hockey,
+  Timer,
+  Infinity,
+  TextT,
+  CornersOut,
+  ImagesSquare,
+  ArticleNyTimes,
+  FolderSimpleUser,
+  FilePy,
+  Power,
+  AndroidLogo,
+  SlackLogo,
+  NotionLogo,
+} from "@phosphor-icons/react";
+
 /**
  * 초기 작업 데이터를 정의합니다.
  */
@@ -74,3 +93,23 @@ export const initialTaskData = [
     content: "",
   },
 ];
+
+export const icons = {
+  scroll_up: CaretDoubleUp,
+  scroll_down: CaretDoubleDown,
+  single_click: CursorClick,
+  long_press: CursorClick,
+  key_event: Hockey,
+  delay: Timer,
+  loop: Infinity,
+  input_text: TextT,
+  screen_capture: CornersOut,
+  image_matching: ImagesSquare,
+  extract_text: ArticleNyTimes,
+  user_variable: FolderSimpleUser,
+  python_runner: FilePy,
+  conditional_exit: Power,
+  adb_command: AndroidLogo,
+  slack_message: SlackLogo,
+  notion_page: NotionLogo,
+};

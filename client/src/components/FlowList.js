@@ -298,6 +298,7 @@ function FlowList({
    * 작업 속성 업데이트 이벤트
    */
   const updateTaskItems = async (newParam, taskOrder) => {
+    // client side update
     if (Array.isArray(newParam) || !newParam || !flowItems[taskOrder]) {
       return;
     }
@@ -316,7 +317,7 @@ function FlowList({
     for (let i = 0; i < keys.length; i++) {
       flowItems[taskOrder][keys[i]] = newParam[i];
     }
-    const url = "http://127.0.0.1/update";
+    // server side update
     const headers = {
       accept: "application/json",
       "Content-Type": "application/json",
@@ -325,20 +326,15 @@ function FlowList({
       new_param: newParam,
       task_order: taskOrder,
     };
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/update`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(data),
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const jsonData = await response.json();
-      console.log(jsonData);
     } catch (error) {
       console.error(error);
     }
