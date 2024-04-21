@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 const { ipcRenderer } = window;
 
@@ -12,84 +14,90 @@ export const handleButtonReload = () => {
   ipcRenderer.send("screen");
 };
 
-function ScreenViewer({ setDragCoords, setClickCoords, className }) {
+function ScreenViewer({
+  setDragCoords,
+  setClickCoords,
+  className,
+  DragCoords,
+}) {
+  const [crop, setCrop] = useState({
+    unit: "%",
+    width: 0,
+    height: 0,
+    aspect: 1 / 1,
+    x: 0,
+    y: 0,
+  });
+
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [dragStart, setDragStart] = useState(null);
-  const [dragEnd, setDragEnd] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const imgRef = useRef(null);
 
   /**
-   * 마우스 이벤트 핸들러
-   * 드래그 시작 좌표를 설정
-   * @param {*} event 
+   * 사진의 실제 좌표를 얻기 위한 함수
+   * @param {*} value
+   * @param {*} imgDimension
+   * @param {*} cropDimension
+   * @returns
    */
-  const handleMouseDown = (event) => {
-    const coords = getRealXY(event);
-    setDragStart(coords);
-    setIsDragging(true);
+  const getRealXY = (value, imgDimension, cropDimension) => {
+    return Math.round((value / cropDimension) * imgDimension);
   };
 
   /**
-   * 마우스 이벤트 핸들러
-   * 드래그 종료 좌표를 설정하고, 좌표 알림창을 띄움
-   * @param {*} event 
-   * @returns 
+   * 화면 캡쳐 후 이미지 좌표를 업데이트하는 함수
+   * @param {*} newCrop
    */
-  const handleMouseUp = async (event) => {
-    if (!isDragging) return;
-    const coords = getRealXY(event);
-    setDragEnd(coords);
-    setIsDragging(false);
-    setDragCoords({
-      top_left_x: dragStart.x,
-      top_left_y: dragStart.y,
-      bottom_right_x: coords.x,
-      bottom_right_y: coords.y,
-    });
-    setClickCoords({ x: dragStart.x, y: dragStart.y });
-    setAlertOpen(true);
-  };
+  const handleCropChange = (newCrop) => {
+    if (imgRef.current) {
+      const scaleX = imgRef.current.naturalWidth;
+      const scaleY = imgRef.current.naturalHeight;
 
+      const realTopLeftX = getRealXY(
+        newCrop.x,
+        scaleX,
+        imgRef.current.offsetWidth
+      );
+      const realTopLeftY = getRealXY(
+        newCrop.y,
+        scaleY,
+        imgRef.current.offsetHeight
+      );
+      const realBottomRightX = getRealXY(
+        newCrop.x + newCrop.width,
+        scaleX,
+        imgRef.current.offsetWidth
+      );
+      const realBottomRightY = getRealXY(
+        newCrop.y + newCrop.height,
+        scaleY,
+        imgRef.current.offsetHeight
+      );
+
+      const selection = {
+        top_left_x: realTopLeftX,
+        top_left_y: realTopLeftY,
+        bottom_right_x: realBottomRightX,
+        bottom_right_y: realBottomRightY,
+      };
+      setDragCoords(selection);
+      setClickCoords({ x: selection.top_left_x, y: selection.top_left_y });
+
+      setAlertOpen(true);
+    }
+  };
   /**
    * 알림창을 닫는 함수
-   * @param {*} event 
-   * @param {*} reason 
-   * @returns 
+   * @param {*} event
+   * @param {*} reason
+   * @returns
    */
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setAlertOpen(false);
-  };
-
-  /**
-   * 마우스 이벤트 핸들러
-   * 드래그 중일 때 드래그 종료 좌표를 설정
-   * @param {*} event 
-   * @returns 
-   */
-  const handleMouseMove = (event) => {
-    if (!isDragging) return;
-    const coords = getRealXY(event);
-    setDragEnd(coords);
-  };
-
-   /**
-    * 좌표를 실제 안드로이드 화면 크기에 맞게 변환하는 함수
-    * @param {*} event 
-    * @returns 
-    */
-  const getRealXY = (event) => {
-    const imgElement = document.getElementById("uploaded-image");
-    const scaleX = imgElement.naturalWidth / imgElement.offsetWidth;
-    const scaleY = imgElement.naturalHeight / imgElement.offsetHeight;
-
-    const realX = Math.round(event.nativeEvent.offsetX * scaleX);
-    const realY = Math.round(event.nativeEvent.offsetY * scaleY);
-    return { x: realX, y: realY };
   };
 
   // 화면 캡쳐 요청 및 화면 이미지 업데이트
@@ -112,26 +120,37 @@ function ScreenViewer({ setDragCoords, setClickCoords, className }) {
         ) : (
           <label className={className}>
             {imageSrc && (
-              <img
+              <ReactCrop
                 id="uploaded-image"
-                src={imageSrc}
-                alt="스마트폰이 인식되지 않습니다."
+                crop={crop}
+                onChange={(newCrop) => setCrop(newCrop)}
+                onComplete={(newCrop) => handleCropChange(newCrop)}
                 style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "contain",
                 }}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseMove={handleMouseMove}
-              />
+              >
+                <img
+                  ref={imgRef}
+                  id="uploaded-image"
+                  src={imageSrc}
+                  alt="스마트폰이 인식되지 않습니다."
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              </ReactCrop>
             )}
           </label>
         )}
       </div>
       {alertOpen && (
         <Alert onClose={handleClose} severity="success">
-          저장된 좌표 : {dragStart.x}, {dragStart.y} to {dragEnd.x}, {dragEnd.y}
+          저장된 좌표 : {DragCoords.top_left_x}, {DragCoords.top_left_y} to{" "}
+          {DragCoords.bottom_right_x}, {DragCoords.bottom_right_y}
         </Alert>
       )}
     </div>

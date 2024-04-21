@@ -9,7 +9,7 @@ import "@fontsource/nanum-gothic";
 import "@fontsource/nanum-gothic/400.css";
 import Joyride from "react-joyride";
 import { steps } from "./utils/intro_step.js";
-import { initialTaskData } from "./utils/initialTask.js";
+import { initialTaskData, icons } from "./utils/initialTask.js";
 
 function App() {
   const [taskItems, setTaskItems] = useState([]);
@@ -68,7 +68,7 @@ function App() {
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6} md={4}>
             <Box boxShadow={3} padding={1}>
-              <TaskList taskItems={taskItems} className="task_list_target" />
+              <TaskList taskItems={taskItems} className="task_list_target" icons={icons}/>
             </Box>
             <Box boxShadow={3} padding={1} className="vm_target">
               <VariableManager />
@@ -94,6 +94,7 @@ function App() {
                 setDragCoords={setDragCoords}
                 setClickCoords={setClickCoords}
                 className="screen_target"
+                DragCoords = {dragCoords}
               />
             </Box>
           </Grid>

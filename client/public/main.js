@@ -1,32 +1,32 @@
-
-const { BrowserWindow, app, ipcMain } = require('electron');
-const path = require('path');
-
+const { BrowserWindow, app, ipcMain } = require("electron");
+const path = require("path");
 
 const BASE_URL = "http://127.0.0.1:3000";
 
 let mainWindow = null;
 let manager_window = null;
 
-const http = require('http');
+const http = require("http");
 
 function fetchImage() {
   return new Promise((resolve, reject) => {
-    http.get("http://127.0.0.1/screen", (response) => {
-      const chunks = [];
-      response.on("data", (chunk) => {
-        chunks.push(chunk);
-      });
+    http
+      .get("http://127.0.0.1/screen", (response) => {
+        const chunks = [];
+        response.on("data", (chunk) => {
+          chunks.push(chunk);
+        });
 
-      response.on("end", () => {
-        const result = Buffer.concat(chunks);
-        const arrayBuffer = Uint8Array.from(result).buffer;
-        resolve(arrayBuffer);
+        response.on("end", () => {
+          const result = Buffer.concat(chunks);
+          const arrayBuffer = Uint8Array.from(result).buffer;
+          resolve(arrayBuffer);
+        });
+      })
+      .on("error", (error) => {
+        console.error("Error fetching image:", error);
+        reject(error);
       });
-    }).on("error", (error) => {
-      console.error("Error fetching image:", error);
-      reject(error);
-    });
   });
 }
 
@@ -100,6 +100,21 @@ const createWindow = () => {
       });
   });
   ipcMain.on("show_manager", show_manager);
+
+  ipcMain.handle("openHelpWindow", async (event, url) => {
+    let helpWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      autoHideMenuBar: true,
+      titleBarStyle: "hidden",
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+      },
+    });
+
+    helpWindow.loadURL(url);
+  });
 
   manager_window.on("close", (event) => {
     event.preventDefault();

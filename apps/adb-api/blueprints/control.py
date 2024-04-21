@@ -366,6 +366,42 @@ def clear_adb_operator():
     ordered_tasks.clear()
     dag.clear()
     return {'message': 'All operators cleared'}, 200
+  
+  
+@controller.route('/update', methods=['POST'])
+def update_adb_operator():
+    """
+    Update the ADB operations.
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: update
+          required:
+            - task_id
+            - new_param
+          properties:
+            task_order:
+              type: integer
+              description: The order of the task.
+            new_param:
+              type: array
+              items:
+                type: string
+              description: The properties to be updated.
+    responses:
+      200:
+        description: ADB operations updated successfully.
+    """
+    task_order = request.json.get('task_order')
+    new_param = request.json.get('new_param')
+    if ordered_tasks:
+        task_id = ordered_tasks[task_order]
+    else:
+        return {'message': 'No operators to execute'}, 200
+    dag.update_task(int(task_id), new_param)
+    return {'message': 'task updated  successfully'}, 200
 
 
 @controller.route('/tasks', methods=['get'])

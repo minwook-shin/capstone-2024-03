@@ -7,11 +7,13 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@mui/material/Button";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
+import ContactSupportIcon from "@mui/icons-material/ContactSupport";
+import { handleHelpClick } from "../utils/initialTask.js";
 
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
-import 'brace/mode/json';
+import "brace/mode/json";
 import "ace-builds/webpack-resolver";
 
 function OptionInput({
@@ -60,10 +62,21 @@ function OptionInput({
         if (key === "display_text") {
           return (
             <Box
+              key={key}
               padding={1}
               sx={{ color: "grey.500", justifyContent: "center" }}
             >
-              <Typography> {inputValues[key]} 값을 설정하는 중...</Typography>
+              <Typography
+                onClick={() => {
+                  handleHelpClick(inputValues["text"]);
+                }}
+              >
+                <ContactSupportIcon
+                  size={18}
+                  style={{ verticalAlign: "middle" }}
+                />
+                {inputValues["text"]} 값을 설정하는 중...
+              </Typography>
             </Box>
           );
         }
@@ -178,6 +191,7 @@ function OptionInput({
         ) {
           return (
             <Tooltip
+              key={key}
               title="안드로이드 스크린을 누르거나, 드래그하여 좌표 값을 변경하세요."
               placement="right-start"
               arrow
@@ -193,7 +207,7 @@ function OptionInput({
                 placeholder={`${key} 값을 입력하세요.`}
                 onKeyDown={handleKeyDown}
                 sx={{ my: 0.5 }}
-                disabled="true"
+                disabled={true}
               />
             </Tooltip>
           );
