@@ -24,7 +24,7 @@ class TestVmMain(unittest.TestCase):
             response = add_cors_headers(response)
             self.assertEqual(
                 response.headers['Access-Control-Allow-Methods'],
-                'GET, POST')
+                'GET, POST, DELETE')
             self.assertEqual(
                 response.headers['Access-Control-Allow-Origin'],
                 'http://127.0.0.1:3000')
