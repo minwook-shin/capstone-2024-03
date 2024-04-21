@@ -113,3 +113,64 @@ export const icons = {
   slack_message: SlackLogo,
   notion_page: NotionLogo,
 };
+
+const { ipcRenderer } = window;
+
+/**
+ * 도움말 버튼 클릭 시, 해당 작업에 대한 도움말 페이지를 엽니다.
+ * @param {*} task 
+ */
+export function handleHelpClick(task) {
+  console.log(task);
+  let url =
+    "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/intro/";
+  if (task === "scroll_up" || task === "scroll_down") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/scroll/";
+  }
+  if (task === "single_click" || task === "long_press") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/click/";
+  }
+  if (task === "key_event") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/key_event/";
+  }
+  if (task === "loop") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/loop/";
+  }
+  if (task === "input_text") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/keyboard/";
+  }
+  if (task === "screen_capture") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/capture/";
+  }
+  if (task === "image_matching") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/click/";
+  }
+  if (task === "extract_text") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/text_extract/";
+  }
+  if (task === "user_variable") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/variable/";
+  }
+  if (task === "python_runner") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/python/";
+  }
+  if (task === "conditional_exit") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/exit/";
+  }
+  if (task === "slack_message" || task === "notion_page") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/report/";
+  }
+  ipcRenderer.invoke("openHelpWindow", url);
+}
