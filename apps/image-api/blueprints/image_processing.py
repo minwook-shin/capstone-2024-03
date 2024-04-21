@@ -1,3 +1,6 @@
+"""
+This module contains the blueprint for image processing.
+"""
 from flask import Blueprint, request, jsonify
 from werkzeug.datastructures import FileStorage
 
@@ -8,6 +11,9 @@ ProcessImage = Blueprint('image processing', __name__)
 
 @ProcessImage.route('/')
 def hello_world():
+    """
+    This is a run test function.
+    """
     return {"message": "ProcessImage is running."}
 
 

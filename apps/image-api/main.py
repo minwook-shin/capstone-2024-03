@@ -1,3 +1,6 @@
+"""
+This is the main file of the image-api.
+"""
 from flasgger import Swagger
 from flask import Flask
 

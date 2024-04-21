@@ -1,4 +1,8 @@
+"""
+This module contains the ADB class, which provides methods to interact with the ADB API.
+"""
 import os
+import json
 import subprocess
 from time import sleep
 import requests
@@ -18,6 +22,9 @@ logger = logger_worker.get_logger()
 
 
 def convert_template_string(template_string):
+    """
+    Convert the template string to the appropriate type.
+    """
     url = "http://127.0.0.1:82/vm/render"
     headers = {
         "accept": "application/json",
@@ -26,10 +33,13 @@ def convert_template_string(template_string):
     data = {
         "template_string": template_string,
     }
-    return requests.post(url, headers=headers, data=data).text
+    return requests.post(url, headers=headers, data=data, timeout=60).text
 
 
 class ADB:
+    """
+    A class to interact with the ADB API.
+    """
     def __init__(self):
         self.apk_path = 'https://github.com/senzhk/ADBKeyBoard/raw/master/ADBKeyboard.apk'
         try:
@@ -52,7 +62,7 @@ class ADB:
         try:
             client = AdbClient(host="127.0.0.1", port=5037)
             devices = client.devices()
-        except Exception as _:
+        except Exception as _:  # pylint: disable=W0718
             print("ADB server is not running. will automatically launch the ADB server.")
             subprocess.call(["adb", "start-server"])
             client = AdbClient(host="127.0.0.1", port=5037)
@@ -185,7 +195,7 @@ class ADB:
         if os.path.exists('ADBKeyboard.apk'):
             pass
         else:
-            response = requests.get(self.apk_path)
+            response = requests.get(self.apk_path, timeout=60)
             with open('ADBKeyboard.apk', 'wb') as f:
                 f.write(response.content)
         self.device.install('ADBKeyboard.apk')
@@ -226,11 +236,14 @@ class ADB:
         """
         result = self.device.screencap()
         response = requests.post('http://localhost:81/template_matching',
-                                 files={'image': result, 'template': template})
+                                 files={'image': result, 'template': template},
+                                 timeout=60)
         print(response.json())
         self.execute_adb_single_click(response.json()['center_x'], response.json()['center_y'])
 
-    def extract_text_using_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name):
+    def extract_text_using_screen(
+        self, top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name
+        ):  # pylint: disable=R0913
         """
         Perform extract text using the screen capture.
 
@@ -250,9 +263,9 @@ class ADB:
             "bottom_right_y": int(bottom_right_y),
             }
         res = requests.post('http://localhost:81/extract_texts',
-                      files={'image': result}, data=data).json()
+                      files={'image': result}, data=data, timeout=60).json()
         data = {"key": variable_name ,"value": " ".join(res["texts"])}
-        requests.post('http://localhost:82/vm/var', data=data)
+        requests.post('http://localhost:82/vm/var', data=data, timeout=60)
 
     def add_user_variable(self, variable_name, variable_value):
         """
@@ -263,7 +276,7 @@ class ADB:
         value (str): The value of the user variable.
         """
         data = {"key": variable_name ,"value": variable_value}
-        requests.post('http://localhost:82/vm/var', data=data)
+        requests.post('http://localhost:82/vm/var', data=data, timeout=60)
 
     def run_python_script(self, code):
         """
@@ -272,7 +285,7 @@ class ADB:
         Parameters:
         script (str): The Python script to be executed.
         """
-        requests.post('http://localhost:82/py/runner', data=code)
+        requests.post('http://localhost:82/py/runner', data=code, timeout=60)
 
     def conditional_exit(self, condition_variable, condition_value):
         """
@@ -281,9 +294,10 @@ class ADB:
         Parameters:
         condition (str): The condition to be checked.
         """
-        data = requests.get('http://localhost:82/vm/var').json()
+        data = requests.get('http://localhost:82/vm/var', timeout=60).json()
         if data.get(condition_variable, None) == condition_value:
             return False
+        return True
 
     def execute_adb_command(self, command):
         """
@@ -325,12 +339,12 @@ class ADB:
         }
 
         headers = {'Content-Type': 'application/json'}
-        import json
-        response = requests.post(incoming_webhook_url, data=json.dumps(payload), headers=headers)
+        response = requests.post(incoming_webhook_url, data=json.dumps(payload),
+                                 headers=headers, timeout=60)
 
         if response.status_code != 200:
-            raise ValueError('Request to slack returned an error %s, the response is:\n%s' % (response.status_code, response.text))
-        
+            raise ValueError(f'error {response.status_code}, the response is:\n{response.text}')
+
     def create_notion_page(self, token, database_id, title, content):
         """
         Create a page in Notion.
@@ -345,12 +359,12 @@ class ADB:
         database_id = str(convert_template_string(database_id))
         title = str(convert_template_string(title))
         content = str(convert_template_string(content))
-        D = Database(integrations_token=token)
-        D.retrieve_database(database_id=database_id)
+        database = Database(integrations_token=token)
+        database.retrieve_database(database_id=database_id)
 
-        PROPERTY = Properties()
-        PROPERTY.set_title("title", title)
-        PROPERTY.set_select("author", "Min Bot")
+        properties = Properties()
+        properties.set_title("title", title)
+        properties.set_select("author", "Min Bot")
         children = Children()
         children.set_breadcrumb()
         children.set_heading_1(title)
@@ -358,5 +372,5 @@ class ADB:
         children.set_divider()
         children.set_callout("Auto generated by : Min Bot")
         children.set_bookmark("https://github.com/kookmin-sw/capstone-2024-03")
-        P = Page(integrations_token=token)
-        P.create_page(database_id=database_id, properties=PROPERTY, children=children)
+        page = Page(integrations_token=token)
+        page.create_page(database_id=database_id, properties=properties, children=children)

@@ -1,3 +1,6 @@
+"""
+variable manager api
+"""
 from flasgger import Swagger
 from flask import Flask
 from flask_variable_manager import VariableManagerExtension

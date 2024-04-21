@@ -1,3 +1,6 @@
+"""
+Extra tasks for the ADB API.        
+"""
 from time import sleep
 
 from utils.custom_logger import CustomLogger

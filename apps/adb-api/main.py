@@ -1,3 +1,6 @@
+"""
+Main module of the ADB API.
+"""
 from flasgger import Swagger
 from flask import Flask
 

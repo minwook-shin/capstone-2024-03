@@ -1,3 +1,6 @@
+"""
+This module contains the blueprint for the manager page of the ADB API.
+"""
 import os
 import pickle
 import json
@@ -9,6 +12,14 @@ api_data_path = os.path.join(root_dir, 'api_data.pkl')
 
 @manager.route('/manager')
 def variable_manager():
+    """
+    Render the manager page.
+    ---
+    get:
+        responses:
+            200:
+            description: The manager page.
+    """
     try:
         with open(api_data_path, 'rb') as f:
             api_data = pickle.load(f)
@@ -19,6 +30,14 @@ def variable_manager():
 
 @manager.route('/manager/clear')
 def clear_manager():
+    """
+    Clear the API data.
+    ---
+    get:
+        responses:
+            200:
+            description: The manager page with cleared data.
+    """
     with open(api_data_path, 'wb') as f:
         pickle.dump({}, f)
 
@@ -27,6 +46,14 @@ def clear_manager():
 
 @manager.route('/manager/download', methods=['GET'])
 def download():
+    """
+    Download the API data as a JSON file.
+    ---
+    get:
+        responses:
+            200:
+            description: The API data as a JSON file.
+    """
     with open(api_data_path, 'rb') as f:
         api_data = pickle.load(f)
     json_data = json.dumps(api_data, ensure_ascii=False)

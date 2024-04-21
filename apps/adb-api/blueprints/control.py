@@ -1,3 +1,6 @@
+"""
+This module contains the API endpoints for the ADB control operations.
+"""
 import json
 import os
 import zipfile
@@ -18,8 +21,12 @@ ordered_tasks = []
 
 @controller.route('/')
 def hello_world():
+    """
+    ADB status check.
+    """
     adb_status = control_obj.is_adb_enabled()
-    return {"ADB status": adb_status, "message": "If ADB status is False, please check the ADB connection"}
+    return {"ADB status": adb_status,
+            "message": "If ADB status is False, please check the ADB connection"}
 
 
 @controller.route('/screen', methods=['GET'])
@@ -101,7 +108,8 @@ def download_images():
         for file in files:
             os.remove(os.path.join(root, file))
 
-    return send_file(zip_path, as_attachment=True, mimetype='application/zip', download_name=zip_filename)
+    return send_file(zip_path, as_attachment=True,
+                     mimetype='application/zip', download_name=zip_filename)
 
 
 @controller.route('/scroll_up', methods=['POST'])
@@ -288,7 +296,8 @@ def short_cut():
     task_id = request.json.get('task_id')
     time = request.json.get('time')
 
-    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_short_cut, param=(key_event,),
+    dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_short_cut,
+                                      param=(key_event,),
                                       task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
     return {'message': 'short_cut added', 'key_event': key_event, 'time': time}, 200
@@ -349,7 +358,7 @@ def execute_adb_operator():
         converter = Converter(dag)
         converter.convert_list_to_dag(ordered_tasks)
         dag.run(task_id)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=W0718
         return {'message': str(e)}, 500
     return {'message': 'All operators executed'}, 200
 
@@ -366,8 +375,8 @@ def clear_adb_operator():
     ordered_tasks.clear()
     dag.clear()
     return {'message': 'All operators cleared'}, 200
-  
-  
+
+
 @controller.route('/update', methods=['POST'])
 def update_adb_operator():
     """
@@ -617,10 +626,12 @@ def extract_text():
     variable_name = request.json.get('variable_name')
     task_id = request.json.get('task_id')
     dag.add_task(IterFunctionOperator(function=control_obj.extract_text_using_screen,
-                                      param=(top_left_x, top_left_y, bottom_right_x, bottom_right_y, variable_name),
+                                      param=(top_left_x, top_left_y, bottom_right_x,
+                                             bottom_right_y, variable_name),
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
-    return {'message': 'text extraction added', 'arguments': f'{top_left_x}, {top_left_y}, {bottom_right_x}, {bottom_right_y}'}, 200
+    return {'message': 'text extraction added',
+            'arguments': f'{top_left_x}, {top_left_y}, {bottom_right_x}, {bottom_right_y}'}, 200
 
 
 @controller.route('/user_variable', methods=['POST'])
@@ -655,10 +666,12 @@ def user_variable():
     variable_value = request.json.get('variable_value')
     task_id = request.json.get('task_id')
 
-    dag.add_task(IterFunctionOperator(function=control_obj.add_user_variable, param=(variable_name, variable_value),
+    dag.add_task(IterFunctionOperator(function=control_obj.add_user_variable,
+                                      param=(variable_name, variable_value),
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
-    return {'message': 'user_variable added', 'variable_name': variable_name, 'variable_value': variable_value}, 200
+    return {'message': 'user_variable added',
+            'variable_name': variable_name, 'variable_value': variable_value}, 200
 
 
 @controller.route('/python_runner', methods=['POST'])
@@ -725,7 +738,8 @@ def conditional_exit():
     condition_variable = request.json.get('condition_variable')
     condition_value = request.json.get('condition_value')
     task_id = request.json.get('task_id')
-    dag.add_task(DefaultFunctionOperator(function=control_obj.conditional_exit, param=(condition_variable, condition_value),
+    dag.add_task(DefaultFunctionOperator(function=control_obj.conditional_exit,
+                                         param=(condition_variable, condition_value),
                                          task_id=task_id))
     ordered_tasks.append(task_id)
     return {'message': 'conditional_exit added', 'condition_variable': condition_variable}, 200
@@ -761,9 +775,9 @@ def adb_command():
     dag.add_task(IterFunctionOperator(function=control_obj.execute_adb_command, param=(command,),
                                       task_id=task_id, iterations=time))
     ordered_tasks.append(task_id)
-    
+
     return {'message': 'adb_command added', 'command': command}, 200
-  
+
 
 @controller.route('/slack_message', methods=['POST'])
 def slack_message():
@@ -792,13 +806,14 @@ def slack_message():
     message = request.json.get('message')
     incoming_webhook_url = request.json.get('incoming_webhook_url')
     task_id = request.json.get('task_id')
-    dag.add_task(IterFunctionOperator(function=control_obj.send_slack, param=(incoming_webhook_url, message,),
+    dag.add_task(IterFunctionOperator(function=control_obj.send_slack,
+                                      param=(incoming_webhook_url, message,),
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
-    
-    return {'message': 'slack_message added', 'message': message}, 200
-  
-  
+
+    return {'message': 'slack_message added', 'slack': message}, 200
+
+
 @controller.route('/notion_page', methods=['POST'])
 def notion_page():
     """
@@ -832,8 +847,9 @@ def notion_page():
     task_id = request.json.get('task_id')
     token = request.json.get('token')
     database_id = request.json.get('database_id')
-    dag.add_task(IterFunctionOperator(function=control_obj.create_notion_page, param=(token, database_id, title, content),
+    dag.add_task(IterFunctionOperator(function=control_obj.create_notion_page,
+                                      param=(token, database_id, title, content),
                                       task_id=task_id, iterations=1))
     ordered_tasks.append(task_id)
-    
+
     return {'message': 'notion_page added', 'page_title': title}, 200
