@@ -34,6 +34,8 @@ def screen():
     """
     Capture the screen of a device and return the image.
     ---
+    tags:
+      - Screen
     responses:
       200:
         description: Return the captured image
@@ -51,8 +53,10 @@ def screen():
 @controller.route('/screen_capture', methods=['POST'])
 def screen_capture():
     """
-    Capture the screen of a device and save the image to a local file.
+    Capture the screen of a device for senario task.
     ---
+    tags:
+      - Screen
     parameters:
        - in: body
          name: body
@@ -86,6 +90,8 @@ def download_images():
     """
     save the screen of a device and return the zip.
     ---
+    tags:
+      - Screen
     responses:
       200:
         description: Return the captured image
@@ -117,6 +123,8 @@ def scroll_up():
     """
     Scroll up on the device screen.
     ---
+    tags:
+      - Scroll
     parameters:
       - in: body
         name: body
@@ -150,6 +158,8 @@ def scroll_down():
     """
     Scroll down on the device screen.
     ---
+    tags:
+      - Scroll
     parameters:
       - in: body
         name: body
@@ -183,6 +193,8 @@ def single_click():
     """
     Execute a single click on the device screen.
     ---
+    tags:
+      - Click
     parameters:
       - in: body
         name: body
@@ -226,6 +238,8 @@ def long_press():
     """
     Execute a long press on the device screen.
     ---
+    tags:
+      - Click
     parameters:
       - in: body
         name: body
@@ -269,6 +283,8 @@ def short_cut():
     """
     Execute a shortcut on the device.
     ---
+    tags:
+      - Input
     parameters:
       - in: body
         name: body
@@ -308,6 +324,8 @@ def input_text():
     """
     Execute an input text on the device.
     ---
+    tags:
+      - Input
     parameters:
       - in: body
         name: body
@@ -346,6 +364,8 @@ def execute_adb_operator():
     """
     Execute the ADB operations.
     ---
+    tags:
+      - Core
     responses:
       200:
         description: All ADB operations executed successfully.
@@ -368,6 +388,8 @@ def clear_adb_operator():
     """
     Clear all the ADB operations.
     ---
+    tags:
+      - Core
     responses:
       200:
         description: All ADB operations cleared successfully.
@@ -382,6 +404,8 @@ def update_adb_operator():
     """
     Update the ADB operations.
     ---
+    tags:
+      - Core
     parameters:
       - in: body
         name: body
@@ -418,6 +442,8 @@ def get_all_adb_operator():
     """
     Get all the ADB operations.
     ---
+    tags:
+      - Core
     responses:
       200:
         description: All ADB operations returned successfully.
@@ -430,6 +456,8 @@ def delay_seconds():
     """
     Add a delay to the task queue.
     ---
+    tags:
+      - Utility
     parameters:
       - in: body
         name: body
@@ -455,8 +483,10 @@ def delay_seconds():
 @controller.route('/loop', methods=['POST'])
 def functions_iterator():
     """
-    Add a function to the task queue.
+    Add a loop of functions to the task operator.
     ---
+    tags:
+      - Utility
     parameters:
       - in: body
         name: body
@@ -527,6 +557,8 @@ def install_adb_keyboard():
     """
     Install the ADB keyboard on the device.
     ---
+    tags:
+      - Keyboard
     responses:
       200:
         description: ADB keyboard installed successfully.
@@ -538,8 +570,10 @@ def install_adb_keyboard():
 @controller.route('/reset_keyboard', methods=['GET'])
 def reset_adb_keyboard():
     """
-    Install the ADB keyboard on the device.
+    Uninstall the ADB keyboard on the device.
     ---
+    tags:
+      - Keyboard
     responses:
       200:
         description: ADB keyboard installed successfully.
@@ -551,8 +585,10 @@ def reset_adb_keyboard():
 @controller.route('/check_keyboard', methods=['GET'])
 def check_adb_keyboard():
     """
-    Install the ADB keyboard on the device.
+    Check the ADB keyboard on the device.
     ---
+    tags:
+      - Keyboard
     responses:
       200:
         description: Is ADB keyboard installed.
@@ -565,6 +601,8 @@ def template_matching():
     """
     Perform template matching on the device screen using the provided template image.
     ---
+    tags:
+      - Image
     parameters:
       - in: formData
         name: template
@@ -599,6 +637,8 @@ def extract_text():
     """
     Extract text from an image using OCR.
     ---
+    tags:
+      - Image
     parameters:
       - in: formData
         name: image
@@ -637,8 +677,10 @@ def extract_text():
 @controller.route('/user_variable', methods=['POST'])
 def user_variable():
     """
-    Add a user variable to the task queue.
+    Add a user variable to the task operator.
     ---
+    tags:
+      - variable
     parameters:
       - in: body
         name: body
@@ -677,8 +719,10 @@ def user_variable():
 @controller.route('/python_runner', methods=['POST'])
 def python_runner():
     """
-    Run a python script on the device.
+    Run a python script on studio client.
     ---
+    tags:
+      - Python
     parameters:
       - in: body
         name: body
@@ -716,6 +760,8 @@ def conditional_exit():
     """
     Exit the loop based on the condition.
     ---
+    tags:
+      - Utility
     parameters:
       - in: body
         name: body
@@ -750,6 +796,8 @@ def adb_command():
     """
     Execute an ADB command on the device.
     ---
+    tags:
+      - Utility
     parameters:
       - in: body
         name: body
@@ -784,6 +832,8 @@ def slack_message():
     """
     Send a message to a Slack channel.
     ---
+    tags:
+      - Report
     parameters:
       - in: body
         name: body
@@ -819,6 +869,8 @@ def notion_page():
     """
     Create a new page in Notion.
     ---
+    tags:
+      - Report
     parameters:
       - in: body
         name: body

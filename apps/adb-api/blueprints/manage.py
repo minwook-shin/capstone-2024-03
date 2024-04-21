@@ -15,6 +15,8 @@ def variable_manager():
     """
     Render the manager page.
     ---
+    tags:
+        - manager
     get:
         responses:
             200:
@@ -33,6 +35,8 @@ def clear_manager():
     """
     Clear the API data.
     ---
+    tags:
+        - manager
     get:
         responses:
             200:
@@ -49,6 +53,8 @@ def download():
     """
     Download the API data as a JSON file.
     ---
+    tags:
+        - manager
     get:
         responses:
             200:
