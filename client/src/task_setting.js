@@ -72,7 +72,6 @@ export const add_task_setting = async (newItem, initialTaskItems) => {
         body: formData,
       })
         .then((response) => response.json())
-        .then((data) => console.log(data))
         .catch((error) => console.error(error));
       return;
     } else if (newItem.text === "extract_text") {
@@ -108,8 +107,7 @@ export const add_task_setting = async (newItem, initialTaskItems) => {
       body.title = newItem.title;
       body.content = newItem.content;
     }
-    const jsonResponse = await apiCall(newItem.text, "POST", body);
-    console.log(jsonResponse);
+    await apiCall(newItem.text, "POST", body);
   }
 };
 
@@ -135,7 +133,6 @@ export const add_backup_setting = async (newFlowItems) => {
         body: formData,
       })
         .then((response) => response.json())
-        .then((data) => console.log(data))
         .catch((error) => console.error(error));
     } else {
       await fetch(`${API_URL}/${text}`, {

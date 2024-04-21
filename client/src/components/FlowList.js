@@ -48,17 +48,16 @@ function FlowList({
 
   /**
    * update 오픈 이벤트
-   * @param {*} taskOrder 
+   * @param {*} taskOrder
    */
   const handleClickUpdateOpen = (taskOrder) => {
     setTaskOrder(taskOrder);
     const { id, display_text, text, time, ...rest } = flowItems[taskOrder];
     const result = Object.values(rest);
-    console.log(result);
     setNewParam(result);
     setOpen(true);
   };
-   
+
   /**
    * update 닫기 이벤트
    */
@@ -113,8 +112,6 @@ function FlowList({
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const jsonResponse = await response.json();
-    console.log(jsonResponse);
     setFlowItems([]);
 
     const flowItems = JSON.parse(event.target.result).flowItems;
@@ -255,8 +252,6 @@ function FlowList({
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const jsonResponse = await response.json();
-    console.log(jsonResponse);
     setFlowItems([]);
   };
 
@@ -287,8 +282,6 @@ function FlowList({
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      const jsonResponse = await response.json();
-      console.log(jsonResponse);
     }
     setCurrentCount(0);
     setIsPlaying(false);
@@ -394,7 +387,7 @@ function FlowList({
                 if (key === "text") return null;
                 if (key === "display_text") {
                   return (
-                    <Tooltip title={value} arrow>
+                    <Tooltip title={value} arro="true">
                       <ListItemText
                         primary={
                           <Typography variant="caption">
@@ -444,12 +437,20 @@ function FlowList({
         <DialogTitle>옵션 변경</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            선택한 {taskOrder} 번째 옵션의 현재 값입니다.<br /> 
-            값을 변경하고 확인을 눌러주세요.  <br />
-            (옵션은 콤마(,)로 구분하여 입력해주세요.) <br /><br />
-            제공되는 옵션 데이터는 아래와 같은 순서입니다 : <br/ >
-            {flowItems[taskOrder] ? Object.keys(flowItems[taskOrder]).filter(key => !['id', 'display_text', 'text', 'time'].includes(key)).join(', ') : ''}
-
+            선택한 {taskOrder} 번째 옵션의 현재 값입니다.
+            <br />
+            값을 변경하고 확인을 눌러주세요. <br />
+            (옵션은 콤마(,)로 구분하여 입력해주세요.) <br />
+            <br />
+            제공되는 옵션 데이터는 아래와 같은 순서입니다 : <br />
+            {flowItems[taskOrder]
+              ? Object.keys(flowItems[taskOrder])
+                  .filter(
+                    (key) =>
+                      !["id", "display_text", "text", "time"].includes(key)
+                  )
+                  .join(", ")
+              : ""}
           </DialogContentText>
           <TextField
             autoFocus

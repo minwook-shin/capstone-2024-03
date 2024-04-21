@@ -62,6 +62,7 @@ function OptionInput({
         if (key === "display_text") {
           return (
             <Box
+              key={key}
               padding={1}
               sx={{ color: "grey.500", justifyContent: "center" }}
             >
@@ -190,6 +191,7 @@ function OptionInput({
         ) {
           return (
             <Tooltip
+              key={key}
               title="안드로이드 스크린을 누르거나, 드래그하여 좌표 값을 변경하세요."
               placement="right-start"
               arrow
@@ -205,7 +207,7 @@ function OptionInput({
                 placeholder={`${key} 값을 입력하세요.`}
                 onKeyDown={handleKeyDown}
                 sx={{ my: 0.5 }}
-                disabled="true"
+                disabled={true}
               />
             </Tooltip>
           );

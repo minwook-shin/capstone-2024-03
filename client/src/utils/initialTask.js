@@ -121,7 +121,6 @@ const { ipcRenderer } = window;
  * @param {*} task 
  */
 export function handleHelpClick(task) {
-  console.log(task);
   let url =
     "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/intro/";
   if (task === "scroll_up" || task === "scroll_down") {

@@ -20,7 +20,14 @@ function ScreenViewer({
   className,
   DragCoords,
 }) {
-  const [crop, setCrop] = useState({ aspect: 1 / 1 });
+  const [crop, setCrop] = useState({
+    unit: "%",
+    width: 0,
+    height: 0,
+    aspect: 1 / 1,
+    x: 0,
+    y: 0,
+  });
 
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,8 +50,6 @@ function ScreenViewer({
    * @param {*} newCrop
    */
   const handleCropChange = (newCrop) => {
-    console.log(imgRef.current);
-
     if (imgRef.current) {
       const scaleX = imgRef.current.naturalWidth;
       const scaleY = imgRef.current.naturalHeight;
@@ -79,7 +84,6 @@ function ScreenViewer({
       setDragCoords(selection);
       setClickCoords({ x: selection.top_left_x, y: selection.top_left_y });
 
-      console.log(selection);
       setAlertOpen(true);
     }
   };

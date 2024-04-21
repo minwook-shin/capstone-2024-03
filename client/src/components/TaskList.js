@@ -66,14 +66,16 @@ function TaskList({ taskItems, className, icons }) {
         placement="bottom-start"
         arrow
       >
-        <FixedSizeList
-          height={650}
-          width="100%"
-          itemSize={40}
-          itemCount={taskItems.length}
-          children={renderRow}
-        />
-        <label className={className}></label>
+        <div>
+          <FixedSizeList
+            height={650}
+            width="100%"
+            itemSize={40}
+            itemCount={taskItems.length}
+            children={renderRow}
+          />
+          <label className={className}></label>
+        </div>
       </Tooltip>
     </div>
   );

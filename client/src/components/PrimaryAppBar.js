@@ -39,7 +39,7 @@ export default function PrimaryAppBar({ className, setRun }) {
   const [pluginMenu, setPluginMenu] = React.useState(null);
   const isPluginMenuOpen = Boolean(pluginMenu);
   const [packageName, setPackageName] = useState("");
-  const [requirement, setRequirement] = useState({});
+  const [requirement, setRequirement] = useState([]);
 
   /**
    * ADB 키보드 설치 확인 함수
@@ -47,7 +47,6 @@ export default function PrimaryAppBar({ className, setRun }) {
   const checkKeyboard = useCallback(async () => {
     const BASE_URL = "http://127.0.0.1";
     const jsonResponse = await api.get(`${BASE_URL}/check_keyboard`);
-    console.log(jsonResponse);
     if (jsonResponse["ADB keyboard installed"] === true) {
       setKeyboardStatus(true);
     } else {
