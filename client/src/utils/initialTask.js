@@ -182,5 +182,9 @@ export function handleHelpClick(task) {
     url =
       "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/report/";
   }
+  if (task === "compare_data") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/compare_data/";
+  }
   ipcRenderer.invoke("openHelpWindow", url);
 }
