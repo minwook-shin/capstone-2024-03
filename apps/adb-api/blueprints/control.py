@@ -530,6 +530,7 @@ def functions_iterator():
         "adb_command": control_obj.execute_adb_command,
         "slack_message": control_obj.send_slack,
         "notion_page": control_obj.create_notion_page,
+        "compare_data": control_obj.compare_data,
     }
     functions = json.loads(functions)
 
@@ -905,3 +906,45 @@ def notion_page():
     ordered_tasks.append(task_id)
 
     return {'message': 'notion_page added', 'page_title': title}, 200
+
+@controller.route('/compare_data', methods=['POST'])
+def compare_data():
+    """
+    Compare two data sets.
+    ---
+    tags:
+      - Utility
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: compare_data
+          required:
+            - data1
+            - data2
+            - task_id
+          properties:
+            data1:
+              type: string
+              description: The first data set to be compared.
+            data2:
+              type: string
+              description: The second data set to be compared.
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: Data comparison operation added successfully.
+    """
+    origin = request.json.get('origin')
+    target = request.json.get('target')
+    expression = request.json.get('expression')
+    task_id = request.json.get('task_id')
+    variable_name = request.json.get('variable_name')
+    dag.add_task(IterFunctionOperator(function=control_obj.compare_data,
+                                      param=(origin, target, expression, variable_name),
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+
+    return {'message': 'compare_data added', 'origin': origin, 'target': target}, 200

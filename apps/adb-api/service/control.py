@@ -3,6 +3,7 @@ This module contains the ADB class, which provides methods to interact with the 
 """
 import os
 import json
+import operator
 import subprocess
 from time import sleep
 import requests
@@ -374,3 +375,27 @@ class ADB:
         children.set_bookmark("https://github.com/kookmin-sw/capstone-2024-03")
         page = Page(integrations_token=token)
         page.create_page(database_id=database_id, properties=properties, children=children)
+
+    def compare_data(self, origin, target, expression, variable_name):
+        """
+        Compare the data between the original and target data.
+
+        Parameters:
+        origin (str): The original data.
+        target (str): The target data.
+        expression (str): The expression to be evaluated.
+        """
+        origin = str(convert_template_string(origin))
+        target = str(convert_template_string(target))
+        expression = str(convert_template_string(expression))
+        ops = {'==': operator.eq, '!=': operator.ne,
+               '>': operator.gt, '<': operator.lt,
+               '>=': operator.ge, '<=': operator.le}
+        if expression in ops:
+            result = ops[expression](origin, target)
+            data = {"key": variable_name ,"value": result}
+            requests.post('http://localhost:82/vm/var', data=data, timeout=60)
+        else:
+            raise ValueError(f"Invalid expression: {expression}")
+
+        return result

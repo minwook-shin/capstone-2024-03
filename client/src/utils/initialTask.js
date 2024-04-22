@@ -15,6 +15,7 @@ import {
   AndroidLogo,
   SlackLogo,
   NotionLogo,
+  GreaterThanOrEqual
 } from "@phosphor-icons/react";
 
 /**
@@ -92,6 +93,15 @@ export const initialTaskData = [
     title: "",
     content: "",
   },
+  { 
+    display_text: "데이터 비교",
+    text: "compare_data",
+    time: 1,
+    origin: "",
+    target: "",
+    expression: "",
+    variable_name: "",
+  }
 ];
 
 export const icons = {
@@ -112,6 +122,7 @@ export const icons = {
   adb_command: AndroidLogo,
   slack_message: SlackLogo,
   notion_page: NotionLogo,
+  compare_data: GreaterThanOrEqual,
 };
 
 const { ipcRenderer } = window;

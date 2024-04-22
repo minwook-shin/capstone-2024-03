@@ -106,6 +106,11 @@ export const add_task_setting = async (newItem, initialTaskItems) => {
       body.database_id = newItem.database_id;
       body.title = newItem.title;
       body.content = newItem.content;
+    } else if (newItem.text === "compare_data") {
+      body.origin = newItem.origin;
+      body.target = newItem.target;
+      body.expression = newItem.expression;
+      body.variable_name = newItem.variable_name;
     }
     await apiCall(newItem.text, "POST", body);
   }
