@@ -114,6 +114,7 @@ function OptionInput({
         if (key === "template") {
           return (
             <TextField
+              variant="standard"
               fullWidth
               label={key}
               key={key}

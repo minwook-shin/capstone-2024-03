@@ -531,6 +531,7 @@ def functions_iterator():
         "slack_message": control_obj.send_slack,
         "notion_page": control_obj.create_notion_page,
         "compare_data": control_obj.compare_data,
+        "csv_import": control_obj.import_csv,
     }
     functions = json.loads(functions)
 
@@ -948,3 +949,45 @@ def compare_data():
     ordered_tasks.append(task_id)
 
     return {'message': 'compare_data added', 'origin': origin, 'target': target}, 200
+
+@controller.route('/csv_import', methods=['POST'])
+def csv_import():
+    """
+    Import a CSV file.
+    ---
+    tags:
+      - Utility
+    parameters:
+      - in: formData
+        name: template
+        type: file
+        description: The CSV file to be imported.
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: csv_import
+          required:
+            - task_id
+          properties:
+            task_id:
+              type: string
+              description: The ID of the task.
+    responses:
+      200:
+        description: CSV import operation added successfully.
+    """
+    template: FileStorage = request.files.get('template')
+    template = template.read()
+    template = template.decode('utf-8')
+    lines = template.splitlines()
+    template = {}
+    for line in lines:
+        field, value = line.split(',')
+        template[field] = value
+    task_id = request.form.get('task_id')
+    dag.add_task(IterFunctionOperator(function=control_obj.import_csv,
+                                      param=[template],
+                                      task_id=task_id, iterations=1))
+    ordered_tasks.append(task_id)
+    return {'message': 'csv_import added'}, 200

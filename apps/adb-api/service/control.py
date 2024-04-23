@@ -37,7 +37,7 @@ def convert_template_string(template_string):
     return requests.post(url, headers=headers, data=data, timeout=60).text
 
 
-class ADB:
+class ADB:  # pylint: disable=R0904
     """
     A class to interact with the ADB API.
     """
@@ -399,3 +399,13 @@ class ADB:
             raise ValueError(f"Invalid expression: {expression}")
 
         return result
+
+    def import_csv(self, template):
+        """
+        Import a CSV file and store the data in a user variable.
+
+        Parameters:
+        csv_bytes (bytes): The CSV file content.
+        variable_name (str): The name of the user variable.
+        """
+        requests.post('http://localhost:82/vm/vars', json=template, timeout=60)

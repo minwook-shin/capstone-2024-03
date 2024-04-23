@@ -15,7 +15,8 @@ import {
   AndroidLogo,
   SlackLogo,
   NotionLogo,
-  GreaterThanOrEqual
+  GreaterThanOrEqual,
+  FileCsv
 } from "@phosphor-icons/react";
 
 /**
@@ -101,6 +102,12 @@ export const initialTaskData = [
     target: "",
     expression: "",
     variable_name: "",
+  },
+  {
+    display_text: "CSV 파일 가져오기",
+    text: "csv_import",
+    time: 1,
+    template: "",
   }
 ];
 
@@ -123,6 +130,7 @@ export const icons = {
   slack_message: SlackLogo,
   notion_page: NotionLogo,
   compare_data: GreaterThanOrEqual,
+  csv_import: FileCsv
 };
 
 const { ipcRenderer } = window;
