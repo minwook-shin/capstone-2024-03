@@ -194,5 +194,9 @@ export function handleHelpClick(task) {
     url =
       "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/compare_data/";
   }
+  if (task === "csv_import") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/csv_import/";
+  }
   ipcRenderer.invoke("openHelpWindow", url);
 }
