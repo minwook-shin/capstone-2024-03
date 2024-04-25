@@ -15,6 +15,8 @@ import {
   AndroidLogo,
   SlackLogo,
   NotionLogo,
+  GreaterThanOrEqual,
+  FileCsv
 } from "@phosphor-icons/react";
 
 /**
@@ -92,6 +94,21 @@ export const initialTaskData = [
     title: "",
     content: "",
   },
+  { 
+    display_text: "데이터 비교",
+    text: "compare_data",
+    time: 1,
+    origin: "",
+    target: "",
+    expression: "",
+    variable_name: "",
+  },
+  {
+    display_text: "CSV 파일 가져오기",
+    text: "csv_import",
+    time: 1,
+    template: "",
+  }
 ];
 
 export const icons = {
@@ -112,6 +129,8 @@ export const icons = {
   adb_command: AndroidLogo,
   slack_message: SlackLogo,
   notion_page: NotionLogo,
+  compare_data: GreaterThanOrEqual,
+  csv_import: FileCsv
 };
 
 const { ipcRenderer } = window;
@@ -170,6 +189,14 @@ export function handleHelpClick(task) {
   if (task === "slack_message" || task === "notion_page") {
     url =
       "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/report/";
+  }
+  if (task === "compare_data") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/compare_data/";
+  }
+  if (task === "csv_import") {
+    url =
+      "https://minwook-shin.github.io/capstone-2024-03-web/docs/tutorial/csv_import/";
   }
   ipcRenderer.invoke("openHelpWindow", url);
 }

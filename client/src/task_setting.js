@@ -106,6 +106,24 @@ export const add_task_setting = async (newItem, initialTaskItems) => {
       body.database_id = newItem.database_id;
       body.title = newItem.title;
       body.content = newItem.content;
+    } else if (newItem.text === "compare_data") {
+      body.origin = newItem.origin;
+      body.target = newItem.target;
+      body.expression = newItem.expression;
+      body.variable_name = newItem.variable_name;
+    } else if (newItem.text === "csv_import") {
+      const formData = new FormData();
+      const blob = new Blob([newItem.template], { type: "text/csv" });
+      formData.append("template", blob, "template.csv");
+      formData.append("task_id", task_id);
+
+      fetch(`${API_URL}/csv_import`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .catch((error) => console.error(error));
+      return;
     }
     await apiCall(newItem.text, "POST", body);
   }
@@ -129,6 +147,21 @@ export const add_backup_setting = async (newFlowItems) => {
       formData.append("task_id", task_id.toString());
 
       await fetch(`${API_URL}/image_matching`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .catch((error) => console.error(error));
+    }
+    if (text === "csv_import") {
+      const formData = new FormData();
+      const blob = new Blob([base64ToArrayBuffer(rest.template)], {
+        type: "text/csv",
+      });
+      formData.append("template", blob, "template.csv");
+      formData.append("task_id", task_id.toString());
+
+      await fetch(`${API_URL}/csv_import`, {
         method: "POST",
         body: formData,
       })

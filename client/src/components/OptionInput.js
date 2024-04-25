@@ -24,6 +24,7 @@ function OptionInput({
   onInputChangeForCode,
 }) {
   const [keyEvents, setKeyEvents] = useState({});
+  const [expression, setExpression] = useState({});
 
   useEffect(() => {
     /**
@@ -36,6 +37,15 @@ function OptionInput({
     };
 
     loadKeyEvents();
+
+    setExpression({
+      "Origin 값과 Tartget 값이 같으면": "==",
+      "Origin 값과 Tartget 값이 다르면": "!=",
+      "Origin 값이 Tartget 값보다 크거나 같으면": ">=",
+      "Origin 값이 Tartget 값보다 작거나 같으면": "<=",
+      "Origin 값이 Tartget 값보다 크면": ">",
+      "Origin 값이 Tartget 값보다 작으면": "<",
+    });
   }, []);
 
   /**
@@ -104,6 +114,7 @@ function OptionInput({
         if (key === "template") {
           return (
             <TextField
+              variant="standard"
               fullWidth
               label={key}
               key={key}
@@ -114,6 +125,24 @@ function OptionInput({
               onKeyDown={handleKeyDown}
               sx={{ my: 0.5 }}
             />
+          );
+        } // expression은 Select로 렌더링
+        if (key === "expression") {
+          return (
+            <Select
+              fullWidth
+              key={key}
+              name={key}
+              value={inputValues[key]}
+              onChange={onInputChange}
+              onKeyDown={handleKeyDown}
+            >
+              {Object.entries(expression).map(([eventKey, eventValue]) => (
+                <MenuItem key={eventKey} value={eventValue}>
+                  {eventKey}
+                </MenuItem>
+              ))}
+            </Select>
           );
           // functions는 TextField로 렌더링
           // 여러 줄 입력이 가능하며, Drag & drop을 통해 목록을 만들 수 있음

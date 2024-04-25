@@ -406,7 +406,7 @@ function FlowList({
                       secondary={
                         <img
                           src={`data:image/png;base64,${value}`}
-                          alt="template"
+                          alt="FILE"
                           style={{ width: "15%", height: "15%" }}
                         />
                       }
