@@ -28,9 +28,9 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 
 ## 영상
 
-* 캡스톤 디자인 2024 03팀 최종 발표
+* **캡스톤 디자인 2024 03팀 최종 발표**
 
-_업로드 예정_
+[![캡스톤 디자인 2024 03팀 최종 시연](https://img.youtube.com/vi/m36ozV_C6jk/0.jpg)](https://www.youtube.com/watch?v=m36ozV_C6jk)
 
 * 캡스톤 디자인 2024 03팀 중간 발표
 
