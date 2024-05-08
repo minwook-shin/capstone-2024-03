@@ -286,9 +286,7 @@ class ADB:  # pylint: disable=R0904
         Parameters:
         script (str): The Python script to be executed.
         """
-        # if you wants to use korean, 
-        # you should encode the code to utf-8
-        # code=code.encode('utf-8')
+        code = code.encode('utf-8')
         requests.post('http://localhost:82/py/runner', data=code, timeout=60)
 
     def conditional_exit(self, condition_variable, condition_value):
