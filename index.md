@@ -44,6 +44,10 @@ Scenario creation is user-friendly forms and drag & drop functionality rather th
 | **신민욱 (\*\*\*\*1640 )** | <img src="https://avatars.githubusercontent.com/u/12551635?v=4" width="100" height="100"/> | 서버, 클라이언트, 문서, 테스트 | [https://github.com/minwook-shin](https://github.com/minwook-shin) | 
 | **임덕규 (산학 멘토)** | <img src="https://avatars.githubusercontent.com/u/1933975?v=4" width="100" height="100"/> | 프로젝트 멘토링 | [https://github.com/RavenKyu](https://github.com/RavenKyu) |
 
+## 발표 자료 및 포스터
+
+개요, 설정, 문서 등 모든 내용이 모아진 [새로운 프로젝트 페이지](https://minwook-shin.github.io/capstone-2024-03-web/docs/intro)에서 발표 자료를 확인하실 수 있습니다.
+
 ## 개발 환경 설정 및 사용법
 
 해당 프로젝트의 시작을 위해서 서버의 환경 설정을 먼저 진행해주셔야 합니다.
