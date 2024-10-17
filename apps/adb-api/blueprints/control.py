@@ -14,7 +14,7 @@ from service.extra import delay
 
 controller = Blueprint('controller', __name__)
 
-dag = DAG()
+dag = DAG(use_graphlib=True)
 control_obj = ADB()
 ordered_tasks = []
 
@@ -370,14 +370,12 @@ def execute_adb_operator():
       200:
         description: All ADB operations executed successfully.
     """
-    if ordered_tasks:
-        task_id = ordered_tasks[0]
-    else:
+    if not ordered_tasks:
         return {'message': 'No operators to execute'}, 200
     try:
         converter = Converter(dag)
         converter.convert_list_to_dag(ordered_tasks)
-        dag.run(task_id)
+        dag.run()
     except Exception as e:  # pylint: disable=W0718
         return {'message': str(e)}, 500
     return {'message': 'All operators executed'}, 200
